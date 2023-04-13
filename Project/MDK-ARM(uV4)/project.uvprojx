@@ -402,18 +402,6 @@
         </Group>
         <Group>
           <GroupName>User_GUI</GroupName>
-          <Files>
-            <File>
-              <FileName>GUI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_GUI\GUI.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_OLED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_GUI\GUI_OLED.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>User_App</GroupName>
@@ -429,44 +417,14 @@
               <FilePath>..\..\User\User_App\app.c</FilePath>
             </File>
             <File>
-              <FileName>app_walk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_walk.c</FilePath>
-            </File>
-            <File>
               <FileName>app_input.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_input.c</FilePath>
             </File>
             <File>
-              <FileName>app_work.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_work.c</FilePath>
-            </File>
-            <File>
               <FileName>app_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_echo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_echo.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_outfireRobotOneWork.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_outfireRobotOneWork.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_outfireRobotTwoWork.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_outfireRobotTwoWork.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_rescueRobotWork.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_rescueRobotWork.c</FilePath>
             </File>
             <File>
               <FileName>app_findfire.c</FileName>
@@ -489,49 +447,14 @@
               <FilePath>..\..\User\User_Driver\driver.c</FilePath>
             </File>
             <File>
-              <FileName>driver_photoelectric_switch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_photoelectric_switch.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_oled.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_steering_engine_speed.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_steering_engine_speed.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_fan_motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_fan_motor.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_key.c</FilePath>
             </File>
             <File>
-              <FileName>driver_echo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_echo.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_linearMovement.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_linearMovement.c</FilePath>
-            </File>
-            <File>
-              <FileName>HJ_USART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\HJ_USART.c</FilePath>
-            </File>
-            <File>
-              <FileName>HJ_USART_IRQ.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\HJ_USART_IRQ.c</FilePath>
             </File>
           </Files>
         </Group>

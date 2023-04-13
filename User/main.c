@@ -46,13 +46,13 @@ void app_Init(void)
 	bsp_Init();
 	driver_Init();
 	app_ParameterInit();
-	GUI_Init();								//1
+//	GUI_Init();								//1
 	
-	appfindFire_Init();
-	app_walkTaskInit();	
+//	appfindFire_Init();
+//	app_walkTaskInit();	
 	
-	app_echoInit();					//3
-	app_WorkTaskInit();    // 4
+//	app_echoInit();					//3
+//	app_WorkTaskInit();    // 4
 	app_inputTaskInit();     //2
 	
 			//4

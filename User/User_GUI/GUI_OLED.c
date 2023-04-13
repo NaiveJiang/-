@@ -196,7 +196,7 @@ void menuInit()
 		testWalkMenu.preMenu = &testModeMenu;
 		testWalkMenu.func = (void (**)(void))malloc(sizeof(NULL) * testWalkMenu.subMenuNumber);
 		for(i = 0;i<4;i++){
-			testWalkMenu.func[i] = testWalkFuction;
+//			testWalkMenu.func[i] = testWalkFuction;
 		}
 	}
 
@@ -690,8 +690,8 @@ void testSr04Function(void)
 	
 	switch(oled.keyValue){
 		case OLED_BACK:{
-			outfireRobotState.step = INIT;
-			rescueRobotState.step = INIT;
+//			outfireRobotState.step = INIT;
+//			rescueRobotState.step = INIT;
 			currentMenu -> displayFlag = UPDATEMENU_FLAG;				//刷新一次菜单~
 			break;
 		}
@@ -699,10 +699,10 @@ void testSr04Function(void)
 			break;
 		}
 		case OLED_SAVE:{
-			outfireRobotState.workMode = OUT_FIRE;
-			outfireRobotState.step = READY;
-			rescueRobotState.workMode = RESCUEING;
-			rescueRobotState.step = READY;
+//			outfireRobotState.workMode = OUT_FIRE;
+//			outfireRobotState.step = READY;
+//			rescueRobotState.workMode = RESCUEING;
+//			rescueRobotState.step = READY;
 		break;
 		}
 	}
@@ -716,166 +716,166 @@ void testSr04Function(void)
 	currentMenu->displayFlag = FUNCTION_AUTO_FLAG;
 }
 
-void testWalkFuction(void)
-{ 
-	switch(currentMenu -> currentOption){
-		case WALK_TEST: {
-			switch(oled.keyValue){
-				case OLED_ENTER:{
-						currentMenu -> displayFlag = TEST_FLAG;
-						if(outfireRobotState.testTarget != TESTING||rescueRobotState.testTarget != TESTING){
-						switch(currentMenu ->preMenu->currentOption){
-							case 1:{break;}
-							case 2:{break;}
-							case 3:{break;}
-							case 4:{outfireRobotState.moveWays = FRONT_TURN_LEFT_90;rescueRobotState.moveWays = FRONT_TURN_LEFT_90;break;}
-							case 5:{outfireRobotState.moveWays = FRONT_TURN_LEFT_180;rescueRobotState.moveWays = FRONT_TURN_LEFT_180;break;}
-							case 6:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_90;rescueRobotState.moveWays = FRONT_TURN_RIGHT_90;break;}
-							case 7:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_180;rescueRobotState.moveWays = FRONT_TURN_RIGHT_180;break;}
-							case 8:{outfireRobotState.moveWays = FRONT_TURN_LEFT_135;rescueRobotState.moveWays = FRONT_TURN_LEFT_135;break;}
-							case 9:{outfireRobotState.moveWays = FRONT_TURN_LEFT_45;rescueRobotState.moveWays = FRONT_TURN_LEFT_45;break;}
-							case 10:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_135;rescueRobotState.moveWays = FRONT_TURN_RIGHT_135;break;}
-							case 11:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_45;rescueRobotState.moveWays = FRONT_TURN_RIGHT_45;break;}
-							case 12:{outfireRobotState.moveWays = BEHIND_TURN_LEFT_45;rescueRobotState.moveWays = BEHIND_TURN_LEFT_45;break;}
-							case 13:{outfireRobotState.moveWays = BEHIND_TURN_RIGHT_45;rescueRobotState.moveWays = BEHIND_TURN_RIGHT_45;break;}
-							case 14:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_45;rescueRobotState.moveWays = REVERSE_LEFT_TURN_45;break;}
-							case 15:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_45;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_45;break;}
-							case 16:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_90;rescueRobotState.moveWays = REVERSE_LEFT_TURN_90;break;}
-							case 17:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_90;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_90;break;}
-							case 18:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_135;rescueRobotState.moveWays = REVERSE_LEFT_TURN_135;break;}
-							case 19:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_135;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_135;break;}
-							case 20:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_180;rescueRobotState.moveWays = REVERSE_LEFT_TURN_180;break;}
-							case 21:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_180;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_180;break;}
-							case 22:{outfireRobotState.moveWays = GO_STRAIGHT;rescueRobotState.moveWays = GO_STRAIGHT;break;} 
-							default:break;
-						}
-						OLED_Clear();
-						outfireRobotState.testTarget = TESTING;
-						rescueRobotState.testTarget = TESTING;
-					}
-						OLED_ShowString(42,0,"Testing",16);
-						OLED_ShowString(42,2,currentMenu ->preMenu->menuOption[currentMenu ->preMenu->currentOption],16);
-					break;
-				}
-				case OLED_BACK: {
-					currentMenu -> displayFlag = UPDATEMENU_FLAG;
-					rescueRobotState.testTarget = WAITING;
-					rescueRobotState.moveWays = STOP;
-					outfireRobotState.testTarget = WAITING;
-					outfireRobotState.moveWays = STOP;
-					break;	
-				}
-			}
-				break;
-				
-		}
-		case LEFT_WHEEL:{
-			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
-			switch(currentMenu->preMenu->currentOption){
-				case 0:break;
-				case 1:break;
-				case 2:break;
-				case 3:{parameterCalibration(&parameter[NAME_SET_ZERO__LEFT_RATE],0,200);break;}
-				case 4:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
-				case 5:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
-				case 6:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
-				case 7:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
-				case 8:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
-				case 9:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
-				case 10:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
-				case 11:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
-				case 12:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
-				case 13:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
-				case 14:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
-				case 15:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
-				case 16:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
-				case 17:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
-				case 18:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
-				case 19:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
-				case 20:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
-				case 21:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
-				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT__LEFT_RATE],0,50);break;}
-				default:break;
-		}
-			break;
-		}
-		case RIGHT_WHEEL:{
-			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
-			switch(currentMenu ->preMenu->currentOption){
-				case 0:break;
-				case 1:break;
-				case 2:break;
-				case 3:{parameterCalibration(&parameter[NAME_SET_ZERO__RIGHT_RATE],0,200);break;}
-				case 4:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
-				case 5:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
-				case 6:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
-				case 7:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
-				case 8:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
-				case 9:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
-				case 10:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
-				case 11:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
-				case 12:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
-				case 13:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
-				case 14:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
-				case 15:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
-				case 16:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
-				case 17:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
-				case 18:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
-				case 19:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
-				case 20:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
-				case 21:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
-				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT__RIGHT_RATE],0,50);break;}
-			}
-			break;
-		}
-		case TURN_TIME:{
-			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
-			switch(currentMenu ->preMenu->currentOption){
-				case 0:break;
-				case 1:break;
-				case 2:break;
-				case 3:{parameter[NAME_FRONT_TURN_LEFT_TIME_90] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_LEFT_TIME_180] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_RIGHT_TIME_90] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_RIGHT_TIME_180] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_LEFT_TIME_135] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_RIGHT_TIME_135] = SET_ZERO_TIME;
-						parameter[NAME_FRONT_TURN_RIGHT_TIME_45] = SET_ZERO_TIME;
-						parameter[NAME_BEHIND_TURN_LEFT_TIME_45] = SET_ZERO_TIME;
-						parameter[NAME_BEHIND_TURN_RIGHT_TIME_45] = SET_ZERO_TIME;
-						parameter[NAME_REVERSE_TURN_TIME_45] = SET_ZERO_TIME;
-						parameter[NAME_REVERSE_TURN_TIME_90] = SET_ZERO_TIME;
-						parameter[NAME_REVERSE_TURN_TIME_135] = SET_ZERO_TIME;
-						parameter[NAME_REVERSE_TURN_TIME_180] = SET_ZERO_TIME;
-						parameter[NAME_GO_STRAIGHT_TIME] = SET_ZERO_TIME;
-						app_FlashWriteUdata();
-						saveGUIFinish();
-						break;
-						}
-				case 4:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_90],200,3000);break;}
-				case 5:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_180],200,5000);break;}
-				case 6:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_90],200,5000);break;}
-				case 7:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_180],200,5000);break;}
-				case 8:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_135],200,5000);break;}
-				case 9:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_45],200,5000);break;}
-				case 10:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_135],200,5000);break;}
-				case 11:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_45],200,5000);break;}
-				case 12:{parameterCalibration(&parameter[NAME_BEHIND_TURN_LEFT_TIME_45],200,5000);break;}
-				case 13:{parameterCalibration(&parameter[NAME_BEHIND_TURN_RIGHT_TIME_45],200,5000);break;}
-				case 14:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_45],200,5000);break;}
-				case 15:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_45],200,5000);break;}
-				case 16:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_90],200,5000);break;}
-				case 17:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_90],200,5000);break;}
-				case 18:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_135],200,5000);break;}
-				case 19:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_135],200,5000);break;}
-				case 20:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_180],200,5000);break;}
-				case 21:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_180],200,5000);break;}
-				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT_TIME],200,5000);break;}
-			}
-			break;
-		}		
-	}
-}
+//void testWalkFuction(void)
+//{ 
+//	switch(currentMenu -> currentOption){
+//		case WALK_TEST: {
+//			switch(oled.keyValue){
+//				case OLED_ENTER:{
+//						currentMenu -> displayFlag = TEST_FLAG;
+//						if(outfireRobotState.testTarget != TESTING||rescueRobotState.testTarget != TESTING){
+//						switch(currentMenu ->preMenu->currentOption){
+//							case 1:{break;}
+//							case 2:{break;}
+//							case 3:{break;}
+//							case 4:{outfireRobotState.moveWays = FRONT_TURN_LEFT_90;rescueRobotState.moveWays = FRONT_TURN_LEFT_90;break;}
+//							case 5:{outfireRobotState.moveWays = FRONT_TURN_LEFT_180;rescueRobotState.moveWays = FRONT_TURN_LEFT_180;break;}
+//							case 6:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_90;rescueRobotState.moveWays = FRONT_TURN_RIGHT_90;break;}
+//							case 7:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_180;rescueRobotState.moveWays = FRONT_TURN_RIGHT_180;break;}
+//							case 8:{outfireRobotState.moveWays = FRONT_TURN_LEFT_135;rescueRobotState.moveWays = FRONT_TURN_LEFT_135;break;}
+//							case 9:{outfireRobotState.moveWays = FRONT_TURN_LEFT_45;rescueRobotState.moveWays = FRONT_TURN_LEFT_45;break;}
+//							case 10:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_135;rescueRobotState.moveWays = FRONT_TURN_RIGHT_135;break;}
+//							case 11:{outfireRobotState.moveWays = FRONT_TURN_RIGHT_45;rescueRobotState.moveWays = FRONT_TURN_RIGHT_45;break;}
+//							case 12:{outfireRobotState.moveWays = BEHIND_TURN_LEFT_45;rescueRobotState.moveWays = BEHIND_TURN_LEFT_45;break;}
+//							case 13:{outfireRobotState.moveWays = BEHIND_TURN_RIGHT_45;rescueRobotState.moveWays = BEHIND_TURN_RIGHT_45;break;}
+//							case 14:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_45;rescueRobotState.moveWays = REVERSE_LEFT_TURN_45;break;}
+//							case 15:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_45;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_45;break;}
+//							case 16:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_90;rescueRobotState.moveWays = REVERSE_LEFT_TURN_90;break;}
+//							case 17:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_90;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_90;break;}
+//							case 18:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_135;rescueRobotState.moveWays = REVERSE_LEFT_TURN_135;break;}
+//							case 19:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_135;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_135;break;}
+//							case 20:{outfireRobotState.moveWays = REVERSE_LEFT_TURN_180;rescueRobotState.moveWays = REVERSE_LEFT_TURN_180;break;}
+//							case 21:{outfireRobotState.moveWays = REVERSE_RIGHT_TURN_180;rescueRobotState.moveWays = REVERSE_RIGHT_TURN_180;break;}
+//							case 22:{outfireRobotState.moveWays = GO_STRAIGHT;rescueRobotState.moveWays = GO_STRAIGHT;break;} 
+//							default:break;
+//						}
+//						OLED_Clear();
+//						outfireRobotState.testTarget = TESTING;
+//						rescueRobotState.testTarget = TESTING;
+//					}
+//						OLED_ShowString(42,0,"Testing",16);
+//						OLED_ShowString(42,2,currentMenu ->preMenu->menuOption[currentMenu ->preMenu->currentOption],16);
+//					break;
+//				}
+//				case OLED_BACK: {
+//					currentMenu -> displayFlag = UPDATEMENU_FLAG;
+//					rescueRobotState.testTarget = WAITING;
+//					rescueRobotState.moveWays = STOP;
+//					outfireRobotState.testTarget = WAITING;
+//					outfireRobotState.moveWays = STOP;
+//					break;	
+//				}
+//			}
+//				break;
+//				
+//		}
+//		case LEFT_WHEEL:{
+//			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
+//			switch(currentMenu->preMenu->currentOption){
+//				case 0:break;
+//				case 1:break;
+//				case 2:break;
+//				case 3:{parameterCalibration(&parameter[NAME_SET_ZERO__LEFT_RATE],0,200);break;}
+//				case 4:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
+//				case 5:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
+//				case 6:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
+//				case 7:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
+//				case 8:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
+//				case 9:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
+//				case 10:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
+//				case 11:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
+//				case 12:{parameterCalibration(&parameter[NAME_TURN_LEFT__LEFT_RATE],0,50);break;}
+//				case 13:{parameterCalibration(&parameter[NAME_TURN_RIGHT__LEFT_RATE],0,50);break;}
+//				case 14:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
+//				case 15:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
+//				case 16:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
+//				case 17:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
+//				case 18:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
+//				case 19:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
+//				case 20:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__LEFT_RATE],0,50);break;}
+//				case 21:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__LEFT_RATE],0,50);break;}
+//				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT__LEFT_RATE],0,50);break;}
+//				default:break;
+//		}
+//			break;
+//		}
+//		case RIGHT_WHEEL:{
+//			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
+//			switch(currentMenu ->preMenu->currentOption){
+//				case 0:break;
+//				case 1:break;
+//				case 2:break;
+//				case 3:{parameterCalibration(&parameter[NAME_SET_ZERO__RIGHT_RATE],0,200);break;}
+//				case 4:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
+//				case 5:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
+//				case 6:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
+//				case 7:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
+//				case 8:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
+//				case 9:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
+//				case 10:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
+//				case 11:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
+//				case 12:{parameterCalibration(&parameter[NAME_TURN_LEFT__RIGHT_RATE],0,50);break;}
+//				case 13:{parameterCalibration(&parameter[NAME_TURN_RIGHT__RIGHT_RATE],0,50);break;}
+//				case 14:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
+//				case 15:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
+//				case 16:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
+//				case 17:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
+//				case 18:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
+//				case 19:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
+//				case 20:{parameterCalibration(&parameter[NAME_REVERSE_LEFT_TURN__RIGHT_RATE],0,50);break;}
+//				case 21:{parameterCalibration(&parameter[NAME_REVERSE_RIGHT_TURN__RIGHT_RATE],0,50);break;}
+//				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT__RIGHT_RATE],0,50);break;}
+//			}
+//			break;
+//		}
+//		case TURN_TIME:{
+//			currentMenu -> displayFlag = FUNCTION_MANUAL_FLAG;
+//			switch(currentMenu ->preMenu->currentOption){
+//				case 0:break;
+//				case 1:break;
+//				case 2:break;
+//				case 3:{parameter[NAME_FRONT_TURN_LEFT_TIME_90] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_LEFT_TIME_180] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_RIGHT_TIME_90] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_RIGHT_TIME_180] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_LEFT_TIME_135] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_RIGHT_TIME_135] = SET_ZERO_TIME;
+//						parameter[NAME_FRONT_TURN_RIGHT_TIME_45] = SET_ZERO_TIME;
+//						parameter[NAME_BEHIND_TURN_LEFT_TIME_45] = SET_ZERO_TIME;
+//						parameter[NAME_BEHIND_TURN_RIGHT_TIME_45] = SET_ZERO_TIME;
+//						parameter[NAME_REVERSE_TURN_TIME_45] = SET_ZERO_TIME;
+//						parameter[NAME_REVERSE_TURN_TIME_90] = SET_ZERO_TIME;
+//						parameter[NAME_REVERSE_TURN_TIME_135] = SET_ZERO_TIME;
+//						parameter[NAME_REVERSE_TURN_TIME_180] = SET_ZERO_TIME;
+//						parameter[NAME_GO_STRAIGHT_TIME] = SET_ZERO_TIME;
+//						app_FlashWriteUdata();
+//						saveGUIFinish();
+//						break;
+//						}
+//				case 4:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_90],200,3000);break;}
+//				case 5:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_180],200,5000);break;}
+//				case 6:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_90],200,5000);break;}
+//				case 7:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_180],200,5000);break;}
+//				case 8:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_135],200,5000);break;}
+//				case 9:{parameterCalibration(&parameter[NAME_FRONT_TURN_LEFT_TIME_45],200,5000);break;}
+//				case 10:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_135],200,5000);break;}
+//				case 11:{parameterCalibration(&parameter[NAME_FRONT_TURN_RIGHT_TIME_45],200,5000);break;}
+//				case 12:{parameterCalibration(&parameter[NAME_BEHIND_TURN_LEFT_TIME_45],200,5000);break;}
+//				case 13:{parameterCalibration(&parameter[NAME_BEHIND_TURN_RIGHT_TIME_45],200,5000);break;}
+//				case 14:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_45],200,5000);break;}
+//				case 15:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_45],200,5000);break;}
+//				case 16:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_90],200,5000);break;}
+//				case 17:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_90],200,5000);break;}
+//				case 18:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_135],200,5000);break;}
+//				case 19:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_135],200,5000);break;}
+//				case 20:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_180],200,5000);break;}
+//				case 21:{parameterCalibration(&parameter[NAME_REVERSE_TURN_TIME_180],200,5000);break;}
+//				case 22:{parameterCalibration(&parameter[NAME_GO_STRAIGHT_TIME],200,5000);break;}
+//			}
+//			break;
+//		}		
+//	}
+//}
 
 void fanTest(void)
 {
@@ -1054,8 +1054,8 @@ void fireChoose(void){
 						}
 						case OLED_ENTER:{
 							OLED_Clear();
-							for(i = 0;i < 9;i++){outfireRobotState.returnFlag[i] = 0;} //初始化火点寻找和返回函数
-							for(i = 0;i < 9;i++){outfireRobotState.fireArray[i] = 0;}
+//							for(i = 0;i < 9;i++){outfireRobotState.returnFlag[i] = 0;} //初始化火点寻找和返回函数
+//							for(i = 0;i < 9;i++){outfireRobotState.fireArray[i] = 0;}
 							OLED_ShowString(0,0,"CLEAR_ALL",16);
 							OLED_ShowString(0,2,"SUCCESSFULY",16);
 							break;

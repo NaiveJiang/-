@@ -4,7 +4,7 @@
 appStruct_t appInput;
 void app_inputUpdata()
 {
-	driverPhotoelectricSwitchNowStateUpdate();
+//	driverPhotoelectricSwitchNowStateUpdate();
 	driverKeyNowStateUpdate();
 	appInput.loops += INPUT_TASK_PERIOD;
 }
