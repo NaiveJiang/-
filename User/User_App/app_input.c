@@ -21,6 +21,7 @@ void app_inputTask(void *Parameters)
 	while(1){
 		vTaskDelayUntil(&xLastWakeTime, INPUT_TASK_PERIOD);
 		app_inputUpdata();
+		IWDG_Feed(); //Î¹¹·
 	}
 }
 
