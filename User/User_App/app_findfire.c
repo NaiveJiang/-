@@ -4,7 +4,7 @@
 appStruct_t appfindFire;
 adcTestStruct_t adcTestData;
 void appfindFireUpdata(void){
-	getadc_average(adcTestData.adcData);
+//	getadc_average(adcTestData.adcData);
 }
 
 void app_findFireTask(void *Parameters){
