@@ -6,6 +6,7 @@
 #include "driver_key.h"
 #include "driver_linearMovement.h"
 #include "driver_wdg.h"
+#include "driver_dac.h"
 void driver_Init(void);
 
 #endif

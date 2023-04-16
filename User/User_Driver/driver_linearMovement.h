@@ -8,11 +8,6 @@
 #define SENSOR_LENGTH 500
 #define SENSOR_SCALE 1.0f/4096*SENSOR_LENGTH
 
-#define  ADC1_USEGPIO BSP_GPIOC0
-#define  ADC2_USEGPIO BSP_GPIOC1
-#define  ADC3_USEGPIO BSP_GPIOC2
-#define  ADC4_USEGPIO BSP_GPIOC3
-
 //PC组ADC
 #define HV_DC3V3 BSP_GPIOC0     //高压放电电压
 #define LSPI3V3 BSP_GPIOC1		//生产线控输出功率速度电流给定
@@ -24,12 +19,12 @@
 //PA组ADC
 #define IDC_ADC BSP_GPIOA0      //IDC电流检测
 #define VDC_ADC BSP_GPIOA1      //VDC电压检测
-#define TRANS_IADC BSP_GPIOA6   //变压器原边电流
-#define TRANS_VADC BSP_GPIOA7   //变压器原边电压
+#define TBI_DC3V3 BSP_GPIOA6   //变压器原边电流
+#define TBV_DC3V3 BSP_GPIOA7   //变压器原边电压
 
 //PB组ADC
-#define OUTPUT_POWER_3V3 BSP_GPIOB0 //输出功率AD3.3V检测
-#define HV_DISCHARGE_IADC BSP_GPIOB1 //高压放电电流检测
+#define POV3V3 BSP_GPIOB0 //输出功率AD3.3V检测
+#define HI_DC3V3 BSP_GPIOB1 //高压放电电流检测
 
 
 

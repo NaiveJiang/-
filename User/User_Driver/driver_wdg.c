@@ -5,10 +5,10 @@
 //时间计算(大概):Tout=((4*2^prer)*rlr)/40 (ms).
 
 
-//以下是wdg.h引用的头文件
+//以下是driver_wdg.h引用的头文件
 //#include "stm32f10x_iwdg.h"
 
-#include "driver_wdg.h"
+#include "driver.h"
 
 //看门狗初始化
 void driver_IWDG_Init(u8 prer,u16 rlr)
