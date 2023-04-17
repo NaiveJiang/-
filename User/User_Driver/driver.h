@@ -7,6 +7,7 @@
 #include "driver_linearMovement.h"
 #include "driver_wdg.h"
 #include "driver_dac.h"
+#include "driver_can.h"
 void driver_Init(void);
 
 #endif

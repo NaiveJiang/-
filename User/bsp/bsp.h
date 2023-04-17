@@ -85,6 +85,7 @@
 #include "BSP_GPIO.h"
 #include "BSP_EXTI.h"
 #include "BSP_Timer.h"
+#include "BSP_CAN.h"
 
 
 /* 提供给其他C文件调用的函数 */

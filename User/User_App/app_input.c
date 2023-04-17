@@ -3,10 +3,12 @@
 #define INPUT_TASK_PERIOD	5
 
 appStruct_t appInput;
+//≤‚ ‘”√±‰¡ø
 float test_adc1[6];
 float test_adc3[6];
 float set_vdc;
 float set_speed;
+
 void app_inputUpdata(void){
 	driverKeyNowStateUpdate();
 	getadc1_average(test_adc1);
@@ -22,6 +24,8 @@ void app_inputTask(void *Parameters){
 		app_inputUpdata();
 		dac_ch1_voltageOut(set_vdc);
 		dac_ch2_voltageOut(set_speed);
+		can_Send(USE_CANx,&can_id20A);
+		
 		IWDG_Feed(); //Œππ∑
 	}
 }

@@ -38,21 +38,23 @@
 *	返 回 值: 无
 *********************************************************************************************************
 */
-
+RCC_ClocksTypeDef get_rcc_clock;
 void app_Init(void)
 {
 	
+    
 	
 	bsp_Init();
 	driver_Init();
 	app_ParameterInit();
 	app_inputTaskInit();     //2
-	
+	RCC_GetClocksFreq(&get_rcc_clock);
 			//4
 								//删除当前任务
 }
 int main(void)
 {
+	
 	/* 
 	  在启动调度前，为了防止初始化STM32外设时有中断服务程序执行，这里禁止全局中断(除了NMI和HardFault)。
 	  这样做的好处是：
@@ -62,7 +64,7 @@ int main(void)
 	  在移植文件port.c中的函数prvStartFirstTask中会重新开启全局中断。通过指令cpsie i开启，__set_PRIMASK(1)
 	  和cpsie i是等效的。
      */
-	__set_PRIMASK(1);  
+	__set_PRIMASK(0);  //开启全局中断
 	
 	/* 硬件初始化 */
 	//bsp_Init(); 
