@@ -471,6 +471,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_can.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_485.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_485.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_gui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_gui.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ISP</GroupName>
+          <Files>
+            <File>
+              <FileName>isp_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ISP\isp_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ISP\isp_usart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -480,6 +505,11 @@
               <FileName>bsp.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\User\bsp\bsp.h</FilePath>
+            </File>
+            <File>
+              <FileName>BSP_DMA_DEFINE.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\User\bsp\BSP_DMA_DEFINE.h</FilePath>
             </File>
             <File>
               <FileName>bsp.c</FileName>
@@ -535,6 +565,11 @@
               <FileName>BSP_CAN.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\BSP_CAN.c</FilePath>
+            </File>
+            <File>
+              <FileName>BSP_USART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\BSP_USART.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -720,16 +755,6 @@
               <FileName>util.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\Util\util.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ISP</GroupName>
-          <Files>
-            <File>
-              <FileName>isp_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\ISP\isp_can.c</FilePath>
             </File>
           </Files>
         </Group>

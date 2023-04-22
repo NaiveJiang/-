@@ -86,6 +86,8 @@
 #include "BSP_EXTI.h"
 #include "BSP_Timer.h"
 #include "BSP_CAN.h"
+#include "BSP_USART.h"
+//#include "BSP_DMA_DEFINE.h"
 
 
 /* 提供给其他C文件调用的函数 */

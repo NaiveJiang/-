@@ -1,4 +1,4 @@
-#include "driver_can.h"
+#include "driver.h"
 
 can_sendStruct_t can_id20A;
 can_sendStruct_t can_id209;

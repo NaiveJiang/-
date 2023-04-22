@@ -8,6 +8,8 @@
 #include "driver_wdg.h"
 #include "driver_dac.h"
 #include "driver_can.h"
+#include "driver_485.h"
+#include "driver_gui.h"
 void driver_Init(void);
 
 #endif
