@@ -8,14 +8,14 @@
 
 //宏定义串口接收数组长度
 #define	Length_USART1_RX_Buff 256
-#define	Length_USART2_RX_Buff 512
+#define	Length_USART2_RX_Buff 64
 #define	Length_USART3_RX_Buff 512
 #define	Length_UART4_RX_Buff 	512
 #define	Length_UART5_RX_Buff 	512
 
 //宏定义串口发送数组长度
 #define	Length_USART1_TX_Buff 256
-#define	Length_USART2_TX_Buff 512
+#define	Length_USART2_TX_Buff 64
 #define	Length_USART3_TX_Buff 512
 #define	Length_UART4_TX_Buff 	512
 #define	Length_UART5_TX_Buff 	512

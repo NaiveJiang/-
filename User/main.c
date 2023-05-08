@@ -39,17 +39,13 @@
 *********************************************************************************************************
 */
 RCC_ClocksTypeDef get_rcc_clock;
-void app_Init(void)
-{
-	
-    
-	
+void app_Init(void){	
 	bsp_Init();
 	driver_Init();
 	app_ParameterInit();
 	app_inputTaskInit();     //2
-	RCC_GetClocksFreq(&get_rcc_clock);
-			//4
+	RCC_GetClocksFreq(&get_rcc_clock);//4
+			
 								//删除当前任务
 }
 int main(void)

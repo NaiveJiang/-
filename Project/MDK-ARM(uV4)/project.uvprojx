@@ -431,6 +431,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_findfire.c</FilePath>
             </File>
+            <File>
+              <FileName>app_mcrc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_mcrc16.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

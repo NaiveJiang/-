@@ -1,6 +1,6 @@
 #include "app.h"
 
-uint32_t res_loop;
+uint32_t res_loop = 0;
 //串口2中断服务函数
 void USART2_IRQHandler(void){
 	uint16_t len = 0;

@@ -78,15 +78,15 @@ uint32_t USART_TO_ArrayRX(USART_TypeDef* USARTx){
 	uint32_t ArrayRX;
 	
 	if(USARTx == USART1)
-		ArrayRX = (uint32_t)Array_USART1_RX;
+		ArrayRX = (uint32_t)&Array_USART1_RX;
 	else if(USARTx == USART2)
-		ArrayRX = (uint32_t)Array_USART2_RX;
+		ArrayRX = (uint32_t)&Array_USART2_RX;
 	else if(USARTx == USART3)
-		ArrayRX = (uint32_t)Array_USART3_RX;
+		ArrayRX = (uint32_t)&Array_USART3_RX;
 	else if(USARTx == UART4)
-		ArrayRX = (uint32_t)Array_UART4_RX;
+		ArrayRX = (uint32_t)&Array_UART4_RX;
 	else if(USARTx == UART5)
-		ArrayRX = (uint32_t)Array_UART5_RX;
+		ArrayRX = (uint32_t)&Array_UART5_RX;
 	
 	return ArrayRX;	
 }
@@ -132,15 +132,15 @@ uint32_t USART_TO_ArrayTX(USART_TypeDef* USARTx){
 	uint32_t ArrayTX;
 	
 	if(USARTx == USART1)
-		ArrayTX = (uint32_t)Array_USART1_TX;
+		ArrayTX = (uint32_t)&Array_USART1_TX;
 	else if(USARTx == USART2)
-		ArrayTX = (uint32_t)Array_USART2_TX;
+		ArrayTX = (uint32_t)&Array_USART2_TX;
 	else if(USARTx == USART3)
-		ArrayTX = (uint32_t)Array_USART3_TX;
+		ArrayTX = (uint32_t)&Array_USART3_TX;
 	else if(USARTx == UART4)
-		ArrayTX = (uint32_t)Array_UART4_TX;
+		ArrayTX = (uint32_t)&Array_UART4_TX;
 	else if(USARTx == UART5)
-		ArrayTX = (uint32_t)Array_UART5_TX;
+		ArrayTX = (uint32_t)&Array_UART5_TX;
 	
 	return ArrayTX;	
 }
@@ -277,7 +277,7 @@ void BSP_USART_DMA_Init(BSP_USART_Typedef *USARTx_DMA){
 	else{
 		DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 		DMA_InitStructure.DMA_MemoryBaseAddr = USART_TO_ArrayRX(USARTx_DMA->USARTx);
-		DMA_InitStructure.DMA_BufferSize = sizeof(USART_TO_ArrayRX(USARTx_DMA->USARTx)) / sizeof(uint8_t);
+//		DMA_InitStructure.DMA_BufferSize = sizeof(USART_TO_ArrayRX(USARTx_DMA->USARTx)) / sizeof(uint8_t);
 		DMA_InitStructure.DMA_BufferSize = USART_TO_LengthArrayRX(USARTx_DMA->USARTx);
 	}
     

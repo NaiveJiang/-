@@ -1,5 +1,8 @@
 #include "app.h"
 
+
+
+//FLASH–¥»Î
 void app_FlashWriteUdata(void)
 {
 	uint8_t i = 0;
@@ -8,6 +11,7 @@ void app_FlashWriteUdata(void)
 	}
 }
 
+//FLASH∂¡»°
 void app_FlashReadUdata(void)
 {
 	uint8_t i = 0;
