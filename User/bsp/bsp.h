@@ -87,6 +87,7 @@
 #include "BSP_Timer.h"
 #include "BSP_CAN.h"
 #include "BSP_USART.h"
+#include "BSP_RTC.h" 
 //#include "BSP_DMA_DEFINE.h"
 
 

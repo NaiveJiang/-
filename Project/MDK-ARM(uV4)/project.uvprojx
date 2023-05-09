@@ -501,6 +501,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\ISP\isp_usart.c</FilePath>
             </File>
+            <File>
+              <FileName>isp_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ISP\isp_rtc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -576,6 +581,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\BSP_USART.c</FilePath>
             </File>
+            <File>
+              <FileName>BSP_RTC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\BSP_RTC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -650,6 +660,21 @@
               <FileName>stm32f10x_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</FilePath>
             </File>
           </Files>
         </Group>

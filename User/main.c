@@ -39,14 +39,12 @@
 *********************************************************************************************************
 */
 RCC_ClocksTypeDef get_rcc_clock;
-void app_Init(void){	
-	bsp_Init();
+void app_Init(void){
 	driver_Init();
 	app_ParameterInit();
 	app_inputTaskInit();     //2
 	RCC_GetClocksFreq(&get_rcc_clock);//4
-			
-								//删除当前任务
+	
 }
 int main(void)
 {
@@ -63,7 +61,7 @@ int main(void)
 	__set_PRIMASK(0);  //开启全局中断
 	
 	/* 硬件初始化 */
-	//bsp_Init(); 
+	bsp_Init(); 
 	
 	/* 创建任务 */
 	app_Init();
