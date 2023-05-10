@@ -234,26 +234,26 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 	
 	/*************配置ICAP输出引脚***************/
 	if(ICAP1 != NULL){
-		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_AF_PP);	//配置ICAP1引脚为复用推挽模式
+		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP1引脚为复用推挽模式
 		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP1引脚复用为定时器TIMx
 	}
 	if(ICAP2 != NULL){
-		BSP_GPIO_Init(ICAP2->ICAP_GPIO,GPIO_Mode_AF_PP);	//配置ICAP2引脚为复用推挽模式
+		BSP_GPIO_Init(ICAP2->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP2引脚为复用推挽模式
 		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP2引脚复用为定时器TIMx
 	}
 	if(ICAP3 != NULL){
-		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_AF_PP);	//配置ICAP3引脚为复用推挽模式
+		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP3引脚为复用推挽模式
 		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP3引脚复用为定时器TIMx
 	}
 	if(ICAP4 != NULL){
-		BSP_GPIO_Init(ICAP4->ICAP_GPIO,GPIO_Mode_AF_PP);	//配置ICAP4引脚为复用推挽模式
+		BSP_GPIO_Init(ICAP4->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP4引脚为复用推挽模式
 		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP4引脚复用为定时器TIMx
 	}
 	
 	/*************配置定时器TIMx***************/
-	TIM_TimeBaseStructure.TIM_Prescaler = Period;  	//定时器分频
+	TIM_TimeBaseStructure.TIM_Prescaler = Prescaler;  	//定时器分频
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数模式
-	TIM_TimeBaseStructure.TIM_Period = Prescaler;   //自动重装载值
+	TIM_TimeBaseStructure.TIM_Period = Period;   //自动重装载值
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	
 	TIM_TimeBaseInit(BSP_TIMx,&TIM_TimeBaseStructure);//初始化定时器TIMx
@@ -297,8 +297,8 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 		TIM_ICInit(BSP_TIMx, &TIM_ICInitStructure);
 	}
 	
-	TIM_ITConfig(TIM5,TIM_IT_Update | TIM_IT,ENABLE);//允许更新中断 ,允许通道捕获中断
-//	TIM_Cmd(BSP_TIMx, ENABLE);  //使能TIMx定时器
+	TIM_ITConfig(BSP_TIMx,TIM_IT_Update | TIM_IT,ENABLE);//允许更新中断 ,允许通道捕获中断
+	TIM_Cmd(BSP_TIMx, ENABLE);  //使能TIMx定时器
 	
 	
 	/*********************配置NVIC寄存器***********************/
@@ -310,3 +310,5 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 		NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化NVIC寄存器
 	}
 }
+											
+

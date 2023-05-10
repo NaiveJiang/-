@@ -467,14 +467,14 @@
               <FilePath>..\..\User\User_Driver\driver_wdg.c</FilePath>
             </File>
             <File>
-              <FileName>driver_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_dac.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_dac.c</FilePath>
             </File>
             <File>
               <FileName>driver_485.c</FileName>
@@ -485,6 +485,11 @@
               <FileName>driver_gui.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_gui.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_pulsecap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_pulsecap.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -505,6 +510,11 @@
               <FileName>isp_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\ISP\isp_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ISP\isp_tim.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -10,6 +10,7 @@
 #include "driver_can.h"
 #include "driver_485.h"
 #include "driver_gui.h"
+#include "driver_pulsecap.h"
 void driver_Init(void);
 
 #endif

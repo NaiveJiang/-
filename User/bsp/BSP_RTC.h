@@ -10,6 +10,8 @@
 #define RTC_PREEMPTIONPRIORITY 3
 #define RTC_SUBPRIORITY 0
 
+#define BACKUP_REG 0x5051   //每次修改寄存器，修改一次0x5050或0x5051
+
 //时间结构体
 typedef struct {
 	__IO uint8_t hour;

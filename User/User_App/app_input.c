@@ -11,9 +11,11 @@ float set_speed;
 uint8_t flash_sw;
 
 void app_inputUpdata(void){
-	driverKeyNowStateUpdate();
+//	driverKeyNowStateUpdate();
+#if !USE_TEST_ICAP
 	getadc1_average(test_adc1);
 	getadc3_average(test_adc3);
+#endif
 	appInput.loops += INPUT_TASK_PERIOD;
 }
 uint32_t fp;
