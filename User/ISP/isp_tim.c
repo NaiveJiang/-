@@ -1,11 +1,5 @@
 #include "app.h"
 
-void TIM3_IRQHandler(void){
-	if(TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET){
-	}
-	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
-}
-
 #if !USE_TEST_ICAP
 //输入捕获中断
 void TIM4_IRQHandler(void){
@@ -86,6 +80,44 @@ void TIM2_IRQHandler(void){
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update|TIM_IT_CC1|TIM_IT_CC2);//清除中断
 }
 #endif
+
+void TIM6_IRQHandler(void){
+	if(TIM_GetITStatus(TIM6,TIM_IT_Update) != RESET){
+		if((adc1_settlement >= SAMP_FULL_COUNT) && (!adc1_settlement_sw)){   //50ms结算
+			digitalHi(&adc1_settlement_sw);  //允许ADC结算
+		}else if((adc1_settlement < SAMP_FULL_COUNT) && (!adc1_settlement_sw)){
+			//得到单次ADC数据  5ms一次
+			getadc1_average();
+			adc_full_TBI_DC3V3[adc1_settlement] = adc_TBI_DC3V3;
+			adc_full_TBV_DC3V3[adc1_settlement] = adc_TBV_DC3V3;
+			adc_full_POV3V3[adc1_settlement] = adc_POV3V3;
+			adc_full_HI_DC3V3[adc1_settlement] = adc_HI_DC3V3;
+			adc_full_LPV3V3[adc1_settlement] = adc_LPV3V3;
+			adc_full_TEMP[adc1_settlement] = adc_TEMP;
+			digitalIncreasing(&adc1_settlement);
+		}
+	}
+	TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
+}
+
+void TIM7_IRQHandler(void){
+	if(TIM_GetITStatus(TIM7,TIM_IT_Update) != RESET){
+		if((adc3_settlement >= SAMP_FULL_COUNT) && (!adc3_settlement_sw)){   //50ms结算
+			digitalHi(&adc3_settlement_sw);  //允许ADC结算
+		}else if((adc3_settlement < SAMP_FULL_COUNT) && (!adc3_settlement_sw)){
+			//得到单次ADC数据  5ms一次
+			getadc3_average();
+			adc_full_IDC_ADC[adc3_settlement] = adc_IDC_ADC;
+			adc_full_VDC_ADC[adc3_settlement] = adc_VDC_ADC;
+			adc_full_HV_DC3V3[adc3_settlement] = adc_HV_DC3V3;
+			adc_full_LSPI3V3[adc3_settlement] = adc_LSPI3V3;
+			adc_full_LSPV3V3[adc3_settlement] = adc_LSPV3V3;
+			adc_full_LPIMA3V3[adc3_settlement] = adc_LPIMA3V3;
+			digitalIncreasing(&adc3_settlement);
+		}
+	}
+	TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
+}
 
 
 

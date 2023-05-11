@@ -6,6 +6,66 @@ __IO uint16_t adc3_raw_value[10][6]; //²É¼¯µÄADCÖµ
 __IO float average_dis[4];  //¾àÀëÆ½¾ùÖµ
 adcFilterData_t adcFilters[4]; //ÂË²¨½á¹¹Ìå
 adcFilterData_t speedFilters[4];
+
+
+/*******************ADC1*******************/
+//ADC1½áËãÊ¹ÄÜ
+uint8_t adc1_settlement_sw = 0;
+//ADC1²ÉÑù´ÎÊı
+__IO uint8_t adc1_settlement = 0;
+//ADC1µ¥´Î²ÉÑùÊı¾İ
+__IO float adc_TBI_DC3V3;//±äÑ¹Æ÷Ô­±ßµçÁ÷
+__IO float adc_TBV_DC3V3;//±äÑ¹Æ÷Ô­±ßµçÑ¹
+__IO float adc_POV3V3;//Êä³ö¹¦ÂÊAD3.3V
+__IO float adc_HI_DC3V3;//¸ßÑ¹·ÅµçµçÁ÷
+__IO float adc_LPV3V3;//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÑ¹¸ø¶¨
+__IO float adc_TEMP;//É¢ÈÈÆ÷ÎÂ¶È¼ì²âÊäÈë
+//ADC1²ÉÑùÊı×é
+__IO float adc_full_TBI_DC3V3[SAMP_FULL_COUNT];
+__IO float adc_full_TBV_DC3V3[SAMP_FULL_COUNT];
+__IO float adc_full_POV3V3[SAMP_FULL_COUNT];
+__IO float adc_full_HI_DC3V3[SAMP_FULL_COUNT];
+__IO float adc_full_LPV3V3[SAMP_FULL_COUNT];
+__IO float adc_full_TEMP[SAMP_FULL_COUNT];
+//ADC1ÂË²¨²ÉÑùÊı¾İ
+__IO float adc_filter_TBI_DC3V3;
+__IO float adc_filter_TBV_DC3V3;
+__IO float adc_filter_POV3V3;
+__IO float adc_filter_HI_DC3V3;
+__IO float adc_filter_LPV3V3;
+__IO float adc_filter_TEMP;
+/*******************ADC3*******************/
+//ADC3½áËãÊ¹ÄÜ
+uint8_t adc3_settlement_sw = 0;
+//ADC3²ÉÑù´ÎÊı
+__IO uint8_t adc3_settlement = 0;
+//ADC3µ¥´Î²ÉÑùÊı¾İ
+__IO float adc_IDC_ADC;//IDCµçÁ÷
+__IO float adc_VDC_ADC;//VDCµçÑ¹
+__IO float adc_HV_DC3V3;//¸ßÑ¹·ÅµçµçÑ¹
+__IO float adc_LSPI3V3;//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÁ÷¸ø¶¨
+__IO float adc_LSPV3V3;//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÑ¹¸ø¶¨
+__IO float adc_LPIMA3V3;//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÁ÷¸ø¶¨
+//ADC3²ÉÑùÊı×é
+__IO float adc_full_IDC_ADC[SAMP_FULL_COUNT];
+__IO float adc_full_VDC_ADC[SAMP_FULL_COUNT];
+__IO float adc_full_HV_DC3V3[SAMP_FULL_COUNT];
+__IO float adc_full_LSPI3V3[SAMP_FULL_COUNT];
+__IO float adc_full_LSPV3V3[SAMP_FULL_COUNT];
+__IO float adc_full_LPIMA3V3[SAMP_FULL_COUNT];
+//ADC3ÂË²¨²ÉÑùÊı¾İ
+__IO float adc_filter_IDC_ADC;
+__IO float adc_filter_VDC_ADC;
+__IO float adc_filter_HV_DC3V3;
+__IO float adc_filter_LSPI3V3;
+__IO float adc_filter_LSPV3V3;
+__IO float adc_filter_LPIMA3V3;
+
+//´´½¨¶¨Ê±Æ÷£¬¶¨Ê±¹Û²ìADCÖµ
+void drive_ADC_sampling_TIM_init(TIM_TypeDef* SAMP_TIMx){
+	BSP_TIM_INT_Init(SAMP_TIMx,SAMP_TIMER_PEROID,SAMP_TIMER_PRESCALER,SAMP_TIMER_PREEMPTIONPRIORITY,SAMP_TIMER_SUBPRIORITY);
+}
+
 /*
 *********************************************************************************************************
 *	º¯ Êı Ãû: drive_ADC1_Configuration
@@ -59,12 +119,12 @@ void drive_ADC1_Configuration(void){
 	ADC_Init(ADC1, &ADC_InitStructure);
 
 	/* ÅäÖÃADC1 ¹æÔòÍ¨µÀ */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_55Cycles5);		//±äÑ¹Æ÷Ô­±ßµçÁ÷
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 2, ADC_SampleTime_55Cycles5);		//±äÑ¹Æ÷Ô­±ßµçÑ¹
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 3, ADC_SampleTime_55Cycles5);		//Êä³ö¹¦ÂÊAD3.3V¼ì²â
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 4, ADC_SampleTime_55Cycles5);		//¸ßÑ¹·ÅµçµçÁ÷¼ì²â
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 5, ADC_SampleTime_55Cycles5);	//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÑ¹¸ø¶¨
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 6, ADC_SampleTime_55Cycles5);	//É¢ÈÈÆ÷ÎÂ¶È¼ì²âÊäÈë
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_239Cycles5);		//±äÑ¹Æ÷Ô­±ßµçÁ÷					300
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 2, ADC_SampleTime_239Cycles5);		//±äÑ¹Æ÷Ô­±ßµçÑ¹					800
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 3, ADC_SampleTime_239Cycles5);		//Êä³ö¹¦ÂÊAD3.3V¼ì²â				45K
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 4, ADC_SampleTime_239Cycles5);		//¸ßÑ¹·ÅµçµçÁ÷¼ì²â				10A				
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 5, ADC_SampleTime_239Cycles5);	//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÑ¹¸ø¶¨			40K
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 6, ADC_SampleTime_239Cycles5);	//É¢ÈÈÆ÷ÎÂ¶È¼ì²âÊäÈë					85
 	
 
 	/* Ê¹ÄÜADC1 DMA¹¦ÄÜ */
@@ -140,12 +200,12 @@ void drive_ADC3_Configuration(void){
 	ADC_Init(ADC3, &ADC_InitStructure);
 
 	/* ÅäÖÃADC3 ¹æÔòÍ¨µÀ */
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 1, ADC_SampleTime_55Cycles5);		//IDCµçÁ÷¼ì²â
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 2, ADC_SampleTime_55Cycles5);		//VDCµçÑ¹¼ì²â
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 3, ADC_SampleTime_55Cycles5);	//¸ßÑ¹·ÅµçµçÑ¹
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_11, 4, ADC_SampleTime_55Cycles5);	//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÁ÷¸ø¶¨
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_12, 5, ADC_SampleTime_55Cycles5);	//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÑ¹¸ø¶¨
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_13, 6, ADC_SampleTime_55Cycles5);	//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÁ÷¸ø¶¨
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);		//IDCµçÁ÷¼ì²â				120
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);		//VDCµçÑ¹¼ì²â				590
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 3, ADC_SampleTime_239Cycles5);	//¸ßÑ¹·ÅµçµçÑ¹					12500
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_11, 4, ADC_SampleTime_239Cycles5);	//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÁ÷¸ø¶¨		100,4~20
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_12, 5, ADC_SampleTime_239Cycles5);	//Éú²úÏß¿ØÊä³ö¹¦ÂÊËÙ¶ÈµçÑ¹¸ø¶¨		0.66~3.3
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_13, 6, ADC_SampleTime_239Cycles5);	//Éú²úÏß¿ØÖÆÊä³ö¹¦ÂÊµçÁ÷¸ø¶¨		0.66~3.3
 	
 
 	/* Ê¹ÄÜADC3 DMA¹¦ÄÜ */
@@ -229,35 +289,46 @@ uint16_t GetADC(void)
 
 
 
-void getadc1_average(__IO float *real){  //²É¼¯µÃµ½Æ½¾ùÖµ
-	int i;
-	int j;
+void getadc1_average(void){  //²É¼¯µÃµ½Æ½¾ùÖµ
+	uint8_t i,j;
 	float sum =0;
-	for (i = 0; i < 6; i++)
-	{
-		for (j = 0; j < 10;j++)
-		{
+	float real[6]; //6Â·ADC
+	for (i = 0; i < 6; i++){
+		for (j = 0; j < 10;j++){
 			sum += adc1_raw_value[j][i];
 		}
-		real[i] = sum * 0.1;//mm  
+		
+		real[i] = sum * 0.1f;  //µÃµ½Æ½¾ùÖµ
 		sum=0;
-  }	
+	}
+	//¸³Öµ
+	adc_TBI_DC3V3 = real[0] * 0.073260073260f;
+	adc_TBV_DC3V3 = real[1] * 0.195360195360f;
+	adc_POV3V3 = real[2] * 10.989010989011f;
+	adc_HI_DC3V3 = real[3] * 0.002442002442f;
+	adc_LPV3V3 = real[4] * 9.768009768010f;
+	adc_TEMP = real[5] * 0.000805860806f;
 }
 
-void getadc3_average(__IO float *real){  //²É¼¯µÃµ½Æ½¾ùÖµ
+void getadc3_average(void){  //²É¼¯µÃµ½Æ½¾ùÖµ
 	int i;
 	int j;
 	float sum =0;
-	for (i = 0; i < 6; i++)
-	{
-		for (j = 0; j < 10;j++)
-		{
+	float real[6]; //6Â·ADC
+	for (i = 0; i < 6; i++){
+		for (j = 0; j < 10;j++){
 			sum += adc3_raw_value[j][i];
 		}
 		real[i] = sum * 0.1;//mm  
 		sum=0;
-  }	
-  
+	}
+	//¸³Öµ
+	adc_IDC_ADC = real[0] * 0.029304029304f;
+	adc_VDC_ADC = real[1] * 0.144078144078f;
+	adc_HV_DC3V3 = real[2] * 3.052503052503f;
+	adc_LSPI3V3 = real[3] * 0.000805860806f;
+	adc_LSPV3V3 = real[4] * 0.000805860806f;
+	adc_LPIMA3V3 = real[5] * 0.000805860806f;
 }
 
 void adcLowPassFilterInit(void)  //µÍÍ¨ÂË²¨²ÎÊı³õÊ¼»¯
@@ -351,8 +422,7 @@ float adcFilter(float input, struct adcFilterData *filterParameters) //¶ş½×µÍÍ¨Â
     return output;
 }
 
-void adcLowPassFilter(formatTrans32Struct_t *distence, formatTrans32Struct_t *speed)  //»ñµÃ×îÖÕ¾àÀëºÍËÙ¶ÈÖµ
-{
+void adcLowPassFilter(formatTrans32Struct_t *distence, formatTrans32Struct_t *speed){  //»ñµÃ×îÖÕ¾àÀëºÍËÙ¶ÈÖµ
 	int i;
 //	getadc_average(average_dis);
 	  
@@ -362,4 +432,5 @@ void adcLowPassFilter(formatTrans32Struct_t *distence, formatTrans32Struct_t *sp
 	}
 	  distence[1].float_temp += 0.2f;
 }
+
 

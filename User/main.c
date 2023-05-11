@@ -42,6 +42,7 @@ RCC_ClocksTypeDef get_rcc_clock;
 void app_Init(void){
 	driver_Init();
 	app_ParameterInit();
+	app_adcTaskInit();
 	app_inputTaskInit();     //2
 	RCC_GetClocksFreq(&get_rcc_clock);//4
 	
@@ -66,6 +67,7 @@ int main(void)
 	/* 创建任务 */
 	app_Init();
 //	xTaskCreate(app_Init,"INIT",INIT_STACK_SIZE,NULL,INIT_PRIORITY,NULL);
+	xEventGroupCreate();  //创建事件标志组
 	
     /* 启动调度，开始执行任务 */
    vTaskStartScheduler();

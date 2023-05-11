@@ -4,11 +4,11 @@
 #include "bsp.h"
 
 //ICAP
-#define USE_TEST_ICAP 1
+#define USE_TEST_ICAP 0
 #if USE_TEST_ICAP
 #define ICAP_TIMER TIM2 //使用TIM4作为输入捕获,100kHz计数,计数到最大0xFFFF
 #else
-#define ICAP_TIMER TIM2
+#define ICAP_TIMER TIM4
 #endif
 
 #define ICAP_TIMER_PEROID 0xFFFF

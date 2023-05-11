@@ -436,6 +436,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_mcrc16.c</FilePath>
             </File>
+            <File>
+              <FileName>app_filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -4,8 +4,8 @@
 #include "bsp.h"
 #include "util.h"
 
-#define PGD3V3 BSP_GPIOA4		//DA-3.3V输出功率给定
-#define POUT3V3 BSP_GPIOA5		//DA-3.3V输出功率转电流环输出
+#define PGD3V3 BSP_GPIOA4		//DA-3.3V输出功率给定				40k
+#define POUT3V3 BSP_GPIOA5		//DA-3.3V输出功率转电流环输出		100
 
 void driver_DAC1_Configuration(void);
 void driver_DAC2_Configuration(void);

@@ -7,12 +7,12 @@ pulse_captureStruct LSPSI_CALC;
 // ‰»Î≤∂ªÒ≈‰÷√
 BSP_TIM_ICAP_TypeDef BSPSI_ICAP = {		//PB6-------CH1
 	BSPSI,
-	TIM_ICPolarity_Rising,
+	TIM_ICPolarity_Falling,
 };
 
 BSP_TIM_ICAP_TypeDef LSPSI_ICAP = {		//PB7-------CH2
 	LSPSI,
-	TIM_ICPolarity_Rising,
+	TIM_ICPolarity_Falling,
 };
 
 
