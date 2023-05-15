@@ -235,19 +235,15 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 	/*************配置ICAP输出引脚***************/
 	if(ICAP1 != NULL){
 		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP1引脚为复用推挽模式
-		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP1引脚复用为定时器TIMx
 	}
 	if(ICAP2 != NULL){
 		BSP_GPIO_Init(ICAP2->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP2引脚为复用推挽模式
-		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP2引脚复用为定时器TIMx
 	}
 	if(ICAP3 != NULL){
 		BSP_GPIO_Init(ICAP1->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP3引脚为复用推挽模式
-		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP3引脚复用为定时器TIMx
 	}
 	if(ICAP4 != NULL){
 		BSP_GPIO_Init(ICAP4->ICAP_GPIO,GPIO_Mode_IPD);	//配置ICAP4引脚为复用推挽模式
-		GPIO_Pin_TO_PinAFConfig(TIM_TO_GPIO_PinRemap(BSP_TIMx));	//ICAP4引脚复用为定时器TIMx
 	}
 	
 	/*************配置定时器TIMx***************/

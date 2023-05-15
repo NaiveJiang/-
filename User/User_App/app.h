@@ -11,6 +11,8 @@
 //#include "app_echo.h"
 #include "app_findFire.h"
 #include "app_mcrc16.h"
+#include "app_serial.h"
+#include "gui_data.h"
 #include "app_filter.h"
 #include "app_adc.h"
 #define VERSION  2

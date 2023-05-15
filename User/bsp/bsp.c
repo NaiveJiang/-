@@ -28,7 +28,8 @@
 *	返 回 值: 无
 *********************************************************************************************************
 */
-void bsp_Init(void){
+void bsp_Init(void)
+{
 	/*
 		由于ST固件库的启动文件已经执行了CPU系统时钟的初始化，所以不必再次重复配置系统时钟。
 		启动文件配置了CPU主时钟频率、内部Flash访问速度和可选的外部SRAM FSMC初始化。
@@ -39,8 +40,10 @@ void bsp_Init(void){
 	/* 优先级分组设置为4，可配置0-15级抢占式优先级，0级子优先级，即不存在子优先级。*/
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	bsp_RTC_Init();
-	
-	
+
+//	bsp_InitUart(); 	/* 初始化串口 */
+//	bsp_InitLed(); 		/* 初始LED指示灯端口 */
+	//bsp_InitKey();		/* 初始化按键 */
 	
 }
 

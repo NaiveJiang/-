@@ -402,6 +402,13 @@
         </Group>
         <Group>
           <GroupName>User_GUI</GroupName>
+          <Files>
+            <File>
+              <FileName>gui_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_GUI\gui_data.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>User_App</GroupName>
@@ -417,24 +424,14 @@
               <FilePath>..\..\User\User_App\app.c</FilePath>
             </File>
             <File>
+              <FileName>app_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_adc.c</FilePath>
+            </File>
+            <File>
               <FileName>app_input.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_input.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_findfire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_findfire.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_mcrc16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_mcrc16.c</FilePath>
             </File>
             <File>
               <FileName>app_filter.c</FileName>
@@ -442,9 +439,24 @@
               <FilePath>..\..\User\User_App\app_filter.c</FilePath>
             </File>
             <File>
-              <FileName>app_adc.c</FileName>
+              <FileName>app_findfire.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\User_App\app_adc.c</FilePath>
+              <FilePath>..\..\User\User_App\app_findfire.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_mcrc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_mcrc16.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -462,21 +474,6 @@
               <FilePath>..\..\User\User_Driver\driver.c</FilePath>
             </File>
             <File>
-              <FileName>driver_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_key.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_linearMovement.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_linearMovement.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_wdg.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_can.c</FilePath>
@@ -487,9 +484,9 @@
               <FilePath>..\..\User\User_Driver\driver_dac.c</FilePath>
             </File>
             <File>
-              <FileName>driver_485.c</FileName>
+              <FileName>driver_key.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\User_Driver\driver_485.c</FilePath>
+              <FilePath>..\..\User\User_Driver\driver_key.c</FilePath>
             </File>
             <File>
               <FileName>driver_gui.c</FileName>
@@ -497,9 +494,24 @@
               <FilePath>..\..\User\User_Driver\driver_gui.c</FilePath>
             </File>
             <File>
+              <FileName>driver_linearMovement.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_linearMovement.c</FilePath>
+            </File>
+            <File>
               <FileName>driver_pulsecap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_pulsecap.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_wdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_wdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_485.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_485.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -557,16 +569,6 @@
               <FilePath>..\..\User\bsp\src\bsp_uart_fifo.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\stm32f10x_it.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_assert.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\stm32f10x_assert.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_cpu_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\bsp_cpu_flash.c</FilePath>
@@ -577,14 +579,14 @@
               <FilePath>..\..\User\bsp\BSP_IIC_SW.c</FilePath>
             </File>
             <File>
-              <FileName>BSP_EXTI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\BSP_EXTI.c</FilePath>
-            </File>
-            <File>
               <FileName>BSP_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\BSP_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>BSP_EXTI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\BSP_EXTI.c</FilePath>
             </File>
             <File>
               <FileName>BSP_Timer.c</FileName>
@@ -625,6 +627,16 @@
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_assert.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\stm32f10x_assert.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\stm32f10x_it.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_gpio.c</FileName>
@@ -682,9 +694,9 @@
               <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_rtc.c</FileName>
+              <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</FilePath>
+              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_pwr.c</FileName>
@@ -692,9 +704,9 @@
               <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_bkp.c</FileName>
+              <FileName>stm32f10x_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</FilePath>
+              <FilePath>..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c</FilePath>
             </File>
           </Files>
         </Group>

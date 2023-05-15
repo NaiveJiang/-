@@ -4,12 +4,8 @@
 #include "bsp.h"
 
 //ICAP
-#define USE_TEST_ICAP 0
-#if USE_TEST_ICAP
-#define ICAP_TIMER TIM2 //使用TIM4作为输入捕获,100kHz计数,计数到最大0xFFFF
-#else
-#define ICAP_TIMER TIM4
-#endif
+#define USE_TEST_ICAP 1
+#define ICAP_TIMER TIM4 //使用TIM4作为输入捕获,100kHz计数,计数到最大0xFFFF
 
 #define ICAP_TIMER_PEROID 0xFFFF
 #define ICAP_TIMER_PRESCALER 720-1
@@ -18,11 +14,11 @@
 #define ICAP_FREQ (configCPU_CLOCK_HZ/(ICAP_TIMER_PRESCALER+1))  //CNT计数频率
 
 #if USE_TEST_ICAP
-#define BSPSI BSP_GPIOA0 //T2CH1    
-#define LSPSI BSP_GPIOA1 //T2CH2	
+#define BSPSI BSP_GPIOD12     
+#define LSPSI BSP_GPIOD13 	
 #else
-#define BSPSI BSP_GPIOB6 //T4CH1    T2CH1
-#define LSPSI BSP_GPIOB7 //T4CH2	T2CH2
+#define BSPSI BSP_GPIOB6 //T4CH1
+#define LSPSI BSP_GPIOB7 //T4CH2	
 #endif
 
 typedef struct{
