@@ -1,7 +1,7 @@
 #ifndef __GUI_DATA_H
 #define __GUI_DATA_H
 
-#define GUI_USART_TEST_LEN 5
+#include "util.h"
 
 //∑¢ÀÕ÷°Õ∑/÷°Œ≤
 #define GUI_HEAD 0xAD
@@ -15,17 +15,9 @@
 #define REV_TAIL 0xA9
 #define REV_LAST 0xD4
 
-typedef struct{
-	float power;
-	float speed;
-	uint8_t speed_up;
-}main_pageStruct;
-
-extern __IO main_pageStruct mainData;
-
-
 
 void gui_send_data(USART_TypeDef *USARTx);
 void gui_receive_data(USART_TypeDef *USARTx,uint8_t *receive_data);
+void gui_data_unPackge(uint8_t *receive_data);
 
 #endif

@@ -12,9 +12,13 @@
 #include "app_findFire.h"
 #include "app_mcrc16.h"
 #include "app_serial.h"
-#include "gui_data.h"
 #include "app_filter.h"
 #include "app_adc.h"
+/*****************************/
+#include "gui_data.h"
+#include "gui_main.h"
+#include "gui_ctrlSet.h"
+
 #define VERSION  2
 
 typedef enum{
@@ -32,44 +36,6 @@ typedef enum{
 	
 	NAME_OF_LIST,
 }nameOfParameter_e;
-
-///*************灭火机器人结构体****************/
-//typedef struct{
-//	bool fireBassarl;
-//	moveWays_e moveWays;
-//	moveWays_e lastMoveWays;
-//	uint8_t workStep;
-//	testTarget_e testTarget;
-//	step_e step;
-//	beginFlag_e beginFlag;
-//	robotTaskstep_e robotTaskstep;
-//	workMode_e workMode;
-//	turnDirection_e useDir;
-//	uint8_t fireArray[10] ;
-//	uint8_t returnFlag[10];
-//	uint16_t ADCDataLeft;
-//	uint16_t ADCDataRight;
-//	uint32_t caliTimeCalc;
-//}outfireRobotState_t;
-///*************救援机器人结构体****************/
-//typedef struct{
-//	moveWays_e moveWays;
-//	moveWays_e lastMoveWays;
-//	uint8_t workStep;
-//	testTarget_e testTarget;
-//	step_e step;
-//	beginFlag_e beginFlag;
-//	robotTaskstep_e robotTaskstep;
-//	workMode_e workMode;
-//	turnDirection_e useDir;
-//	rescueSelect_e rescuePosition;
-//	rescueTaskstep_e rescueTaskstep;
-//	uint8_t returnFlag[4];
-//}rescueRobotState_t;
-
-//typedef struct{
-//	robotType_e robotSelect;
-//}robotSelectStruct_t;
 
 typedef struct {
 	TaskHandle_t xHandleTask;

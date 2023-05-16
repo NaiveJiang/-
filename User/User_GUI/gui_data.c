@@ -1,8 +1,6 @@
 #include "app.h"
-#include "util.h"
 
 formatTrans16Struct_t speedData;
-__IO main_pageStruct mainData;
 
 uint8_t get_decimal_num(float num){
 	uint32_t int_num;
@@ -46,7 +44,36 @@ void gui_receive_data(USART_TypeDef *USARTx,uint8_t *receive_data){
 		if((array[array[2]-4] == REV_TAIL) && (array[array[2]-3] == REV_LAST)){ //校验帧尾
 			if(!Verify_MODBUS_CRC16_Checksum(array,array[2])) return;  //crc16校验不通过
 			else{
+				//执行数据解析
+				gui_data_unPackge(array);
 			}
 		}	
 	}
 }
+
+void gui_data_unPackge(uint8_t *receive_data){
+	//首先解析页面号
+	switch(receive_data[3]){
+		//Main
+		case 1:{
+			//得到main页面数据
+			mainData.main_rev_data = receive_data[4];
+		}break;
+		//ControlSet
+		case 2:{
+			ctrlSetData.ctrlSet_rev_data = receive_data[4];
+		}break;
+		default: break;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
