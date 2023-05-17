@@ -1,7 +1,7 @@
 #include "app.h"
 
 formatTrans16Struct_t speedData;
-
+formatTrans16Struct_t powData;
 uint8_t get_decimal_num(float num){
 	uint32_t int_num;
 	float decimal_num;
@@ -52,16 +52,35 @@ void gui_receive_data(USART_TypeDef *USARTx,uint8_t *receive_data){
 }
 
 void gui_data_unPackge(uint8_t *receive_data){
+	
 	//首先解析页面号
 	switch(receive_data[3]){
 		//Main
 		case 1:{
-			//得到main页面数据
+			//得到Main页面数据
 			mainData.main_rev_data = receive_data[4];
 		}break;
 		//ControlSet
 		case 2:{
+			//得到ControlSet页面数据
 			ctrlSetData.ctrlSet_rev_data = receive_data[4];
+		}break;
+		//PowerSet
+		case 3:{
+			//得到PowerSet页面数据
+			uint8_t index_ptr = 4;
+			for(uint8_t i = 0; i < 2; i++)
+				powData.u8_temp[i] = receive_data[index_ptr++];
+			get_powSetData()->power_density = powData.u16_temp;						//功率密度
+			for(uint8_t i = 0; i < 2; i++)
+				powData.u8_temp[i] = receive_data[index_ptr++];
+			get_powSetData()->spd_max = (float)powData.u16_temp * 0.01f;			//速比模式最大
+			for(uint8_t i = 0; i < 2; i++)
+				powData.u8_temp[i] = receive_data[index_ptr++];
+			get_powSetData()->spd_min = (float)powData.u16_temp * 0.01f;			//速比模式最小
+			for(uint8_t i = 0; i < 2; i++)
+				powData.u8_temp[i] = receive_data[index_ptr++];
+			get_powSetData()->manual_power = (float)powData.u16_temp * 0.01f;		//手动模式
 		}break;
 		default: break;
 	}

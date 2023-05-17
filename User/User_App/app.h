@@ -18,6 +18,7 @@
 #include "gui_data.h"
 #include "gui_main.h"
 #include "gui_ctrlSet.h"
+#include "gui_powSet.h"
 
 #define VERSION  2
 

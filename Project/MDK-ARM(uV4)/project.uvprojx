@@ -419,6 +419,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_GUI\gui_ctrlSet.c</FilePath>
             </File>
+            <File>
+              <FileName>gui_powSet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_GUI\gui_powSet.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
