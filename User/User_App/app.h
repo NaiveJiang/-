@@ -2,13 +2,10 @@
 #define _APP_H
 #include  <math.h>
 #include <stdbool.h>
+#include "parameters.h"
 #include "driver.h"
-//#include "GUI.h"
-//#include "app_walk.h"
 #include "app_input.h"
-//#include "app_work.h"
 #include "app_flash.h"
-//#include "app_echo.h"
 #include "app_findFire.h"
 #include "app_mcrc16.h"
 #include "app_serial.h"
@@ -31,9 +28,15 @@ typedef enum{
 	
 	NAME_VERSION = 0,
 	
-	CONTROL_MODE,
-	POWER_MODE,
-	SPD_SIGNAL,
+	POWER,
+	CONTROL_MODE,		//控制模式
+	POWER_MODE,			//功率模式
+	SPD_SIGNAL,			//速度信号
+	
+	POWER_DENSITY,		//功率密度
+	SPD_MAX,			//速比最大
+	SPD_MIN,			//速比最小
+	MANUAL_POWER,		//手动额定		
 	
 	NAME_OF_LIST,
 }nameOfParameter_e;
@@ -44,13 +47,11 @@ typedef struct {
 	uint32_t loops;
 }appStruct_t;
 
-//extern outfireRobotState_t outfireRobotState;
-//extern rescueRobotState_t rescueRobotState;
 extern appStruct_t app;
 extern uint32_t parameter[NAME_OF_LIST];
-//extern robotSelectStruct_t robotSelect;
 
 void app_ParameterInit(void);
+void app_ControlParameterLoad(void);
 void app_Init(void);
 void app_FlashUdata(void);
 #endif

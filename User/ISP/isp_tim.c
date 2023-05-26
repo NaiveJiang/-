@@ -1,6 +1,16 @@
 #include "app.h"
 
-//输入捕获中断
+void TIM2_IRQHandler(void){
+	if(TIM_GetITStatus(TIM2,TIM_IT_Update) != RESET){
+		if(get_controlData()->wait_sw){
+			digitalIncreasing(&get_controlData()->wait_time);
+		}
+		else{
+			digitalClan(&get_controlData()->wait_time);
+		}
+	}
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
+}
 void TIM4_IRQHandler(void){
 	//CNT溢出中断
 	if(TIM_GetITStatus(TIM4,TIM_IT_Update) != RESET){
@@ -11,28 +21,32 @@ void TIM4_IRQHandler(void){
 	//BSPSI本地速度脉冲
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC1) != RESET){
 		if(BSPSI_CALC.pulse_get){
-			BSPSI_CALC.get_cnt2 = TIM4->CNT; //得到第二个上升沿的CNT值
+			BSPSI_CALC.get_cnt2 = TIM4->CCR1; //得到第二个上升沿的CNT值
 			//计算CNT差值
-			BSPSI_CALC.difference_cnt = ICAP_TIMER_PEROID * (BSPSI_CALC.pulse_get - 1) + BSPSI_CALC.get_cnt2 - BSPSI_CALC.get_cnt1;
-			BSPSI_CALC.freq = ((float)(ICAP_FREQ)) / ((float)(BSPSI_CALC.difference_cnt)); //计算频率
+			BSPSI_CALC.difference_cnt = ICAP1_TIMER_PEROID * (BSPSI_CALC.pulse_get - 1) + BSPSI_CALC.get_cnt2 - BSPSI_CALC.get_cnt1;
+			BSPSI_CALC.freq = ((float)(ICAP1_FREQ)) / ((float)(BSPSI_CALC.difference_cnt)); //计算频率
 			digitalClan(&BSPSI_CALC.pulse_get); //清空倍数
+			TIM4->CCR1 = 0;
 		}
 		else{
-			BSPSI_CALC.get_cnt1 = TIM4->CNT; //得到第一个上升沿的CNT值
+			TIM4->CCR1 = 0;
+			BSPSI_CALC.get_cnt1 = TIM4->CCR1; //得到第一个上升沿的CNT值
 			digitalHi(&BSPSI_CALC.pulse_get);
 		}
 	}
 	//LSPSI外部生产线速度脉冲
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC2) != RESET){
 		if(LSPSI_CALC.pulse_get){
-			LSPSI_CALC.get_cnt2 = TIM4->CNT; //得到第二个上升沿的CNT值
+			LSPSI_CALC.get_cnt2 = TIM4->CCR2; //得到第二个上升沿的CNT值
 			//计算CNT差值
-			LSPSI_CALC.difference_cnt = ICAP_TIMER_PEROID * (LSPSI_CALC.pulse_get - 1) + LSPSI_CALC.get_cnt2 - LSPSI_CALC.get_cnt1;
-			LSPSI_CALC.freq = ICAP_FREQ / LSPSI_CALC.difference_cnt; //计算频率
+			LSPSI_CALC.difference_cnt = ICAP1_TIMER_PEROID * (LSPSI_CALC.pulse_get - 1) + LSPSI_CALC.get_cnt2 - LSPSI_CALC.get_cnt1;
+			LSPSI_CALC.freq = ICAP1_FREQ / LSPSI_CALC.difference_cnt; //计算频率
 			digitalClan(&LSPSI_CALC.pulse_get); //清空倍数
+			TIM4->CCR2 = 0;
 		}
 		else{
-			LSPSI_CALC.get_cnt1 = TIM4->CNT; //得到第一个上升沿的CNT值
+			TIM4->CCR2 = 0;
+			LSPSI_CALC.get_cnt1 = TIM4->CCR2; //得到第一个上升沿的CNT值
 			digitalHi(&LSPSI_CALC.pulse_get);
 		}
 	}
@@ -77,5 +91,40 @@ void TIM7_IRQHandler(void){
 	TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
 }
 
+#if !USE_TIM_ETR1 
+//输入捕获中断
+void TIM8_CC_IRQHandler(void){
+	if(TIM_GetITStatus(TIM8,TIM_IT_CC1) != RESET){
+		if(F_COUN_CALC.pulse_get){
+			F_COUN_CALC.get_cnt2 = TIM8->CCR1; //得到第二个上升沿的CNT值
+			//计算CNT差值
+			F_COUN_CALC.difference_cnt = ICAP2_TIMER_PEROID * (F_COUN_CALC.pulse_get - 1) + F_COUN_CALC.get_cnt2 - F_COUN_CALC.get_cnt1;
+			F_COUN_CALC.freq = ((float)(ICAP2_FREQ)) / ((float)(F_COUN_CALC.difference_cnt)); //计算频率
+			F_COUN_CALC_average[F_COUN_CALC.average_time] = F_COUN_CALC.freq;
+			digitalClan(&F_COUN_CALC.pulse_get); //清空倍数
+			digitalIncreasing(&F_COUN_CALC.average_time);
+			TIM8->CCR1 = 0;
+			if(F_COUN_CALC.average_time >= ICAP2_AVERAGE_TIME){
+				F_COUN_CALC.freq_avg = middleAverageFilter(F_COUN_CALC_average,ICAP2_AVERAGE_TIME);  //滤波处理
+				digitalClan(&F_COUN_CALC.average_time);
+				digitalClan(&F_COUN_CALC.freq);
+			}
+		}
+		else{
+			TIM8->CCR1 = 0;
+			F_COUN_CALC.get_cnt1 = TIM8->CCR1; //得到第一个上升沿的CNT值
+			digitalHi(&F_COUN_CALC.pulse_get);
+		}
+	}
+	TIM_ClearITPendingBit(TIM8,TIM_IT_CC1);//清除中断
+}
 
+void TIM8_UP_IRQHandler(void){
+	if(TIM_GetITStatus(TIM8,TIM_IT_Update) != RESET){
+		//如果在采集到脉冲时溢出，做溢出处理
+		if(F_COUN_CALC.pulse_get) digitalIncreasing(&F_COUN_CALC.pulse_get);
+	}
+	TIM_ClearITPendingBit(TIM8,TIM_IT_Update);//清除中断
+}
+#endif
 

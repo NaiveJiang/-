@@ -20,7 +20,22 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 											BSP_TIM_ICAP_TypeDef* ICAP4,
 											u8 PreemptionPriority, u8 SubPriority);
 /*****************************************************************************/
-
+uint8_t TIM18_ICAP_TO_NVIC_IRQChannel(TIM_TypeDef* BSP_TIMx){
+	uint8_t NVIC_IRQChannel;
+	if(BSP_TIMx == TIM1)				
+		NVIC_IRQChannel = TIM1_CC_IRQn;
+	else if(BSP_TIMx == TIM8)		
+		NVIC_IRQChannel = TIM8_CC_IRQn;
+	return NVIC_IRQChannel;
+}
+void BSP_TIM_NVIC_Init(uint8_t NVIC_IRQChannel,uint8_t PreemptionPriority,uint8_t SubPriority){
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = NVIC_IRQChannel;	//定时器TIMx中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PreemptionPriority;//抢占优先级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = SubPriority;		//子优先级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
+	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化NVIC寄存器
+}
 
 /*
 ***************************************************
@@ -135,6 +150,12 @@ uint32_t TIM_TO_GPIO_PinRemap(TIM_TypeDef* BSP_TIMx){
 	return GPIO_PinReamp;	
 }
 
+
+
+void BSP_TIM_DMA_Config(){
+}
+
+
 /*
 ***************************************************
 函数名：BSP_TIM_Init
@@ -226,7 +247,6 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 											u8 PreemptionPriority, u8 SubPriority){
 	TIM_TimeBaseInitTypeDef		TIM_TimeBaseStructure;
 	TIM_ICInitTypeDef					TIM_ICInitStructure;
-	NVIC_InitTypeDef 					NVIC_InitStructure;
 	uint16_t TIM_IT;
 	
 	/*************初始化TIMx时钟***************/
@@ -299,12 +319,16 @@ void BSP_TIM_ICAP_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler,
 	
 	/*********************配置NVIC寄存器***********************/
 	if( (PreemptionPriority != 0xff) && (SubPriority != 0xff) ){
-		NVIC_InitStructure.NVIC_IRQChannel = TIM_TO_NVIC_IRQChannel(BSP_TIMx);	//定时器TIMx中断
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PreemptionPriority;//抢占优先级
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = SubPriority;		//子优先级
-		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
-		NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化NVIC寄存器
+		BSP_TIM_NVIC_Init(TIM_TO_NVIC_IRQChannel(BSP_TIMx),PreemptionPriority,SubPriority);
+		//高级定时器需要单独开启捕获中断通道
+		if((BSP_TIMx == TIM1) || (BSP_TIMx == TIM8)){
+			BSP_TIM_NVIC_Init(TIM18_ICAP_TO_NVIC_IRQChannel(BSP_TIMx),PreemptionPriority,SubPriority);
+		}
 	}
 }
-											
 
+void BSP_TIM_ETR_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,uint16_t Prescaler,
+											BSP_TIM_ICAP_TypeDef* ETR1,
+											BSP_TIM_ICAP_TypeDef* ETR2){
+	
+}

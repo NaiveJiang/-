@@ -88,6 +88,7 @@
 #include "BSP_CAN.h"
 #include "BSP_USART.h"
 #include "BSP_RTC.h" 
+#include "BSP_BKP_PWR.h"
 //#include "BSP_DMA_DEFINE.h"
 
 

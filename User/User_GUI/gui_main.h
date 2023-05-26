@@ -17,6 +17,6 @@ typedef struct{
 	uint8_t main_rev_data;
 }main_pageStruct;
 
-extern __IO main_pageStruct mainData;
+__IO main_pageStruct *get_maindata(void);
 uint8_t get_mainData(uint8_t main_data,mainData_e data_state);
 #endif

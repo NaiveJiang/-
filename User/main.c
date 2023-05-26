@@ -39,8 +39,10 @@
 *********************************************************************************************************
 */
 RCC_ClocksTypeDef get_rcc_clock;
-void app_Init(void){	
-	app_ParameterInit();
+void app_Init(void){
+	app_ParameterInit();			//flash读取
+	app_ControlParameterLoad();		//加载flash内容
+	//任务初始化
 	app_inputTaskInit();     //2
 	app_serialTaskInit();
 	app_adcTaskInit();

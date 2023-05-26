@@ -16,7 +16,7 @@
 *
 *********************************************************************************************************
 */
-#include "bsp.h"
+#include "app.h"
 
 
 /*
@@ -39,12 +39,16 @@ void bsp_Init(void)
 	
 	/* 优先级分组设置为4，可配置0-15级抢占式优先级，0级子优先级，即不存在子优先级。*/
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	//初始化后备寄存区时钟
+	bsp_BKP_PWRInit();
+	//检测热启动
+	get_controlData()->error_sta |= bkp_hot_activite();
+	//初始化RTC
 	bsp_RTC_Init();
-
-//	bsp_InitUart(); 	/* 初始化串口 */
-//	bsp_InitLed(); 		/* 初始LED指示灯端口 */
-	//bsp_InitKey();		/* 初始化按键 */
-	
+	//初始化PVD低压检测
+	bsp_PVDInit();
+	//将启动标志置位，1表示机器启动
+	BKP_WriteBackupRegister(ACTIVITE_BKPREG,0x0001);
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

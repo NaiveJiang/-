@@ -435,6 +435,11 @@
               <FilePath>..\..\User\User_App\app.h</FilePath>
             </File>
             <File>
+              <FileName>parameters.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\User\User_App\parameters.h</FilePath>
+            </File>
+            <File>
               <FileName>app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app.c</FilePath>
@@ -528,6 +533,11 @@
               <FileName>driver_485.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_485.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_swport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_swport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -623,6 +633,11 @@
               <FileName>BSP_RTC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\BSP_RTC.c</FilePath>
+            </File>
+            <File>
+              <FileName>BSP_BKP_PWR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\BSP_BKP_PWR.c</FilePath>
             </File>
           </Files>
         </Group>

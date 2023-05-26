@@ -30,3 +30,10 @@ void RTC_IRQHandler(void){
 	RTC_WaitForLastTask();	  	    						 	   	 
 }
 
+//低压检测中断
+void PVD_IRQHandler(void){
+	EXTI_ClearITPendingBit(EXTI_Line16);
+	//启动标志复位
+	BKP_WriteBackupRegister(ACTIVITE_BKPREG,0x0000);
+}
+

@@ -7,11 +7,16 @@
 
 #include "BSP_GPIO.h"
 
-typedef struct
-{
+typedef struct{
 	BSP_GPIOSource_TypeDef *ICAP_GPIO;	//输入捕获
 	uint16_t TIM_ICPolarity;						//输入捕获极性：TIM_ICPolarity_Rising；TIM_ICPolarity_Falling；TIM_ICPolarity_BothEdge
 }BSP_TIM_ICAP_TypeDef;
+
+typedef enum{
+	NO_TIM_DMA = 0,
+	USE_TIM_DMA,
+}Tim_dma_e;
+
 
 void BSP_TIM_RCC_Init(TIM_TypeDef* BSP_TIMx);
 void BSP_TIM_Init(TIM_TypeDef* BSP_TIMx,uint32_t Period,u16 Prescaler);

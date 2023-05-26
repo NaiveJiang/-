@@ -14,7 +14,7 @@ typedef struct{
 	uint8_t ctrlSet_rev_data;
 }ctrlSet_pageStruct;
 
-extern __IO ctrlSet_pageStruct ctrlSetData;
+__IO ctrlSet_pageStruct *get_ctrlSetdata(void);
 uint8_t get_ctrlSetData(uint8_t ctrlSet_data,ctrlSetData_e data_state);
 
 #endif

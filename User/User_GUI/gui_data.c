@@ -18,14 +18,14 @@ void gui_send_data(USART_TypeDef *USARTx){
 	array[index_ptr++] = GUI_ADDR;	
 	array[index_ptr++] = 0;   		//帧长
 	
-	array[index_ptr++] = (uint8_t)mainData.power;
-	array[index_ptr++] = get_decimal_num(mainData.power);
+	array[index_ptr++] = (uint8_t)get_maindata()->power;
+	array[index_ptr++] = get_decimal_num(get_maindata()->power);
 	
-	speedData.u16_temp = (uint16_t)mainData.speed;
+	speedData.u16_temp = (uint16_t)get_maindata()->speed;
 	for(uint8_t i = 0; i < 2; i++)
 		array[index_ptr++] = speedData.u8_temp[i];
 	
-	array[index_ptr++] = mainData.speed_up;
+	array[index_ptr++] = get_maindata()->speed_up;
 	
 	array[index_ptr++] = GUI_TAIL;	//帧尾
 	array[index_ptr++] = GUI_LAST;
@@ -58,12 +58,12 @@ void gui_data_unPackge(uint8_t *receive_data){
 		//Main
 		case 1:{
 			//得到Main页面数据
-			mainData.main_rev_data = receive_data[4];
+			get_maindata()->main_rev_data = receive_data[4];
 		}break;
 		//ControlSet
 		case 2:{
 			//得到ControlSet页面数据
-			ctrlSetData.ctrlSet_rev_data = receive_data[4];
+			get_ctrlSetdata()->ctrlSet_rev_data = receive_data[4];
 		}break;
 		//PowerSet
 		case 3:{
