@@ -8,6 +8,16 @@ void TIM2_IRQHandler(void){
 		else{
 			digitalClan(&get_controlData()->wait_time);
 		}
+		if(get_supervisiorData()->write_bkp_time >= 10){
+			//写入备份数据到BKP
+			BKP_WriteBackupRegister(ACTIVITE_BKPREG,(uint16_t)(get_supervisiorData()->machine_active));
+			BKP_WriteBackupRegister(CONTROL_STATE_BKPREG,get_controlState());
+			BKP_WriteBackupRegister(CONTROL_STEP_BKPREG,(uint16_t)(get_controlData()->control_step));
+			
+			digitalClan(&get_supervisiorData()->write_bkp_time);
+		}else{
+			digitalIncreasing(&get_supervisiorData()->write_bkp_time);
+		}
 	}
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
 }

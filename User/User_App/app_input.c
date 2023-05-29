@@ -1,7 +1,5 @@
 #include "app.h"
 
-#define INPUT_TASK_PERIOD	5
-
 appStruct_t appInput;
 //测试用变量
 float test_adc1[6];
@@ -40,7 +38,7 @@ void app_inputTask(void *Parameters){
 				app_coronaWait();
 			}break;
 			case CORONA_STATE:{
-				
+				//电晕工作阶段
 			}break;
 			case CORONA_STOP:{
 				
@@ -50,12 +48,6 @@ void app_inputTask(void *Parameters){
 		app_inputUpdata();
 //		can_Send(USE_CANx,&can_id20A);
 //		rs485_send_data(RS_485,sendata,RS485_TEST_LEN);
-		if(flash_sw){                  //flash测试
-			app_FlashWriteUdata();
-			flash_sw = 0;
-		}
-		
-		IWDG_Feed(); //喂狗
 	}
 }
 
@@ -78,7 +70,7 @@ void app_coronaWait(void){
 			if(get_controlData()->wait_time >= 500){
 				digitalLo(&get_controlData()->wait_sw);
 				//关闭负压屏蔽
-				FYKL = 0;
+				PBLE3 = 0; //打开报警
 				digitalIncreasing(&get_controlData()->control_step);
 			}
 		}break;
@@ -91,6 +83,28 @@ void app_coronaWait(void){
 			//进入电晕
 			set_controlState(CORONA_STATE);
 			digitalClan(&get_controlData()->control_step);
+		}break;
+	}
+}
+
+//启动电晕状态
+void app_corona_state(void){
+	switch(get_controlData()->control_step){
+		case 0:{
+			//只有这些错误解决了，才能进入继电器闭合
+			
+		}break;
+		case 1:{
+			//等待VDC检测到达80%,继电器闭合
+			
+		}break;
+		case 2:{
+			//检测继电器闭合后,使能3875输出
+			
+		}break;
+		case 3:{
+			//放电
+			
 		}break;
 	}
 }

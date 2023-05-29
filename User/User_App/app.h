@@ -11,6 +11,7 @@
 #include "app_serial.h"
 #include "app_filter.h"
 #include "app_adc.h"
+#include "app_supervisor.h"
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"

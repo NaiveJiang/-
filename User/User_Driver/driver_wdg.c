@@ -11,7 +11,7 @@
 #include "driver.h"
 
 //看门狗初始化
-void driver_IWDG_Init(u8 prer,u16 rlr)
+void driver_IWDG_Init(uint8_t prer,uint16_t rlr)
 {
 	// 1、取消寄存器写保护 写0x5555
 	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);             

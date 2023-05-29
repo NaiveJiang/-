@@ -17,6 +17,8 @@ void GPIO_Pin_TO_PinAFConfig(uint32_t GPIO_Remap);
 
 void BSP_GPIO_Init(BSP_GPIOSource_TypeDef* BSP_GPIO,BSP_GPIOMode_TypeDef BSP_GPIO_Mode);
 
+void BSP_GPIO_LockConfig(BSP_GPIOSource_TypeDef* BSP_GPIO);
+
 #define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
 #define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
 #define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum)) 

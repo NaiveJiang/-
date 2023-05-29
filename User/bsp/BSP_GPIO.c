@@ -106,3 +106,9 @@ void BSP_GPIO_Init(BSP_GPIOSource_TypeDef* BSP_GPIO,BSP_GPIOMode_TypeDef BSP_GPI
 	GPIO_Init(BSP_GPIO->GPIOx, &GPIO_InitStructure);	//³õÊ¼»¯
 }
 
+void BSP_GPIO_LockConfig(BSP_GPIOSource_TypeDef* BSP_GPIO){
+	GPIO_PinLockConfig(BSP_GPIO->GPIOx,BSP_GPIO->Pin);
+}
+
+
+

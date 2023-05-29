@@ -52,6 +52,45 @@ void driver_port_Init(void){
 	BSP_GPIO_Init(IN_ALARM_PORT,GPIO_Mode_IN_FLOATING);	//系统报警
 	BSP_GPIO_Init(PVDD_PORT,GPIO_Mode_IN_FLOATING);		//掉电报警
 	
+	//对IO口配置进行上锁
+	BSP_GPIO_LockConfig(LKEN_PORT);
+	BSP_GPIO_LockConfig(DCVCHK_PORT);
+	BSP_GPIO_LockConfig(PBLE3_PORT);
+	BSP_GPIO_LockConfig(LE0_PORT);
+	BSP_GPIO_LockConfig(LE1_PORT);
+	BSP_GPIO_LockConfig(LE2_PORT);
+	BSP_GPIO_LockConfig(LE3_PORT);
+	BSP_GPIO_LockConfig(OPIN1_PORT);
+	BSP_GPIO_LockConfig(DJOPEN_PORT);
+	BSP_GPIO_LockConfig(O2CJ3_PORT);
+	BSP_GPIO_LockConfig(STOPCJ3_PORT);
+	BSP_GPIO_LockConfig(UPEDCJ2_PORT);
+	BSP_GPIO_LockConfig(STARTS_PORT);
+	BSP_GPIO_LockConfig(STOP_P_PORT);
+	BSP_GPIO_LockConfig(FYKL_PORT);
+	BSP_GPIO_LockConfig(STANDBY_PORT);
+	BSP_GPIO_LockConfig(FD_PORT);
+	BSP_GPIO_LockConfig(PLBJ_PORT);
+	BSP_GPIO_LockConfig(PHBJ_PORT);
+	BSP_GPIO_LockConfig(HJSHDL_PORT);
+	BSP_GPIO_LockConfig(STOPCS_PORT);
+	BSP_GPIO_LockConfig(ALARM_PORT);
+	BSP_GPIO_LockConfig(RESET_SYS_PORT);
+	BSP_GPIO_LockConfig(CJ3OK_PORT);
+	BSP_GPIO_LockConfig(CJ12OK_PORT);
+	BSP_GPIO_LockConfig(LRUN_PORT);
+	BSP_GPIO_LockConfig(DHAL_PORT);
+	BSP_GPIO_LockConfig(HIAL_PORT);
+	BSP_GPIO_LockConfig(IGBTBAL_PORT);
+	BSP_GPIO_LockConfig(IGBTAAL_PORT);
+	BSP_GPIO_LockConfig(TIAL_PORT);
+	BSP_GPIO_LockConfig(IDCAL_PORT);
+	BSP_GPIO_LockConfig(QSALARM_PORT);
+	BSP_GPIO_LockConfig(HJSH_PORT);
+	BSP_GPIO_LockConfig(JTJC_PORT);
+	BSP_GPIO_LockConfig(IN_ALARM_PORT);
+	BSP_GPIO_LockConfig(PVDD_PORT);
+	
 }
 
 //冷启动端口准备
@@ -59,14 +98,11 @@ void driver_port_detection(void){
 	STANDBY = 1;	//禁止3875所有输出
 	STOPCS = 1;
 	
-	FYKL = 1;	//屏蔽负压开关		
+	PBLE3 = 1;	//屏蔽报警LE3	
 	
 	RESET_SYS = 1;		//硬件系统复位 0.1s
 	delay_ms(100);
 	RESET_SYS = 0;
-	
-	if(QSALARM) get_controlData()->error_sta |= QSALARM_ERROR;		//缺项检测
-	if(DCVCHK) get_controlData()->error_sta |= DCVCHK_ERROR;		//低压电源检测
 }
 
 //脉冲输出

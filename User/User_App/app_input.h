@@ -3,6 +3,7 @@
 
 #include "util.h"
 
+#define INPUT_TASK_PERIOD	5
 
 typedef enum{
 	INPUT_PRIORITY = 6,
@@ -16,16 +17,8 @@ typedef enum{
 	
 }controlState_e;
 
-enum{
-	QSALARM_ERROR = 0x00000001,		//缺相
-	DCVCHK_ERROR = 0x00000002,		//低压电源错误
-	IN_HOT_ACTIVE = 0x00000004,		//热启动
-	
-};
-
 
 typedef struct{
-	uint8_t control_state;		//工作状态
 	uint8_t control_mode;		//控制模式
 	uint8_t power_mode;			//功率模式
 	uint8_t speed_signal;		//速度信号

@@ -26,7 +26,7 @@ void driver_Init(void){
 	//RS485配置初始化	
 	driver_485_Configuration(RS_485,RS_485_TX,RS_485_RX,RS_485_EN,RS_485_BAUD,RS_485_PREEMPTIONPRIORITY,RS_485_SUBPRIORITY);  
 	//看门狗初始化
-	driver_IWDG_Init(4,625);
+	driver_IWDG_Init(4,3125);  //5s
 	
 //	driver_InitKeyHard();
 //	BSP_GPIO_Init(BSP_GPIOD7,GPIO_Mode_Out_PP);

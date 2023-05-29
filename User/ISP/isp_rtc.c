@@ -34,6 +34,7 @@ void RTC_IRQHandler(void){
 void PVD_IRQHandler(void){
 	EXTI_ClearITPendingBit(EXTI_Line16);
 	//启动标志复位
-	BKP_WriteBackupRegister(ACTIVITE_BKPREG,0x0000);
+	digitalLo(&get_supervisiorData()->machine_active);
+	BKP_WriteBackupRegister(ACTIVITE_BKPREG,(uint16_t)(get_supervisiorData()->machine_active));
 }
 

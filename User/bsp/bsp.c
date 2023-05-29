@@ -48,7 +48,7 @@ void bsp_Init(void)
 	//初始化PVD低压检测
 	bsp_PVDInit();
 	//将启动标志置位，1表示机器启动
-	BKP_WriteBackupRegister(ACTIVITE_BKPREG,0x0001);
+	digitalHi(&get_supervisiorData()->machine_active);
 }
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

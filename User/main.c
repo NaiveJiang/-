@@ -44,6 +44,7 @@ void app_Init(void){
 	app_ControlParameterLoad();		//加载flash内容
 	//任务初始化
 	app_inputTaskInit();     //2
+	app_supervisiorTaskInit();		//状态机
 	app_serialTaskInit();
 	app_adcTaskInit();
 	RCC_GetClocksFreq(&get_rcc_clock);//4
