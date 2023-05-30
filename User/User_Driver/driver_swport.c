@@ -4,16 +4,16 @@
 void driver_port_Init(void){
 	
 	BSP_GPIO_Init(LKEN_PORT,GPIO_Mode_Out_PP);			//允许线控使能光耦互锁
-	BSP_GPIO_Init(DCVCHK_PORT,GPIO_Mode_IN_FLOATING);	//低压电源检测
+	BSP_GPIO_Init(DCVCHK_PORT,GPIO_Mode_IPD);	//低压电源检测
 	
 	//错误代码LE2:LE1:LE0,LE3为1时有效
 	BSP_GPIO_Init(PBLE3_PORT,GPIO_Mode_Out_PP);		//屏蔽LE3
-	BSP_GPIO_Init(LE0_PORT,GPIO_Mode_IN_FLOATING);	//LE0
-	BSP_GPIO_Init(LE1_PORT,GPIO_Mode_IN_FLOATING);	//LE1
-	BSP_GPIO_Init(LE2_PORT,GPIO_Mode_IN_FLOATING);	//LE2
-	BSP_GPIO_Init(LE3_PORT,GPIO_Mode_IN_FLOATING);	//LE3报警有效位，LE3为1时LE0~2有效
+	BSP_GPIO_Init(LE0_PORT,GPIO_Mode_IPD);	//LE0
+	BSP_GPIO_Init(LE1_PORT,GPIO_Mode_IPD);	//LE1
+	BSP_GPIO_Init(LE2_PORT,GPIO_Mode_IPD);	//LE2
+	BSP_GPIO_Init(LE3_PORT,GPIO_Mode_IPD);	//LE3报警有效位，LE3为1时LE0~2有效
 	
-	BSP_GPIO_Init(OPIN1_PORT,GPIO_Mode_IN_FLOATING);//光耦输入1
+	BSP_GPIO_Init(OPIN1_PORT,GPIO_Mode_IPD);//光耦输入1
 	
 	//脉冲信号输出
 	BSP_GPIO_Init(DJOPEN_PORT,GPIO_Mode_Out_PP);	//打开电极			0.1s脉冲
@@ -36,21 +36,21 @@ void driver_port_Init(void){
 	BSP_GPIO_Init(RESET_SYS_PORT,GPIO_Mode_Out_PP);	//CPU输出系统复位信号
 	
 	//信号输入检测
-	BSP_GPIO_Init(CJ3OK_PORT,GPIO_Mode_IN_FLOATING);	//臭氧风机检测开关
-	BSP_GPIO_Init(PUPOK_PORT,GPIO_Mode_IN_FLOATING);	//初上电检测，达到80%启动CJ2
-	BSP_GPIO_Init(CJ12OK_PORT,GPIO_Mode_IN_FLOATING);	//CJ1~CJ2上电完成
-	BSP_GPIO_Init(LRUN_PORT,GPIO_Mode_IN_FLOATING);		//生产线运行标志
-	BSP_GPIO_Init(DHAL_PORT,GPIO_Mode_IN_FLOATING);		//高压打火报警
-	BSP_GPIO_Init(HIAL_PORT,GPIO_Mode_IN_FLOATING);		//高压放电过流
-	BSP_GPIO_Init(IGBTBAL_PORT,GPIO_Mode_IN_FLOATING);	//IGBTB过流
-	BSP_GPIO_Init(IGBTAAL_PORT,GPIO_Mode_IN_FLOATING);	//IGBTA过流
-	BSP_GPIO_Init(TIAL_PORT,GPIO_Mode_IN_FLOATING);		//原边电流过流
-	BSP_GPIO_Init(IDCAL_PORT,GPIO_Mode_IN_FLOATING);	//IDC过流报警
-	BSP_GPIO_Init(QSALARM_PORT,GPIO_Mode_IN_FLOATING);	//缺相报警
-	BSP_GPIO_Init(HJSH_PORT,GPIO_Mode_IN_FLOATING);		//换卷信号
-	BSP_GPIO_Init(JTJC_PORT,GPIO_Mode_IN_FLOATING);		//急停报警
-	BSP_GPIO_Init(IN_ALARM_PORT,GPIO_Mode_IN_FLOATING);	//系统报警
-	BSP_GPIO_Init(PVDD_PORT,GPIO_Mode_IN_FLOATING);		//掉电报警
+	BSP_GPIO_Init(CJ3OK_PORT,GPIO_Mode_IPD);	//臭氧风机检测开关
+	BSP_GPIO_Init(PUPOK_PORT,GPIO_Mode_IPD);	//初上电检测，达到80%启动CJ2
+	BSP_GPIO_Init(CJ12OK_PORT,GPIO_Mode_IPD);	//CJ1~CJ2上电完成
+	BSP_GPIO_Init(LRUN_PORT,GPIO_Mode_IPD);		//生产线运行标志
+	BSP_GPIO_Init(DHAL_PORT,GPIO_Mode_IPD);		//高压打火报警
+	BSP_GPIO_Init(HIAL_PORT,GPIO_Mode_IPD);		//高压放电过流
+	BSP_GPIO_Init(IGBTBAL_PORT,GPIO_Mode_IPD);	//IGBTB过流
+	BSP_GPIO_Init(IGBTAAL_PORT,GPIO_Mode_IPD);	//IGBTA过流
+	BSP_GPIO_Init(TIAL_PORT,GPIO_Mode_IPD);		//原边电流过流
+	BSP_GPIO_Init(IDCAL_PORT,GPIO_Mode_IPD);	//IDC过流报警
+	BSP_GPIO_Init(QSALARM_PORT,GPIO_Mode_IPD);	//缺相报警
+	BSP_GPIO_Init(HJSH_PORT,GPIO_Mode_IPD);		//换卷信号
+	BSP_GPIO_Init(JTJC_PORT,GPIO_Mode_IPD);		//急停报警
+	BSP_GPIO_Init(IN_ALARM_PORT,GPIO_Mode_IPD);	//系统报警
+	BSP_GPIO_Init(PVDD_PORT,GPIO_Mode_IPD);		//掉电报警
 	
 	//对IO口配置进行上锁
 	BSP_GPIO_LockConfig(LKEN_PORT);
@@ -111,5 +111,9 @@ void pulse_output(volatile unsigned long *pulase_port,uint32_t pulse_time){
 	vTaskDelay(pulse_time);
 	*pulase_port = 0;
 }
-
+//错误设置
+void error_set(volatile unsigned long *error_port,uint32_t error_code){
+	if(!(*error_port)) get_controlData()->error_sta &= ~error_code;
+	else get_controlData()->error_sta |= error_code;
+}
 

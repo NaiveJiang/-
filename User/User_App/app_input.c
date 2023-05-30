@@ -92,17 +92,45 @@ void app_corona_state(void){
 	switch(get_controlData()->control_step){
 		case 0:{
 			//只有这些错误解决了，才能进入继电器闭合
-			
+			if(!(get_controlData()->error_sta & 0xFFFFFFFE))
+				digitalIncreasing(&get_controlData()->control_step);
 		}break;
 		case 1:{
 			//等待VDC检测到达80%,继电器闭合
-			
+//			if(adc_filter_VDC_ADC > 80){
+//				//闭合继电器CJ2
+//				pulse_output(&UPEDCJ2,50);
+//				digitalIncreasing(&get_controlData()->control_step);
+//			}
 		}break;
 		case 2:{
-			//检测继电器闭合后,使能3875输出
-			
+			//等待50ms，如果这期间CJ2无法闭合，则产生停机报警
+//			digitalHi(&get_controlData()->wait_sw);
+//			if(get_controlData()->wait_time >= 5){
+//				digitalLo(&get_controlData()->wait_sw);
+//				if(CJ12OK){		//继电器闭合
+//					digitalIncreasing(&get_controlData()->control_step);
+//				}
+//				else{	//50ms后未能闭合CJ2，发出停机报警
+//					get_controlData()->control_step = 99;
+//				}
+//			}
 		}break;
 		case 3:{
+			//使能3875输出
+//			STOPCS = 0;		//放开STOPCS
+//			vTaskDelay(100);
+//			STANDBY = 0;	//允许3875输出
+//			//DAC给定为0
+//			dac_ch1_voltageOut(0.0f);
+//			dac_ch2_voltageOut(0.0f);
+//			digitalIncreasing(&get_controlData()->control_step);
+		}break;
+		case 4:{
+			//检测达速，打开放电架
+			
+		}break;
+		case 5:{
 			//放电
 			
 		}break;

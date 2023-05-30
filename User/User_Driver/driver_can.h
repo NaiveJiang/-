@@ -20,9 +20,9 @@
 #define CAN_SJWTQ CAN_SJW_1tq //最大精度
 
 //这三项只能其中1个为1
-#define USE_TEST_BOARD_CANB89	1	//使用测试板PB8/PB9作为CAN接口
+#define USE_TEST_BOARD_CANB89	0	//使用测试板PB8/PB9作为CAN接口
 #define USE_TEST_BOARD_CAND01	0	//使用测试板PD0/PD1作为CAN接口
-#define USE_HDX_LPSSI_CAN		0	//使用HDX_LPSSI工程板PA11/PA12作为CAN接口
+#define USE_HDX_LPSSI_CAN		1	//使用HDX_LPSSI工程板PA11/PA12作为CAN接口
 
 #if USE_TEST_BOARD_CANB89		//使用测试板PB8/PB9
 #define CAN_TX BSP_GPIOB9   

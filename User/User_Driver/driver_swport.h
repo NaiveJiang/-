@@ -30,7 +30,7 @@
 #define DJCLOSE PBout(8);
 #define O2CJ3_PORT BSP_GPIOD0		//启动臭氧风机	0.1s
 #define O2CJ3 PDout(0)
-#define STOPCJ3_PORT BSP_GPIOD1	//关闭臭氧风机	0.1s
+#define STOPCJ3_PORT BSP_GPIOD1		//关闭臭氧风机	0.1s
 #define STOPCJ3 PDout(1)
 #define UPEDCJ2_PORT BSP_GPIOD3		//启动CJ2		50ms
 #define UPEDCJ2 PDout(3)
@@ -95,5 +95,6 @@
 void driver_port_Init(void);
 void driver_port_detection(void);
 void pulse_output(volatile unsigned long *pulase_port,uint32_t pulse_time);
+void error_set(volatile unsigned long *error_port,uint32_t error_code);
 #endif
 
