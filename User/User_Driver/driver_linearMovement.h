@@ -8,6 +8,7 @@
 #define SENSOR_LENGTH 500
 #define SENSOR_SCALE 1.0f/4096*SENSOR_LENGTH
 #define SAMP_MAX_ADCVAL 3722.727272727272f		//满偏3V对应ADC值
+#define SAMP_MAX_VOLTAGE 3.0f					//满偏电压3v
 
 //采样定时器 5ms
 #define SAMP_TIMER1 TIM6

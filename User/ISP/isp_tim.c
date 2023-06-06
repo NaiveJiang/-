@@ -18,9 +18,20 @@ void TIM2_IRQHandler(void){
 		}else{
 			digitalIncreasing(&get_supervisiorData()->write_bkp_time);
 		}
+		
+//		//未达速最小功率放电
+//		if(get_controlData()->corona_in_low_sw){
+//			if(!get_controlData()->low_corona_time) {	//超过5s停止放电
+//				digitalLo(&get_controlData()->corona_in_low_sw);		
+//				digitalClan(&get_controlData()->low_corona_time);
+//			}
+//			else digitalDecline(&get_controlData()->low_corona_time);	//自减
+//		}
+		
 	}
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
 }
+
 void TIM4_IRQHandler(void){
 	//CNT溢出中断
 	if(TIM_GetITStatus(TIM4,TIM_IT_Update) != RESET){
@@ -35,6 +46,7 @@ void TIM4_IRQHandler(void){
 			//计算CNT差值
 			BSPSI_CALC.difference_cnt = ICAP1_TIMER_PEROID * (BSPSI_CALC.pulse_get - 1) + BSPSI_CALC.get_cnt2 - BSPSI_CALC.get_cnt1;
 			BSPSI_CALC.freq = ((float)(ICAP1_FREQ)) / ((float)(BSPSI_CALC.difference_cnt)); //计算频率
+			get_controlData()->local_speed = BSPSI_CALC.freq * get_controlData()->roller_pulse_length * 60.0f;	//计算得到本地滚筒速度
 			digitalClan(&BSPSI_CALC.pulse_get); //清空倍数
 			TIM4->CCR1 = 0;
 		}
@@ -43,6 +55,17 @@ void TIM4_IRQHandler(void){
 			BSPSI_CALC.get_cnt1 = TIM4->CCR1; //得到第一个上升沿的CNT值
 			digitalHi(&BSPSI_CALC.pulse_get);
 		}
+		
+//		//如果是小机,脉冲触发开始最小功率放电
+//		if(!get_controlData()->corona_in_low_sw){ //或者加入BSPSI_CALC.freq >= 200或control_step
+//			digitalHi(&get_controlData()->corona_in_low_sw);		//使能放电标志
+//			get_controlData()->low_corona_time = 500;				//时间更新
+//		}
+		
+//		if(BSPSI_CALC.freq >= 200)		//达速 200假定值，实际应该为触摸屏设定m/min再转换
+//			digitalHi(&get_controlData()->speed_up);
+//		else
+//			digitalLo(&get_controlData()->speed_up);
 	}
 	//LSPSI外部生产线速度脉冲
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC2) != RESET){
@@ -61,6 +84,37 @@ void TIM4_IRQHandler(void){
 		}
 	}
 	TIM_ClearITPendingBit(TIM4,TIM_IT_Update|TIM_IT_CC1|TIM_IT_CC2);//清除中断
+}
+
+void TIM5_IRQHandler(void){
+	//CNT溢出中断
+	if(TIM_GetITStatus(TIM5,TIM_IT_Update) != RESET){
+		
+		if(get_controlData()->dry_mode){	//如果为湿启动
+			if(!get_dryData()->spark_wait){	//没有打火
+				if(get_dryData()->dry_time >= DRY_INCREASE_TIME){	//1s
+					digitalClan(&get_dryData()->dry_time);
+					get_dryData()->dry_power += get_dryData()->inc_power;
+					
+				}
+				else{
+					digitalIncreasing(&get_dryData()->dry_time);
+				}
+				//功率限幅
+				if(get_dryData()->dry_power > get_dischargeCtrlData()->manual_power){
+					get_dryData()->dry_power = get_dischargeCtrlData()->manual_power;
+				}
+			}
+			
+			if(get_dryData()->spark_wait) digitalIncreasing(&get_dryData()->spark_wait_time);
+			if(get_dryData()->spark_wait_time >= SPARK_WAIT_TIME){	//等待0.2s
+				digitalLo(&get_dryData()->spark_wait);
+				digitalClan(&get_dryData()->spark_wait_time);
+			}
+			
+		}
+	}
+	TIM_ClearITPendingBit(TIM5,TIM_IT_Update);//清除中断
 }
 
 void TIM6_IRQHandler(void){

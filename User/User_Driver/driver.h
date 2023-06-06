@@ -13,17 +13,21 @@
 #include "driver_pulsecap.h"
 #include "driver_swport.h"
 
-//辅助定时器 每隔10ms中断一次
-#define ASSIST_TIM TIM2
-#define ASSIST_TIM_PEROID 1000-1
-#define ASSIST_TIM_PRESCALER 7200-1
-#define ASSIST_TIM_PREEMPTIONPRIORITY 8
-#define ASSIST_TIM_SUBPRIORITY 0
-
-
-
-
-
+#define USE_ASSIST2 1
+//辅助定时器1 每隔10ms中断一次
+#define ASSIST_TIM1 TIM2
+#define ASSIST_TIM1_PEROID 1000-1
+#define ASSIST_TIM1_PRESCALER 7200-1
+#define ASSIST_TIM1_PREEMPTIONPRIORITY 8
+#define ASSIST_TIM1_SUBPRIORITY 0
+//辅助定时器2 每隔10ms中断一次
+#if USE_ASSIST2
+#define ASSIST_TIM2 TIM5	
+#define ASSIST_TIM2_PEROID 1000-1	
+#define ASSIST_TIM2_PRESCALER 7200-1
+#define ASSIST_TIM2_PREEMPTIONPRIORITY 5
+#define ASSIST_TIM2_SUBPRIORITY 0
+#endif
 void driver_Init(void);
 
 #endif

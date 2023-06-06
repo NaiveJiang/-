@@ -5,6 +5,8 @@
 
 #define SUPER_TASK_PERIOD	2
 
+#define LOW_VDC 470
+
 typedef enum{
 	SUPER_PRIORITY = 5,
 	SUPER_STACK_SIZE = 256,
@@ -31,12 +33,17 @@ enum{
 	IGBTA_OVERCURRENT 			= 0x00002000,	//IGBTA过流
 	PRIMARY_OVERCURRENT 		= 0x00004000,	//原边电流过流
 	IDC_OVERCURRENT				= 0x00008000,	//IDC过流
+	CJ3_ERROR					= 0x00010000,	//CJ3损坏
+	CJ12_ERROR					= 0x00020000,	//CJ12损坏
+	VDC_LOW_ERROR				= 0x00040000,	//外部交流输入过低
+	SPEED_UP_ERROR				= 0x00080000,	//未达速
 };
 
 typedef struct{
 	uint8_t machine_active;	//启动标志
 	formatTrans32Struct_t adc_output;
 	formatTrans32Struct_t dac_output;
+	uint8_t spark_count;	//打火次数
 	uint8_t flash_sw;
 	uint8_t write_bkp_time;	//写入后备寄存区计数位
 }appSupStruct_t;

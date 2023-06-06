@@ -5,6 +5,7 @@
 //#include "FreeRTOS_board.h"
 #include <stdlib.h>
 
+#define PI 3.141592653590f
 #define digitalHi(p)        *p = 1
 #define digitalLo(p)        *p = 0
 #define digitalSet(p, n)    *p = n

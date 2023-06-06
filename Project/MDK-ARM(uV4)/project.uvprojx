@@ -484,6 +484,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_supervisor.c</FilePath>
             </File>
+            <File>
+              <FileName>app_dry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_dry.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_discharge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_discharge.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

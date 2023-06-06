@@ -4,6 +4,7 @@
 void driver_port_Init(void){
 	
 	BSP_GPIO_Init(LKEN_PORT,GPIO_Mode_Out_PP);			//允许线控使能光耦互锁
+	BSP_GPIO_Init(RESET_DH_PORT,GPIO_Mode_Out_PP);		//打火复位
 	BSP_GPIO_Init(DCVCHK_PORT,GPIO_Mode_IPD);	//低压电源检测
 	
 	//错误代码LE2:LE1:LE0,LE3为1时有效
@@ -54,6 +55,7 @@ void driver_port_Init(void){
 	
 	//对IO口配置进行上锁
 	BSP_GPIO_LockConfig(LKEN_PORT);
+	BSP_GPIO_LockConfig(RESET_DH_PORT);
 	BSP_GPIO_LockConfig(DCVCHK_PORT);
 	BSP_GPIO_LockConfig(PBLE3_PORT);
 	BSP_GPIO_LockConfig(LE0_PORT);
@@ -91,6 +93,9 @@ void driver_port_Init(void){
 	BSP_GPIO_LockConfig(IN_ALARM_PORT);
 	BSP_GPIO_LockConfig(PVDD_PORT);
 	
+	//初始化管脚输出
+	RESET_DH = 1;	//防止打火报警重复复位
+	
 }
 
 //冷启动端口准备
@@ -100,20 +105,30 @@ void driver_port_detection(void){
 	
 	PBLE3 = 1;	//屏蔽报警LE3	
 	
+//	STOP_P = 1;			//关闭功率电源 0.1s
 	RESET_SYS = 1;		//硬件系统复位 0.1s
 	delay_ms(100);
+//	STOP_P = 0;
 	RESET_SYS = 0;
+	
+	STOPCS = 0;	//3875输出波形建立驱动电压
 }
 
-//脉冲输出
-void pulse_output(volatile unsigned long *pulase_port,uint32_t pulse_time){
+//脉冲输出(高电平)
+void pulse_outputHigh(volatile unsigned long *pulase_port,uint32_t pulse_time){
 	*pulase_port = 1;
 	vTaskDelay(pulse_time);
 	*pulase_port = 0;
 }
-//错误设置
-void error_set(volatile unsigned long *error_port,uint32_t error_code){
-	if(!(*error_port)) get_controlData()->error_sta &= ~error_code;
-	else get_controlData()->error_sta |= error_code;
+//脉冲输出(低电平)
+void pulse_outputLow(volatile unsigned long *pulase_port,uint32_t pulse_time){
+	*pulase_port = 0;
+	vTaskDelay(pulse_time);
+	*pulase_port = 1;
+}
+//错误设置 错误端口 错误代码 端口错误时的电平状态 0 或 1
+void error_set(volatile unsigned long *error_port,uint32_t error_code,uint8_t state){
+	if(*error_port == state) get_controlData()->error_sta |= error_code;
+	else get_controlData()->error_sta &= ~error_code;		//如果该端口无错误，则清空错误报警
 }
 

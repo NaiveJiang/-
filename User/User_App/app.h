@@ -12,6 +12,8 @@
 #include "app_filter.h"
 #include "app_adc.h"
 #include "app_supervisor.h"
+#include "app_dry.h"
+#include "app_discharge.h"
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"
@@ -37,7 +39,12 @@ typedef enum{
 	POWER_DENSITY,		//功率密度
 	SPD_MAX,			//速比最大
 	SPD_MIN,			//速比最小
-	MANUAL_POWER,		//手动额定		
+	MANUAL_POWER,		//手动额定
+
+	SPD_UP_MAX,			//最大达速
+	SPD_UP_MIN,			//最小达速
+	ROLLER_DIAMETER,	//滚轴直径
+	ROLLER_PULSE,		//滚轴每周脉冲数
 	
 	NAME_OF_LIST,
 }nameOfParameter_e;

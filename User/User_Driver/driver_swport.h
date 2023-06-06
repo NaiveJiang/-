@@ -5,6 +5,8 @@
 
 #define LKEN_PORT BSP_GPIOA8		//允许线控使能光耦互锁
 #define LKEN PAout(8)
+#define RESET_DH_PORT BSP_GPIOA15	//打火复位	0有效
+#define RESET_DH PAout(15)
 #define DCVCHK_PORT BSP_GPIOB9		//低压电源检测
 #define DCVCHK PBin(9)
 
@@ -25,9 +27,9 @@
 
 //脉冲信号输出
 #define DJOPEN_PORT BSP_GPIOB5		//打开电极		0.1s
-#define DJOPEN PBout(5);
+#define DJOPEN PBout(5)
 #define DJCLOSE_PORT BSP_GPIOB8		//关闭电极		0.1s
-#define DJCLOSE PBout(8);
+#define DJCLOSE PBout(8)
 #define O2CJ3_PORT BSP_GPIOD0		//启动臭氧风机	0.1s
 #define O2CJ3 PDout(0)
 #define STOPCJ3_PORT BSP_GPIOD1		//关闭臭氧风机	0.1s
@@ -94,7 +96,8 @@
 
 void driver_port_Init(void);
 void driver_port_detection(void);
-void pulse_output(volatile unsigned long *pulase_port,uint32_t pulse_time);
-void error_set(volatile unsigned long *error_port,uint32_t error_code);
+void pulse_outputHigh(volatile unsigned long *pulase_port,uint32_t pulse_time);
+void pulse_outputLow(volatile unsigned long *pulase_port,uint32_t pulse_time);
+void error_set(volatile unsigned long *error_port,uint32_t error_code,uint8_t state);
 #endif
 

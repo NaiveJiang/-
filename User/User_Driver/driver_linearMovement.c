@@ -324,7 +324,7 @@ void getadc3_average(void){  //采集得到平均值
 	}
 	//赋值
 	adc_IDC_ADC = real[0] * 0.029304029304f;
-	adc_VDC_ADC = real[1] * 0.144078144078f;
+	adc_VDC_ADC = real[1] * 0.146520146520f;	//600V
 	adc_HV_DC3V3 = real[2] * 3.052503052503f;
 	adc_LSPI3V3 = real[3] * 0.000805860806f;
 	adc_LSPV3V3 = real[4] * 0.000805860806f;

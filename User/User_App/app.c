@@ -25,6 +25,14 @@ void app_ParameterInit(void){
 		parameter[SPD_MIN] = DEAFULT_SPD_MIN;
 		
 		parameter[MANUAL_POWER] = DEAFULT_MANUAL_POWER;
+		
+		parameter[SPD_UP_MAX] = DEAFULT_SPD_UP_MAX;
+		
+		parameter[SPD_UP_MIN] = DEAFULT_SPD_UP_MIN;
+		
+		parameter[ROLLER_DIAMETER] = DEAFULT_ROLLER_DIAMETER;
+		
+		parameter[ROLLER_PULSE] = DEAFULT_ROLLER_PULSE;
 	}
 	
 	//从flash中读取版本号
@@ -42,6 +50,8 @@ void app_ParameterInit(void){
 
 void app_ControlParameterLoad(void){
 	//读取flash的控制信息
+	get_controlData()->rated_power = (float)parameter[POWER] * 0.01f;
+	
 	get_controlData()->control_mode = parameter[CONTROL_MODE];
 	get_controlData()->power_mode = parameter[POWER_MODE];
 	get_controlData()->speed_signal = parameter[SPD_SIGNAL];
@@ -51,6 +61,12 @@ void app_ControlParameterLoad(void){
 	get_controlData()->speed_max = (float)parameter[SPD_MAX] * 0.01f;
 	get_controlData()->speed_min = (float)parameter[SPD_MIN] * 0.01f;
 	get_controlData()->manual_power = (float)parameter[MANUAL_POWER] * 0.01f;
+	
+	get_controlData()->speed_up_max = (float)parameter[SPD_UP_MAX] * 0.01f;
+	get_controlData()->speed_up_min = (float)parameter[SPD_UP_MIN] * 0.01f;
+	
+	//得到滚筒周长
+	get_controlData()->roller_pulse_length = (float)parameter[ROLLER_DIAMETER] * 0.01f * PI / (float)parameter[ROLLER_PULSE];
 }
 
 

@@ -29,16 +29,29 @@ void app_supervisiorTask(void *Parameters){
 		
 		//打开PBLE3时检测互锁开关状态
 		if(PBLE3) app_sup_LE();							//互锁开关
-		error_set(&QSALARM,QSALARM_ERROR);				//缺项检测
-		error_set(&DCVCHK,DCVCHK_ERROR);				//低压电源检测
-		error_set(&JTJC,EMERGENCY_STOP);				//急停报警
-		error_set(&IN_ALARM,SYSTEM_ERROR);				//系统报警
-		error_set(&PVDD,POWER_DOWN_ERROR);				//低压电源检测
-		error_set(&DHAL,HIGH_VOLTAGE_SPARK_ERROR);		//高压打火报警		
-		error_set(&HIAL,HIGH_VOLTAGE_OVERCURRENT);		//高压放电过流
-		error_set(&IGBTBAL,IGBTB_OVERCURRENT);			//IGBTB过流
-		error_set(&IGBTAAL,IGBTA_OVERCURRENT);			//IGBTA过流
-		error_set(&TIAL,PRIMARY_OVERCURRENT);			//原边电流过流
+		error_set(&QSALARM,QSALARM_ERROR,1);				//缺项检测
+		error_set(&DCVCHK,DCVCHK_ERROR,1);				//低压电源检测
+		error_set(&JTJC,EMERGENCY_STOP,1);				//急停报警
+		error_set(&IN_ALARM,SYSTEM_ERROR,1);				//系统报警
+		error_set(&PVDD,POWER_DOWN_ERROR,1);				//低压电源检测
+		error_set(&DHAL,HIGH_VOLTAGE_SPARK_ERROR,1);		//高压打火报警		
+		error_set(&HIAL,HIGH_VOLTAGE_OVERCURRENT,1);		//高压放电过流
+		error_set(&IGBTBAL,IGBTB_OVERCURRENT,1);			//IGBTB过流
+		error_set(&IGBTAAL,IGBTA_OVERCURRENT,1);			//IGBTA过流
+		error_set(&TIAL,PRIMARY_OVERCURRENT,1);			//原边电流过流
+		
+		if(adc_filter_VDC_ADC < LOW_VDC)	//VDC低于470
+			get_controlData()->error_sta |= VDC_LOW_ERROR;	//外部交流输入过低警告
+		else
+			get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
+		
+//		if(!get_controlData()->local_speed)
+		
+		//手动功率转为电压
+		get_dischargeCtrlData()->manual_power = get_controlData()->manual_power * SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
+		
+		//报警停机
+		
 		
 		//写入flash
 		if(get_supervisiorData()->flash_sw){
