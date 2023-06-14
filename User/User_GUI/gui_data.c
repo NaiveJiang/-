@@ -38,6 +38,7 @@ void gui_send_data(USART_TypeDef *USARTx){
 	BSP_USART_SendData_DMA(USART_TO_BSP_DMA(USARTx,USART_DMAReq_Tx),array,array[2]);
 }
 
+//接收中断的函数
 void gui_receive_data(USART_TypeDef *USARTx,uint8_t *receive_data){
 	uint8_t *array = (uint8_t*)USART_TO_ArrayRX(USARTx);
 	if((array[0] == REV_HEAD) && (array[1] == REV_ADDR)){ //校验帧头
@@ -81,6 +82,11 @@ void gui_data_unPackge(uint8_t *receive_data){
 			for(uint8_t i = 0; i < 2; i++)
 				powData.u8_temp[i] = receive_data[index_ptr++];
 			get_powSetData()->manual_power = (float)powData.u16_temp * 0.01f;		//手动模式
+		}break;
+		//dry
+		case 4:{
+			//得到湿启动页面的数据
+			get_drydata()->dry_rev_data = receive_data[4];
 		}break;
 		default: break;
 	}

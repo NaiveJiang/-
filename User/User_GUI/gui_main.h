@@ -7,6 +7,7 @@ typedef enum{
 	CORONA = 0x01,
 	FAN = 0x02,
 	DRY = 0x03,
+	STOP_CORONA = 0x04,
 }mainData_e;
 
 typedef struct{

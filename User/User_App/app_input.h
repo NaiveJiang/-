@@ -33,12 +33,8 @@ typedef struct{
 	float speed_min;			//最低线速功率
 	float manual_power;			//手动给定功率
 	
-	float speed_up_max;			//最大达速
-	float speed_up_min;			//最小达速
-	
-	float roller_pulse_length;	//滚筒脉冲线长
-	float local_speed;			//本地滚筒速度
-	float external_speed;		//外部生产线速度
+	float set_speed_up;			//设定达速
+	float set_spd_max;			//最高线速
 	
 	float power;
 	
@@ -49,6 +45,12 @@ typedef struct{
 	uint8_t control_step;		//控制过程变量
 	uint8_t wait_sw;
 	uint16_t wait_time;
+	
+	uint8_t line_control;			//生产线控制标志
+	uint8_t line_suspend;			//生产线暂停
+	uint8_t line_suspend_delay_sw;	//生产线延时放电标志
+	uint32_t line_suspend_time;		//生产线延时放电延时
+	uint32_t line_set_suspend_time;	//生产线延时放电设定延时
 	
 	
 	//小机用

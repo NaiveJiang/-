@@ -95,7 +95,7 @@ void driver_port_Init(void){
 	
 	//初始化管脚输出
 	RESET_DH = 1;	//防止打火报警重复复位
-	
+	LKEN = 1;		//允许线控信号
 }
 
 //冷启动端口准备

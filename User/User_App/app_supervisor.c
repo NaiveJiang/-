@@ -45,10 +45,34 @@ void app_supervisiorTask(void *Parameters){
 		else
 			get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
 		
-//		if(!get_controlData()->local_speed)
+		//达速检测
+		if(get_dischargeCtrlData()->spdCtrl->local_speed < get_controlData()->set_speed_up)	//大于等于最小设定速度即达速
+			get_controlData()->error_sta |= SPEED_UP_ERROR;	//未达速
+		else
+			get_controlData()->error_sta &= ~SPEED_UP_ERROR;	//达速
+		
+		//线控状态
+		if(LKEN) {	//线控信号有效
+			if(LRUN){
+				digitalHi(&get_controlData()->line_control);	//生产线运行
+				digitalLo(&get_controlData()->line_suspend);
+			}
+			else{
+				if(get_controlData()->line_control)
+					digitalHi(&get_controlData()->line_suspend);	//生产线暂停
+			}
+			
+		}
+		else{	//线控信号无效
+			digitalLo(&get_controlData()->line_control);
+			digitalLo(&get_controlData()->line_suspend);
+		}
+		
 		
 		//手动功率转为电压
 		get_dischargeCtrlData()->manual_power = get_controlData()->manual_power * SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
+		//采集电压adc转为输出功率
+		get_dischargeCtrlData()->current_power = adc_filter_POV3V3 * get_controlData()->rated_power / MAX_POWER_ADC;
 		
 		//报警停机
 		

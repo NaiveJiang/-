@@ -24,6 +24,6 @@ typedef struct{
 
 
 void app_dryMode(void);
-dryStruct_t* get_dryData(void);
+dryStruct_t* get_dryCtrlData(void);
 
 #endif

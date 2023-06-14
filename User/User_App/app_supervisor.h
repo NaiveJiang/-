@@ -6,6 +6,7 @@
 #define SUPER_TASK_PERIOD	2
 
 #define LOW_VDC 470
+#define MAX_POWER_ADC 3722.727272727272f
 
 typedef enum{
 	SUPER_PRIORITY = 5,

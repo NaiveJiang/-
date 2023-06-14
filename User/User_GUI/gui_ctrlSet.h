@@ -9,6 +9,12 @@ typedef enum{
 	SPEEDSIGNAL = 0x08,
 }ctrlSetData_e;
 
+typedef enum{
+	MANUAL_MODE = 0,
+	POWER_DENSITY_MODE,
+	SPEED_MODE,
+}powerMode_e;
+
 typedef struct{
 	//接收信息
 	uint8_t ctrlSet_rev_data;

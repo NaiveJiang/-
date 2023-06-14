@@ -424,6 +424,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_GUI\gui_powSet.c</FilePath>
             </File>
+            <File>
+              <FileName>gui_dry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_GUI\gui_dry.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

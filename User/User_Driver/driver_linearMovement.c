@@ -306,7 +306,7 @@ void getadc1_average(void){  //采集得到平均值
 	adc_TBV_DC3V3 = real[1] * 0.195360195360f;
 	adc_POV3V3 = real[2] * 10.989010989011f;
 	adc_HI_DC3V3 = real[3] * 0.002442002442f;
-	adc_LPV3V3 = real[4] * 9.768009768010f;
+	adc_LPV3V3 = real[4] * 0.000244200244f;		//得到百分比  0~10v	即0v~3.3v
 	adc_TEMP = real[5] * 0.000805860806f;
 }
 
@@ -326,9 +326,9 @@ void getadc3_average(void){  //采集得到平均值
 	adc_IDC_ADC = real[0] * 0.029304029304f;
 	adc_VDC_ADC = real[1] * 0.146520146520f;	//600V
 	adc_HV_DC3V3 = real[2] * 3.052503052503f;
-	adc_LSPI3V3 = real[3] * 0.000805860806f;
-	adc_LSPV3V3 = real[4] * 0.000805860806f;
-	adc_LPIMA3V3 = real[5] * 0.000805860806f;
+	adc_LSPI3V3 = (real[3] - 819.0f) * 0.000305250305f;		//得到百分比	 4~20mA 即0.66v~3.3v
+	adc_LSPV3V3 = real[4] * 0.000244200244f;				//得到百分比  0~10v	即0v~3.3v
+	adc_LPIMA3V3 = (real[5] - 819.0f) * 0.000305250305f;	//得到百分比	 4~20mA 即0.66v~3.3v
 }
 
 void adcLowPassFilterInit(void)  //低通滤波参数初始化

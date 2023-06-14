@@ -19,15 +19,6 @@ void TIM2_IRQHandler(void){
 			digitalIncreasing(&get_supervisiorData()->write_bkp_time);
 		}
 		
-//		//未达速最小功率放电
-//		if(get_controlData()->corona_in_low_sw){
-//			if(!get_controlData()->low_corona_time) {	//超过5s停止放电
-//				digitalLo(&get_controlData()->corona_in_low_sw);		
-//				digitalClan(&get_controlData()->low_corona_time);
-//			}
-//			else digitalDecline(&get_controlData()->low_corona_time);	//自减
-//		}
-		
 	}
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
 }
@@ -39,14 +30,14 @@ void TIM4_IRQHandler(void){
 		if(BSPSI_CALC.pulse_get) digitalIncreasing(&BSPSI_CALC.pulse_get);
 		if(LSPSI_CALC.pulse_get) digitalIncreasing(&LSPSI_CALC.pulse_get);
 	}
-	//BSPSI本地速度脉冲
+	//BSPSI本地速度脉冲，低电平触发，用于达速检测和速比模式速度
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC1) != RESET){
 		if(BSPSI_CALC.pulse_get){
 			BSPSI_CALC.get_cnt2 = TIM4->CCR1; //得到第二个上升沿的CNT值
 			//计算CNT差值
 			BSPSI_CALC.difference_cnt = ICAP1_TIMER_PEROID * (BSPSI_CALC.pulse_get - 1) + BSPSI_CALC.get_cnt2 - BSPSI_CALC.get_cnt1;
 			BSPSI_CALC.freq = ((float)(ICAP1_FREQ)) / ((float)(BSPSI_CALC.difference_cnt)); //计算频率
-			get_controlData()->local_speed = BSPSI_CALC.freq * get_controlData()->roller_pulse_length * 60.0f;	//计算得到本地滚筒速度
+			get_dischargeCtrlData()->spdCtrl->local_speed = BSPSI_CALC.freq * get_dischargeCtrlData()->spdCtrl->roller_pulse_length * 60.0f;	//计算得到本地滚筒速度m/min
 			digitalClan(&BSPSI_CALC.pulse_get); //清空倍数
 			TIM4->CCR1 = 0;
 		}
@@ -55,25 +46,23 @@ void TIM4_IRQHandler(void){
 			BSPSI_CALC.get_cnt1 = TIM4->CCR1; //得到第一个上升沿的CNT值
 			digitalHi(&BSPSI_CALC.pulse_get);
 		}
-		
-//		//如果是小机,脉冲触发开始最小功率放电
-//		if(!get_controlData()->corona_in_low_sw){ //或者加入BSPSI_CALC.freq >= 200或control_step
-//			digitalHi(&get_controlData()->corona_in_low_sw);		//使能放电标志
-//			get_controlData()->low_corona_time = 500;				//时间更新
-//		}
-		
-//		if(BSPSI_CALC.freq >= 200)		//达速 200假定值，实际应该为触摸屏设定m/min再转换
-//			digitalHi(&get_controlData()->speed_up);
-//		else
-//			digitalLo(&get_controlData()->speed_up);
+		/********************************************************************************************************************************/
+		//脉冲触发模式
+		if(get_dischargeCtrlData()->mode){
+			//置位脉冲触发标志
+			digitalHi(&get_dischargeCtrlData()->pulseCtrl->discharge_sw);
+			get_dischargeCtrlData()->pulseCtrl->discharge_time = get_dischargeCtrlData()->pulseCtrl->set_delay_time;	//重新装填时间
+		}
+		/********************************************************************************************************************************/
 	}
-	//LSPSI外部生产线速度脉冲
+	//LSPSI外部生产线速度脉冲,用于速比模式的速度
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC2) != RESET){
 		if(LSPSI_CALC.pulse_get){
 			LSPSI_CALC.get_cnt2 = TIM4->CCR2; //得到第二个上升沿的CNT值
 			//计算CNT差值
 			LSPSI_CALC.difference_cnt = ICAP1_TIMER_PEROID * (LSPSI_CALC.pulse_get - 1) + LSPSI_CALC.get_cnt2 - LSPSI_CALC.get_cnt1;
-			LSPSI_CALC.freq = ICAP1_FREQ / LSPSI_CALC.difference_cnt; //计算频率
+			LSPSI_CALC.freq = ((float)(ICAP1_FREQ)) / ((float)(LSPSI_CALC.difference_cnt)); //计算频率
+			get_dischargeCtrlData()->spdCtrl->external_speed = LSPSI_CALC.freq * get_dischargeCtrlData()->spdCtrl->roller_pulse_length * 60.0f;	//计算得到滚筒速度
 			digitalClan(&LSPSI_CALC.pulse_get); //清空倍数
 			TIM4->CCR2 = 0;
 		}
@@ -89,30 +78,103 @@ void TIM4_IRQHandler(void){
 void TIM5_IRQHandler(void){
 	//CNT溢出中断
 	if(TIM_GetITStatus(TIM5,TIM_IT_Update) != RESET){
-		
+		/*********************************************************************************/
 		if(get_controlData()->dry_mode){	//如果为湿启动
-			if(!get_dryData()->spark_wait){	//没有打火
-				if(get_dryData()->dry_time >= DRY_INCREASE_TIME){	//1s
-					digitalClan(&get_dryData()->dry_time);
-					get_dryData()->dry_power += get_dryData()->inc_power;
+			if(!get_dryCtrlData()->spark_wait){	//没有打火
+				if(get_dryCtrlData()->dry_time >= DRY_INCREASE_TIME){	//1s
+					digitalClan(&get_dryCtrlData()->dry_time);
+					get_dryCtrlData()->dry_power += get_dryCtrlData()->inc_power;
 					
 				}
 				else{
-					digitalIncreasing(&get_dryData()->dry_time);
+					digitalIncreasing(&get_dryCtrlData()->dry_time);
 				}
+				
 				//功率限幅
-				if(get_dryData()->dry_power > get_dischargeCtrlData()->manual_power){
-					get_dryData()->dry_power = get_dischargeCtrlData()->manual_power;
+				if(get_dryCtrlData()->dry_power > get_dischargeCtrlData()->manual_power){
+					get_dryCtrlData()->dry_power = get_dischargeCtrlData()->manual_power;
+				}
+				
+				if(get_dryCtrlData()->spark_wait) digitalIncreasing(&get_dryCtrlData()->spark_wait_time);
+				if(get_dryCtrlData()->spark_wait_time >= SPARK_WAIT_TIME){	//等待0.2s
+					digitalLo(&get_dryCtrlData()->spark_wait);
+					digitalClan(&get_dryCtrlData()->spark_wait_time);
+				}
+			}
+		}
+		/*********************************************************************************/
+		//脉冲触发方式
+		if(get_dischargeCtrlData()->mode){
+			if(get_dischargeCtrlData()->pulseCtrl->discharge_sw){	//有脉冲触发才有自减，防止重复进入
+				
+				if(!get_dischargeCtrlData()->pulseCtrl->discharge_time){		//超过设定时间没有触发脉冲进入
+					digitalLo(&get_dischargeCtrlData()->pulseCtrl->discharge_sw);	//复位脉冲触发标志,停止放电
+				}
+				else{
+					digitalDecline(&get_dischargeCtrlData()->pulseCtrl->discharge_time);	//自减
+				}
+				
+				//脉冲触发情况下,每隔100ms 2kw增加输出功率
+				if(get_dischargeCtrlData()->inc_time >= INCLEASE_TIME){
+					digitalClan(&get_dischargeCtrlData()->inc_time);
+					get_dischargeCtrlData()->pulseCtrl->discharge_power += get_dischargeCtrlData()->pulseCtrl->inc_power;
+					
+					//如果处于手动模式，按照100ms 2kw的增速达到最大手动设置功率
+					if(get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE) == MANUAL_MODE){
+						if(!get_controlData()->line_control){
+							if(get_dischargeCtrlData()->pulseCtrl->discharge_power > get_dischargeCtrlData()->manual_power)
+								get_dischargeCtrlData()->pulseCtrl->discharge_power = get_dischargeCtrlData()->manual_power;
+						}
+						else{
+							get_dischargeCtrlData()->line_set_power = get_line_set_power(get_dischargeCtrlData()->line_power_mode);
+							if(get_dischargeCtrlData()->pulseCtrl->discharge_power >= get_dischargeCtrlData()->line_set_power)
+								get_dischargeCtrlData()->pulseCtrl->discharge_power = get_dischargeCtrlData()->line_set_power;
+						}
+					}
+					//其他模式按照100ms 2kw的增速达到最小设定功率
+					else{
+						if(get_dischargeCtrlData()->pulseCtrl->discharge_power > get_dischargeCtrlData()->low_power)
+							get_dischargeCtrlData()->pulseCtrl->discharge_power = get_dischargeCtrlData()->low_power;
+					}
+					
+				}
+				else{
+					digitalIncreasing(&get_dischargeCtrlData()->inc_time);	//时间更新
+				}
+			}
+		}
+		/*********************************************************************************/
+		//线速控制模式
+		else{
+			//手动模式下
+			if(get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE) == MANUAL_MODE){
+				if(get_dischargeCtrlData()->inc_time >= INCLEASE_TIME){
+					digitalClan(&get_dischargeCtrlData()->inc_time);
+					get_dischargeCtrlData()->spdCtrl->discharge_power += get_dischargeCtrlData()->spdCtrl->inc_power;	//2kw/100ms 增加
+				}
+				else{
+					digitalIncreasing(&get_dischargeCtrlData()->inc_time);	//时间更新
 				}
 			}
 			
-			if(get_dryData()->spark_wait) digitalIncreasing(&get_dryData()->spark_wait_time);
-			if(get_dryData()->spark_wait_time >= SPARK_WAIT_TIME){	//等待0.2s
-				digitalLo(&get_dryData()->spark_wait);
-				digitalClan(&get_dryData()->spark_wait_time);
-			}
+			//打开延时放电
+			if(get_dischargeCtrlData()->spdCtrl->delay_sw)
+				digitalIncreasing(&get_dischargeCtrlData()->spdCtrl->delay_time);	//延时时间
+			else
+				digitalClan(&get_dischargeCtrlData()->spdCtrl->delay_time);
 			
 		}
+		/*********************************************************************************/
+		//线控下的延迟放电
+		if(get_controlData()->line_control){
+			if(get_controlData()->line_suspend_delay_sw)
+				digitalIncreasing(&get_controlData()->line_suspend_time);	//延时时间
+			else
+				digitalClan(&get_controlData()->line_suspend_time);
+		}
+		
+		
+		
 	}
 	TIM_ClearITPendingBit(TIM5,TIM_IT_Update);//清除中断
 }

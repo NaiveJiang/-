@@ -17,6 +17,7 @@
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"
+#include "gui_dry.h"
 #include "gui_ctrlSet.h"
 #include "gui_powSet.h"
 
@@ -41,9 +42,9 @@ typedef enum{
 	SPD_MIN,			//速比最小
 	MANUAL_POWER,		//手动额定
 
-	SPD_UP_MAX,			//最大达速
-	SPD_UP_MIN,			//最小达速
+	SPD_UP,				//设定达速
 	ROLLER_DIAMETER,	//滚轴直径
+	ROLLER_WIDTH,		//滚轴宽度
 	ROLLER_PULSE,		//滚轴每周脉冲数
 	
 	NAME_OF_LIST,
