@@ -20,7 +20,6 @@ void app_sup_LE(void){
 		get_controlData()->error_sta |= (le_error + 1) << 3;
 	}
 }
-
 //状态机监控
 void app_supervisiorTask(void *Parameters){
 	TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -76,6 +75,8 @@ void app_supervisiorTask(void *Parameters){
 		
 		//报警停机
 		
+		//获取温度
+		get_controlData()->temp = get_ntc_temp(ntc_adc,(uint16_t)adc_filter_TEMP,BASE_TEMP) * 0.1f;		
 		
 		//写入flash
 		if(get_supervisiorData()->flash_sw){

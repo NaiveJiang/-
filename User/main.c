@@ -40,8 +40,6 @@
 */
 RCC_ClocksTypeDef get_rcc_clock;
 void app_Init(void){
-	app_ParameterInit();			//flash读取
-	app_ControlParameterLoad();		//加载flash内容
 	//任务初始化
 	app_inputTaskInit();     //2
 	app_supervisiorTaskInit();		//状态机
@@ -64,6 +62,9 @@ int main(void)
 	  和cpsie i是等效的。
      */
 	__set_PRIMASK(0);  //开启全局中断
+	
+	app_ParameterInit();			//flash读取
+	app_ControlParameterLoad();		//加载flash内容
 	
 	/* 硬件初始化 */
 	bsp_Init(); 

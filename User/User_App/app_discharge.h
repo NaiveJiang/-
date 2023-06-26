@@ -33,8 +33,8 @@ typedef struct{
 	float power_density;			//给定的功率密度
 	float roller_width;				//滚轴宽度
 	//速比模式
-	float speed_scale[2];
-	float power_scale[2];
+	float max_spd;					//最大线速
+	float spd_max_pow;				//速比模式下最大功率
 	float scale;					//比例功率控制系数
 	//未达速时的延迟放电控制
 	uint8_t delay_sw;

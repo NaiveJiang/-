@@ -20,6 +20,7 @@ typedef enum{
 
 
 typedef struct{
+	float temp;					//工作温度
 	float rated_power;			//额定功率
 	
 	uint8_t control_mode;		//控制模式
@@ -68,7 +69,7 @@ typedef struct{			//自由开关的脉冲控制
 
 void app_inputTaskInit(void);
 appControlStruct_t *get_controlData(void);
-void set_controlState(controlState_e setState);
+void set_controlState(controlState_e setState,uint8_t step);
 controlState_e get_controlState(void);
 
 

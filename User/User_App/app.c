@@ -63,10 +63,10 @@ void app_ControlParameterLoad(void){
 	get_controlData()->manual_power = (float)parameter[MANUAL_POWER] * 0.01f;
 	get_controlData()->set_speed_up = (float)parameter[SPD_UP] * 0.01f;
 	
-	//得到滚筒周长
-	get_dischargeCtrlData()->spdCtrl->roller_pulse_length = (float)parameter[ROLLER_DIAMETER] * 0.01f * PI / (float)parameter[ROLLER_PULSE];
+	//得到滚筒周长 bug
+//	get_controlData()->set_speed_up = (float)parameter[ROLLER_DIAMETER] * 0.01f /** PI / (float)parameter[ROLLER_PULSE]*/;
 	//得到滚筒宽度
-	get_dischargeCtrlData()->spdCtrl->roller_width = (float)parameter[ROLLER_WIDTH];
+//	get_dischargeCtrlData()->spdCtrl->roller_width = (float)parameter[ROLLER_WIDTH];
 }
 
 

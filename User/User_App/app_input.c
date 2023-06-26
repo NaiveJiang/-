@@ -5,8 +5,9 @@ appStruct_t appInput;
 appControlStruct_t controlData;
 app_pulseControlStruct_t djCtrlData;
 controlState_e controlState;
-void set_controlState(controlState_e setState){
+void set_controlState(controlState_e setState,uint8_t step){
 	controlState = setState;
+	get_controlData()->control_step = step;
 }
 controlState_e get_controlState(void){
 	return controlState;
@@ -89,8 +90,7 @@ void app_standby(void){
 				get_controlData()->control_step = 99;
 		}break;
 		case 99:{
-			set_controlState(__FAN_ON);		//进入风机启动模式
-			digitalClan(&get_controlData()->control_step);
+			set_controlState(__FAN_ON,0);		//进入风机启动模式
 		}break;
 	}
 }
@@ -128,15 +128,14 @@ void app_fanMode(void){
 				digitalIncreasing(&get_controlData()->control_step);
 		}break;
 		case 4:{		//风机启动时的待机状态(状态1)
-			//速度信号更新，仅在该状态可以改变
+			//速度信号更新，仅在该状态可以改变(补充)
 			
 			//如果关闭风机,返回到0状态
 			if(!get_mainData(get_maindata()->main_rev_data,FAN)){
 				pulse_outputHigh(&STOPCJ3,100);		//关闭风机
 				FYKL = 1; //屏蔽负压开关,互锁开关不屏蔽
 				pulse_outputHigh(&STOP_P,100);	//关闭直流功率电源
-				set_controlState(__STANDBY);	//回到状态0待机
-				digitalClan(&get_controlData()->control_step);
+				set_controlState(__STANDBY,0);	//回到状态0待机
 			}
 			//检测是否存在缺相/低压/外部交流输入过低，如果存在不允许启动电晕
 			if(!(get_controlData()->error_sta & QSALARM_ERROR) && !(get_controlData()->error_sta & DCVCHK_ERROR) && !(adc_filter_VDC_ADC < LOW_VDC)){
@@ -146,8 +145,7 @@ void app_fanMode(void){
 			}
 		}break;
 		case 99:{
-			set_controlState(__CORONA);	//进入电晕模式
-			digitalClan(&get_controlData()->control_step);
+			set_controlState(__CORONA,0);	//进入电晕模式
 		}break;
 		
 	}
@@ -213,8 +211,7 @@ void app_coronaMode(void){
 				//恢复线控信号
 				LKEN = 1;
 				//跳转状态
-				set_controlState(__FAN_ON);
-				get_controlData()->control_step = 4;
+				set_controlState(__FAN_ON,4);
 			}
 			//按下电晕或生产线控制
 			if(get_mainData(get_maindata()->main_rev_data,CORONA) || get_controlData()->line_control){
@@ -245,8 +242,7 @@ void app_coronaMode(void){
 			digitalLo(&get_controlData()->line_control);
 			digitalLo(&get_controlData()->line_suspend);
 			//进入停机状态
-			set_controlState(__STOP);
-			digitalClan(&get_controlData()->control_step);
+			set_controlState(__STOP,0);
 		}break;
 	}
 }
@@ -292,11 +288,15 @@ void app_stopMode(void){
 			}
 		}break;
 		case 3:{	//等待故障复位
-			//如果收到故障复位命令
+			//如果收到故障复位命令(屏上确认)（补充）
 			
 		}break;
 		case 99:{
-			
+			//根据CJ3回到相关状态
+			if(CJ3OK)	//风机还在运行，回到状态1
+				set_controlState(__FAN_ON,4);
+			else		//风机停机进入状态0
+				set_controlState(__STANDBY,0);
 		}break;
 	}
 }

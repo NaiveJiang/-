@@ -91,10 +91,8 @@ void app_discharge(void){
 					digitalClan(&get_dischargeCtrlData()->step); //回到线速比较达速
 					//如果为线控状态，需要等待生产线重启
 					//进入暂停状态
-					if(get_controlData()->line_suspend){
-						set_controlState(__CORONA);
-						get_controlData()->control_step = 6;
-					}
+					if(get_controlData()->line_suspend)
+						set_controlState(__CORONA,6);
 				}break;
 			}
 			
@@ -136,10 +134,8 @@ void pulse_dischargeUpdate(void){
 			
 			//如果为线控状态，需要等待生产线重启
 			//进入暂停状态
-			if(get_controlData()->line_suspend){
-				set_controlState(__CORONA);
-				get_controlData()->control_step = 6;
-			}
+			if(get_controlData()->line_suspend)
+				set_controlState(__CORONA,6);	
 		}
 		else{	//超出10kw则每隔0.1s降低50%
 			get_dischargeCtrlData()->pulseCtrl->discharge_power *= 0.5f;
@@ -196,12 +192,14 @@ void spd_dischargeUpdate(void){
 			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
 			get_dischargeCtrlData()->spdCtrl->speed = get_speed(get_dischargeCtrlData()->spdCtrl->speed_signal);
 			//计算比例系数
-			get_dischargeCtrlData()->spdCtrl->scale = (get_dischargeCtrlData()->spdCtrl->power_scale[1] - get_dischargeCtrlData()->spdCtrl->power_scale[0]) / (get_dischargeCtrlData()->spdCtrl->speed_scale[1] - get_dischargeCtrlData()->spdCtrl->speed_scale[0]);
+			get_dischargeCtrlData()->spdCtrl->scale = get_dischargeCtrlData()->spdCtrl->spd_max_pow / get_dischargeCtrlData()->spdCtrl->max_spd;
 			//根据比例系数计算出当前的输出功率
 			get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->spdCtrl->scale * get_dischargeCtrlData()->spdCtrl->speed;
 			//如果当前速度下算出的功率小于最小输出功率，则按照最小输出功率输出
 			if(get_dischargeCtrlData()->spdCtrl->discharge_power < get_dischargeCtrlData()->low_power)
 				get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->low_power;
+			if(get_dischargeCtrlData()->spdCtrl->discharge_power > get_dischargeCtrlData()->spdCtrl->spd_max_pow)
+				get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->spdCtrl->spd_max_pow;
 			//输出功率转为dac输出
 			get_dischargeCtrlData()->spdCtrl->discharge_power *= SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
 		}break;
@@ -233,12 +231,14 @@ void spd_discharge_delay(void){
 			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
 			get_dischargeCtrlData()->spdCtrl->speed = get_speed(get_dischargeCtrlData()->spdCtrl->speed_signal);
 			//计算比例系数
-			get_dischargeCtrlData()->spdCtrl->scale = (get_dischargeCtrlData()->spdCtrl->power_scale[1] - get_dischargeCtrlData()->spdCtrl->power_scale[0]) / (get_dischargeCtrlData()->spdCtrl->speed_scale[1] - get_dischargeCtrlData()->spdCtrl->speed_scale[0]);
+			get_dischargeCtrlData()->spdCtrl->scale = get_dischargeCtrlData()->spdCtrl->spd_max_pow / get_dischargeCtrlData()->spdCtrl->max_spd;			
 			//根据比例系数计算出当前的输出功率
 			get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->spdCtrl->scale * get_dischargeCtrlData()->spdCtrl->speed;
 			//如果当前速度下算出的功率小于最小输出功率，则按照最小输出功率输出
 			if(get_dischargeCtrlData()->spdCtrl->discharge_power < get_dischargeCtrlData()->low_power)
 				get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->low_power;
+			if(get_dischargeCtrlData()->spdCtrl->discharge_power > get_dischargeCtrlData()->spdCtrl->spd_max_pow)
+				get_dischargeCtrlData()->spdCtrl->discharge_power = get_dischargeCtrlData()->spdCtrl->spd_max_pow;
 			//输出功率转为dac输出
 			get_dischargeCtrlData()->spdCtrl->discharge_power *= SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
 		}break;

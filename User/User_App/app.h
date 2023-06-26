@@ -14,6 +14,7 @@
 #include "app_supervisor.h"
 #include "app_dry.h"
 #include "app_discharge.h"
+#include "app_ntc.h"
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"

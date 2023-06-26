@@ -38,10 +38,7 @@ uint32_t bkp_hot_activite(void){
 	
 	if(BKP_ReadBackupRegister(ACTIVITE_BKPREG)){
 		//启动状态为热启动状态,读取热启动的工作状态,方便重入现场
-		set_controlState((controlState_e)BKP_ReadBackupRegister(CONTROL_STATE_BKPREG));
-		get_controlData()->control_step = (uint8_t)BKP_ReadBackupRegister(CONTROL_STEP_BKPREG);
-		//热启动获取热启动前的控制参数
-		
+		set_controlState((controlState_e)BKP_ReadBackupRegister(CONTROL_STATE_BKPREG),(uint8_t)BKP_ReadBackupRegister(CONTROL_STEP_BKPREG));
 		error = IN_HOT_ACTIVE;
 	}
 	return error;
