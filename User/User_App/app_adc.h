@@ -5,7 +5,7 @@
 
 typedef enum{
 	ADC_TASK_PRIORITY = 5,
-	ADC_TASK_STACK_SIZE = 256,
+	ADC_TASK_STACK_SIZE = 512,
 }appAdc_e;
 
 void app_adcTaskInit(void);

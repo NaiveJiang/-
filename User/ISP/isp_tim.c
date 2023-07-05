@@ -1,7 +1,7 @@
 #include "app.h"
 
 void TIM2_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
+	
 	if(TIM_GetITStatus(TIM2,TIM_IT_Update) != RESET){
 		if(get_controlData()->wait_sw){
 			digitalIncreasing(&get_controlData()->wait_time);
@@ -21,10 +21,11 @@ void TIM2_IRQHandler(void){
 		}
 		
 	}
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
 }
 
 void TIM4_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM4,TIM_IT_Update|TIM_IT_CC1|TIM_IT_CC2);//清除中断
+	
 	//CNT溢出中断
 	if(TIM_GetITStatus(TIM4,TIM_IT_Update) != RESET){
 		//如果在采集到脉冲时溢出，做溢出处理
@@ -73,6 +74,7 @@ void TIM4_IRQHandler(void){
 			digitalHi(&LSPSI_CALC.pulse_get);
 		}
 	}
+	TIM_ClearITPendingBit(TIM4,TIM_IT_Update|TIM_IT_CC1|TIM_IT_CC2);//清除中断
 }
 
 void TIM5_IRQHandler(void){
@@ -179,7 +181,7 @@ void TIM5_IRQHandler(void){
 }
 
 void TIM6_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
+	
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update) != RESET){
 		if((adc1_settlement >= SAMP_FULL_COUNT) && (!adc1_settlement_sw)){   //50ms结算
 			digitalHi(&adc1_settlement_sw);  //允许ADC结算
@@ -195,10 +197,11 @@ void TIM6_IRQHandler(void){
 			digitalIncreasing(&adc1_settlement);
 		}
 	}
+	TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 }
 
 void TIM7_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
+	
 	if(TIM_GetITStatus(TIM7,TIM_IT_Update) != RESET){
 		if((adc3_settlement >= SAMP_FULL_COUNT) && (!adc3_settlement_sw)){   //50ms结算
 			digitalHi(&adc3_settlement_sw);  //允许ADC结算
@@ -214,12 +217,13 @@ void TIM7_IRQHandler(void){
 			digitalIncreasing(&adc3_settlement);
 		}
 	}
+	TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
 }
 
 #if !USE_TIM_ETR1 
 //输入捕获中断
 void TIM8_CC_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM8,TIM_IT_CC1);//清除中断
+	
 	if(TIM_GetITStatus(TIM8,TIM_IT_CC1) != RESET){
 		if(F_COUN_CALC.pulse_get){
 			F_COUN_CALC.get_cnt2 = TIM8->CCR1; //得到第二个上升沿的CNT值
@@ -242,14 +246,16 @@ void TIM8_CC_IRQHandler(void){
 			digitalHi(&F_COUN_CALC.pulse_get);
 		}
 	}
+	TIM_ClearITPendingBit(TIM8,TIM_IT_CC1);//清除中断
 }
 
 void TIM8_UP_IRQHandler(void){
-	TIM_ClearITPendingBit(TIM8,TIM_IT_Update);//清除中断
+	
 	if(TIM_GetITStatus(TIM8,TIM_IT_Update) != RESET){
 		//如果在采集到脉冲时溢出，做溢出处理
 		if(F_COUN_CALC.pulse_get) digitalIncreasing(&F_COUN_CALC.pulse_get);
 	}
+	TIM_ClearITPendingBit(TIM8,TIM_IT_Update);//清除中断
 }
 #endif
 

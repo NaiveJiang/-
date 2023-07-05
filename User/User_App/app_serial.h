@@ -4,7 +4,7 @@
 #define SERIAL_TASK_PEROID 2
 
 typedef enum{
-	SERIAL_PRIORITY = 5,
+	SERIAL_PRIORITY = 3,
 	SERIAL_STACK_SIZE = 256,
 }appSerial_e;
 

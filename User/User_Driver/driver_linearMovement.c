@@ -119,12 +119,12 @@ void drive_ADC1_Configuration(void){
 	ADC_Init(ADC1, &ADC_InitStructure);
 
 	/* 配置ADC1 规则通道 */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_239Cycles5);		//变压器原边电流					300
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_239Cycles5);		//变压器原边电流					200
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 2, ADC_SampleTime_239Cycles5);		//变压器原边电压					800
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 3, ADC_SampleTime_239Cycles5);		//输出功率AD3.3V检测				45K
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 4, ADC_SampleTime_239Cycles5);		//高压放电电流检测				10A				
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 5, ADC_SampleTime_239Cycles5);	//生产线控制输出功率电压给定			40K
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 6, ADC_SampleTime_239Cycles5);	//散热器温度检测输入					85
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 6, ADC_SampleTime_239Cycles5);	//散热器温度检测输入					100
 	
 
 	/* 使能ADC1 DMA功能 */
@@ -200,8 +200,8 @@ void drive_ADC3_Configuration(void){
 	ADC_Init(ADC3, &ADC_InitStructure);
 
 	/* 配置ADC3 规则通道 */
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);		//IDC电流检测				120
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);		//VDC电压检测				590
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);		//IDC电流检测				180
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);		//VDC电压检测				600
 	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 3, ADC_SampleTime_239Cycles5);	//高压放电电压					12500
 	ADC_RegularChannelConfig(ADC3, ADC_Channel_11, 4, ADC_SampleTime_239Cycles5);	//生产线控输出功率速度电流给定		100,4~20
 	ADC_RegularChannelConfig(ADC3, ADC_Channel_12, 5, ADC_SampleTime_239Cycles5);	//生产线控输出功率速度电压给定		0.66~3.3
@@ -302,12 +302,12 @@ void getadc1_average(void){  //采集得到平均值
 		sum=0;
 	}
 	//赋值
-	adc_TBI_DC3V3 = real[0] * 0.073260073260f;
+	adc_TBI_DC3V3 = real[0] * 0.048840048840f;
 	adc_TBV_DC3V3 = real[1] * 0.195360195360f;
 	adc_POV3V3 = real[2] * 10.989010989011f;
 	adc_HI_DC3V3 = real[3] * 0.002442002442f;
 	adc_LPV3V3 = real[4] * 0.000244200244f;		//得到百分比  0~10v	即0v~3.3v
-	adc_TEMP = real[5] * 0.000805860806f;
+	adc_TEMP = real[5];
 }
 
 void getadc3_average(void){  //采集得到平均值
@@ -323,7 +323,7 @@ void getadc3_average(void){  //采集得到平均值
 		sum=0;
 	}
 	//赋值
-	adc_IDC_ADC = real[0] * 0.029304029304f;
+	adc_IDC_ADC = real[0] * 0.043956043956f;
 	adc_VDC_ADC = real[1] * 0.146520146520f;	//600V
 	adc_HV_DC3V3 = real[2] * 3.052503052503f;
 	adc_LSPI3V3 = (real[3] - 819.0f) * 0.000305250305f;		//得到百分比	 4~20mA 即0.66v~3.3v
