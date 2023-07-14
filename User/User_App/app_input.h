@@ -14,6 +14,8 @@ typedef enum{
 	__STANDBY  = 0x0000,	//待机状态
 	__FAN_ON,				//风机启动状态
 	__CORONA,				//放电状态
+	__DRY,					//湿启动状态
+	__ROLL_CHANGING,		//换卷状态
 	__STOP,					//停机状态
 	
 }controlState_e;
@@ -44,6 +46,7 @@ typedef struct{
 	uint32_t error_sta;			//错误报警
 	
 	uint8_t control_step;		//控制过程变量
+	uint8_t last_control_step;
 	uint8_t wait_sw;
 	uint16_t wait_time;
 	
@@ -71,6 +74,7 @@ void app_inputTaskInit(void);
 appControlStruct_t *get_controlData(void);
 void set_controlState(controlState_e setState,uint8_t step);
 controlState_e get_controlState(void);
-
+controlState_e get_last_controlState(void);
+extern controlState_e last_controlState;
 
 #endif

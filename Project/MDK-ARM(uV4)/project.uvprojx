@@ -504,6 +504,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_App\app_ntc.c</FilePath>
             </File>
+            <File>
+              <FileName>app_roll_changing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_App\app_roll_changing.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -564,6 +569,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\User_Driver\driver_swport.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_roll_changing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\User_Driver\driver_roll_changing.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -588,6 +598,11 @@
               <FileName>isp_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\ISP\isp_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ISP\isp_exti.c</FilePath>
             </File>
           </Files>
         </Group>

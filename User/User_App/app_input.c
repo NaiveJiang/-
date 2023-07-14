@@ -5,12 +5,16 @@ appStruct_t appInput;
 appControlStruct_t controlData;
 app_pulseControlStruct_t djCtrlData;
 controlState_e controlState;
+controlState_e last_controlState;
 void set_controlState(controlState_e setState,uint8_t step){
 	controlState = setState;
 	get_controlData()->control_step = step;
 }
 controlState_e get_controlState(void){
 	return controlState;
+}
+controlState_e get_last_controlState(void){
+	return last_controlState;
 }
 appControlStruct_t *get_controlData(void){
 	return &controlData;
@@ -22,7 +26,7 @@ app_pulseControlStruct_t *get_djCtrlData(void){
 void app_standby(void);
 void app_fanMode(void);
 void app_coronaMode(void);
-
+void app_stopMode(void);
 void app_inputUpdata(void){
 	driverKeyNowStateUpdate();
 //	dac_ch1_voltageOut(set_vdc);
@@ -58,8 +62,16 @@ void app_inputTask(void *Parameters){
 				app_coronaMode();
 			}break;
 			
-			case __STOP:{
+			case __DRY:{
 				
+			}break;
+			
+			case __ROLL_CHANGING:{
+				app_roll_changing();
+			}break;
+			
+			case __STOP:{
+				app_stopMode();
 			}break;
 		}
 		
@@ -87,7 +99,7 @@ void app_standby(void){
 		case 1:{
 			//等待按下风机启动或电晕启动/湿启动(湿启动为独立页面) 或者线控信号接入
 			if(get_mainData(get_maindata()->main_rev_data,CORONA) || get_mainData(get_maindata()->main_rev_data,FAN) || get_dryData(get_drydata()->dry_rev_data,DRY_ON) || get_controlData()->line_control)
-				get_controlData()->control_step = 99;
+				set_controlState(__STANDBY,99);
 		}break;
 		case 99:{
 			set_controlState(__FAN_ON,0);		//进入风机启动模式
@@ -123,29 +135,42 @@ void app_fanMode(void){
 				PBLE3 = 0; 	//解除互锁开关屏蔽
 				FYKL = 0;	//解除负压开关屏蔽
 			}
+			//如果关闭风机,返回到0状态
+			if(!get_mainData(get_maindata()->main_rev_data,FAN) && !get_controlData()->line_control){
+				digitalLo(&get_controlData()->wait_sw);
+				FYKL = 1; //屏蔽负压开关,互锁开关不屏蔽
+				pulse_outputHigh(&STOPCJ3,100);		//关闭风机
+				pulse_outputHigh(&STOP_P,100);	//关闭直流功率电源
+				set_controlState(__STANDBY,0);	//回到状态0待机
+			}
 			//负压开关屏蔽解除后，产生负压，没有无负压报警则进入风机启动待机状态
-			if(!FYKL && !(get_controlData()->error_sta & NEGATIVE_PRESSURE))
+			if(!FYKL && !(get_controlData()->error_sta & NEGATIVE_PRESSURE)){
 				digitalIncreasing(&get_controlData()->control_step);
+			}
 		}break;
-		case 4:{		//风机启动时的待机状态(状态1)
+		case 4:{		
+			//风机启动时的待机状态(状态1)
 			//速度信号更新，仅在该状态可以改变(补充)
 			
 			//如果关闭风机,返回到0状态
-			if(!get_mainData(get_maindata()->main_rev_data,FAN)){
-				pulse_outputHigh(&STOPCJ3,100);		//关闭风机
+			if(!get_mainData(get_maindata()->main_rev_data,FAN) && !get_controlData()->line_control){
 				FYKL = 1; //屏蔽负压开关,互锁开关不屏蔽
+				pulse_outputHigh(&STOPCJ3,100);		//关闭风机
 				pulse_outputHigh(&STOP_P,100);	//关闭直流功率电源
 				set_controlState(__STANDBY,0);	//回到状态0待机
 			}
 			//检测是否存在缺相/低压/外部交流输入过低，如果存在不允许启动电晕
-			if(!(get_controlData()->error_sta & QSALARM_ERROR) && !(get_controlData()->error_sta & DCVCHK_ERROR) && !(adc_filter_VDC_ADC < LOW_VDC)){
+			if(!(get_controlData()->error_sta & QSALARM_ERROR) && !(get_controlData()->error_sta & DCVCHK_ERROR)){
 				//如果按下了电晕启动键或者湿启动，且CJ3确定已经闭合，启动电晕
 				if((get_mainData(get_maindata()->main_rev_data,CORONA) || get_dryData(get_drydata()->dry_rev_data,DRY_ON) || get_controlData()->line_control) && CJ3OK)	
-					get_controlData()->control_step = 99;
+					set_controlState(__FAN_ON,99);
 			}
 		}break;
 		case 99:{
-			set_controlState(__CORONA,0);	//进入电晕模式
+			if(get_dryData(get_drydata()->dry_rev_data,DRY_ON))
+				set_controlState(__DRY,0);		//进入湿启动模式
+			else
+				set_controlState(__CORONA,0);	//进入电晕模式
 		}break;
 		
 	}
@@ -154,7 +179,10 @@ void app_fanMode(void){
 void app_coronaMode(void){
 	switch(get_controlData()->control_step){
 		case 0:{	//准备阶段
-			if(adc_filter_VDC_ADC >= LOW_VDC){	//等待VDC检测到达470V,继电器闭合
+			//启动功率电源
+			STOPCS = 0;		//放开STOPCS
+			pulse_outputHigh(&STARTS,100);
+			if(adc_filter_VDC_ADC >= 420){	//等待VDC检测到达420V,继电器CJ2闭合
 				//闭合继电器CJ2
 				pulse_outputHigh(&UPEDCJ2,50);
 				digitalHi(&get_controlData()->wait_sw);
@@ -171,16 +199,14 @@ void app_coronaMode(void){
 		case 2:{
 			error_set(&CJ12OK,CJ12_ERROR,0);	//若CJ2无法闭合，则产生停机报警	
 			if(CJ12OK){		//继电器闭合
-				digitalIncreasing(&get_controlData()->control_step);
+				if(adc_filter_VDC_ADC >= LOW_VDC) //等待VDC检测到达470V才能放电
+					digitalIncreasing(&get_controlData()->control_step);
 			}
 			else{	//50ms后未能闭合CJ2，发出停机报警
-				get_controlData()->control_step = 99;
+				set_controlState(__CORONA,99);
 			}
 		}break;
 		case 3:{
-			//启动功率电源
-			STOPCS = 0;		//放开STOPCS
-			pulse_outputHigh(&STARTS,100);
 			//使能3875输出
 //			vTaskDelay(100);
 			//DAC给定为0
@@ -188,53 +214,23 @@ void app_coronaMode(void){
 			dac_ch2_voltageOut(0.0f);
 			digitalIncreasing(&get_controlData()->control_step);
 		}break;
-		case 4:{	
-			if(get_dryData(get_drydata()->dry_rev_data,DRY_ON)){	//如果使能湿启动
-				digitalHi(&get_controlData()->dry_mode);
-				//屏蔽线控信号
-				LKEN = 0;
-				STANDBY = 0;	//允许3875输出
-				//湿启动放电
-				app_dryMode();
-			}
-			//如果湿启动时按下停机键，需要停机进入风机启动待机状态(状态1)
-			if(!get_dryData(get_drydata()->dry_rev_data,DRY_ON) && get_controlData()->dry_mode){
-				digitalLo(&get_controlData()->dry_mode);
-				//清空DAC给定
-				dac_ch1_voltageOut(0.0f);
-				dac_ch2_voltageOut(0.0f);
-				//禁止3875移相输出
-				STANDBY = 1;
-				//关闭功率电源
-				pulse_outputHigh(&STOP_P,100);
-				digitalClan(&get_dryCtrlData()->dry_power);
-				//恢复线控信号
-				LKEN = 1;
-				//跳转状态
-				set_controlState(__FAN_ON,4);
-			}
-			//按下电晕或生产线控制
-			if(get_mainData(get_maindata()->main_rev_data,CORONA) || get_controlData()->line_control){
-				digitalIncreasing(&get_controlData()->control_step);
-			}
-		}break;
-		case 5:{
+		case 4:{
 			//功率放电模式
 			app_discharge();
-			//非线控模式下如果按下停机键，进入停机,按下停止键后会回到风机启动状态（状态1）
-			if(get_mainData(get_maindata()->main_rev_data,STOP_CORONA) && !get_controlData()->line_control){
-				get_controlData()->control_step = 99;
+			//非线控模式下如果按下停机键或者关闭电晕，进入停机,按下停止键后会回到待机状态(状态0)，关闭电晕会回到风机启动状态（状态1）
+			if((get_mainData(get_maindata()->main_rev_data,STOP_CORONA) || !get_mainData(get_maindata()->main_rev_data,CORONA)) && !get_controlData()->line_control){
+				set_controlState(__CORONA,99);
 			}
 		}break;
-		case 6:{	//生产线暂停状态
+		case 5:{	//生产线暂停状态
 			//等待生产线重启
 			if(!get_controlData()->line_suspend && get_controlData()->line_control){
 				//返回放电状态
-				get_controlData()->control_step = 5;
+				set_controlState(__CORONA,4);
 			}
 			
 			if(get_mainData(get_maindata()->main_rev_data,STOP_CORONA)){
-				get_controlData()->control_step = 99;
+				set_controlState(__CORONA,99);
 			}
 		}break;
 		case 99:{
@@ -247,6 +243,89 @@ void app_coronaMode(void){
 	}
 }
 
+void app_dryMode(void){
+	switch(get_controlData()->control_step){
+		case 0:{	//准备阶段
+			//屏蔽线控信号
+			LKEN = 0;
+			//启动功率电源
+			STOPCS = 0;		//放开STOPCS
+			pulse_outputHigh(&STARTS,100);
+			if(adc_filter_VDC_ADC >= 420){	//等待VDC检测到达420V,继电器CJ2闭合
+				//闭合继电器CJ2
+				pulse_outputHigh(&UPEDCJ2,50);
+				digitalHi(&get_controlData()->wait_sw);
+				digitalIncreasing(&get_controlData()->control_step);
+			}
+		}break;
+		case 1:{
+			//等待50ms，如果这期间CJ2无法闭合，则产生停机报警
+			if(get_controlData()->wait_time >= 5){
+				digitalLo(&get_controlData()->wait_sw);
+				digitalIncreasing(&get_controlData()->control_step);
+			}
+		}break;
+		case 2:{
+			error_set(&CJ12OK,CJ12_ERROR,0);	//若CJ2无法闭合，则产生停机报警	
+			if(CJ12OK){		//继电器闭合
+				if(adc_filter_VDC_ADC >= LOW_VDC) //等待VDC检测到达470V才能放电
+					digitalIncreasing(&get_controlData()->control_step);
+			}
+			else{	//50ms后未能闭合CJ2，发出停机报警
+				set_controlState(__DRY,0);
+			}
+		}break;
+		case 3:{
+			//DAC给定为0
+			dac_ch1_voltageOut(0.0f);
+			dac_ch2_voltageOut(0.0f);
+			STANDBY = 0;	//允许3875输出
+			digitalHi(&get_controlData()->dry_mode);	//使能湿启动
+			digitalIncreasing(&get_controlData()->control_step);
+		}break;
+		case 4:{
+			if(!get_dryData(get_drydata()->dry_rev_data,DRY_ON)){	//如果关闭了湿启动
+				digitalLo(&get_controlData()->dry_mode); //清除湿启动标志
+				digitalIncreasing(&get_controlData()->control_step);
+			}
+			else{
+				//湿启动输出
+				app_dryCtrl();
+			}
+		}break;
+		case 5:{
+			if(get_dischargeCtrlData()->current_power <= 10.0f){
+				digitalIncreasing(&get_controlData()->control_step);
+			}
+			else{
+				get_dryCtrlData()->dry_power *= 0.5;
+				dac_ch1_voltageOut(get_dryCtrlData()->dry_power);
+				dac_ch2_voltageOut(get_dryCtrlData()->dry_power);
+				vTaskDelay(100);
+			}
+		}break;
+		case 6:{
+			digitalClan(&get_dryCtrlData()->dry_power);
+			//清空DAC给定
+			dac_ch1_voltageOut(0.0f);
+			dac_ch2_voltageOut(0.0f);
+			//禁止3875移相输出
+			STANDBY = 1;
+			//关闭功率电源
+			pulse_outputHigh(&STOP_P,100);
+			//恢复线控信号
+			LKEN = 1;
+			
+			set_controlState(__DRY,99);
+		}break;
+		case 99:{
+			set_controlState(__FAN_ON,4);
+		}break;
+	}
+}
+
+
+
 void app_stopMode(void){
 	switch(get_controlData()->control_step){
 		case 0:{
@@ -254,18 +333,28 @@ void app_stopMode(void){
 				digitalIncreasing(&get_controlData()->control_step);
 			}
 			else{
-				//超出10kw则每隔0.1s降低50%
-				get_dischargeCtrlData()->pulseCtrl->discharge_power *= 0.5f;
-				dac_ch1_voltageOut(get_dischargeCtrlData()->pulseCtrl->discharge_power);
-				dac_ch2_voltageOut(get_dischargeCtrlData()->pulseCtrl->discharge_power);
+				if(get_dischargeCtrlData()->mode){
+					//超出10kw则每隔0.1s降低50%
+					get_pulseDischargeData()->discharge_power *= 0.5f;
+					dac_ch1_voltageOut(get_pulseDischargeData()->discharge_power);
+					dac_ch2_voltageOut(get_pulseDischargeData()->discharge_power);
+				}
+				else{
+					//超出10kw则每隔0.1s降低50%
+					get_spdDischargeData()->discharge_power *= 0.5f;
+					dac_ch1_voltageOut(get_spdDischargeData()->discharge_power);
+					dac_ch2_voltageOut(get_spdDischargeData()->discharge_power);
+				}
 				vTaskDelay(100);	//延时0.1s
 			}
 		}break;
 		case 1:{
 			//停止放电
-			digitalClan(&get_dischargeCtrlData()->pulseCtrl->discharge_power);
-			dac_ch1_voltageOut(get_dischargeCtrlData()->pulseCtrl->discharge_power);
-			dac_ch2_voltageOut(get_dischargeCtrlData()->pulseCtrl->discharge_power);
+			digitalClan(&get_pulseDischargeData()->discharge_power);
+			digitalClan(&get_spdDischargeData()->discharge_power);
+			digitalClan(&get_dischargeCtrlData()->step);
+			dac_ch1_voltageOut(0.0f);
+			dac_ch2_voltageOut(0.0f);
 			
 			//关闭3875移相输出
 			STANDBY = 1;
@@ -276,7 +365,7 @@ void app_stopMode(void){
 			digitalIncreasing(&get_controlData()->control_step);
 		}break;
 		case 2:{
-			vTaskDelay(1000);
+			vTaskDelay(1000);  //延时1s检测CJ1/CJ2是否断开
 			//检查CJ1/CJ2
 			if(!CJ12OK) get_controlData()->control_step = 99;
 			else{

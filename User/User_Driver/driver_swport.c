@@ -41,14 +41,12 @@ void driver_port_Init(void){
 	BSP_GPIO_Init(PUPOK_PORT,GPIO_Mode_IPD);	//初上电检测，达到80%启动CJ2
 	BSP_GPIO_Init(CJ12OK_PORT,GPIO_Mode_IPD);	//CJ1~CJ2上电完成
 	BSP_GPIO_Init(LRUN_PORT,GPIO_Mode_IPD);		//生产线运行标志
-	BSP_GPIO_Init(DHAL_PORT,GPIO_Mode_IPD);		//高压打火报警
 	BSP_GPIO_Init(HIAL_PORT,GPIO_Mode_IPD);		//高压放电过流
 	BSP_GPIO_Init(IGBTBAL_PORT,GPIO_Mode_IPD);	//IGBTB过流
 	BSP_GPIO_Init(IGBTAAL_PORT,GPIO_Mode_IPD);	//IGBTA过流
 	BSP_GPIO_Init(TIAL_PORT,GPIO_Mode_IPD);		//原边电流过流
 	BSP_GPIO_Init(IDCAL_PORT,GPIO_Mode_IPD);	//IDC过流报警
 	BSP_GPIO_Init(QSALARM_PORT,GPIO_Mode_IPD);	//缺相报警
-	BSP_GPIO_Init(HJSH_PORT,GPIO_Mode_IPD);		//换卷信号
 	BSP_GPIO_Init(JTJC_PORT,GPIO_Mode_IPD);		//急停报警
 	BSP_GPIO_Init(IN_ALARM_PORT,GPIO_Mode_IPD);	//系统报警
 	BSP_GPIO_Init(PVDD_PORT,GPIO_Mode_IPD);		//掉电报警
@@ -81,14 +79,12 @@ void driver_port_Init(void){
 	BSP_GPIO_LockConfig(CJ3OK_PORT);
 	BSP_GPIO_LockConfig(CJ12OK_PORT);
 	BSP_GPIO_LockConfig(LRUN_PORT);
-	BSP_GPIO_LockConfig(DHAL_PORT);
 	BSP_GPIO_LockConfig(HIAL_PORT);
 	BSP_GPIO_LockConfig(IGBTBAL_PORT);
 	BSP_GPIO_LockConfig(IGBTAAL_PORT);
 	BSP_GPIO_LockConfig(TIAL_PORT);
 	BSP_GPIO_LockConfig(IDCAL_PORT);
 	BSP_GPIO_LockConfig(QSALARM_PORT);
-	BSP_GPIO_LockConfig(HJSH_PORT);
 	BSP_GPIO_LockConfig(JTJC_PORT);
 	BSP_GPIO_LockConfig(IN_ALARM_PORT);
 	BSP_GPIO_LockConfig(PVDD_PORT);
@@ -103,7 +99,8 @@ void driver_port_detection(void){
 	STANDBY = 1;	//禁止3875所有输出
 	STOPCS = 1;
 	
-	PBLE3 = 1;	//屏蔽报警LE3	
+	PBLE3 = 1;	//屏蔽报警LE3
+	FYKL = 1;
 	
 //	STOP_P = 1;			//关闭功率电源 0.1s
 	RESET_SYS = 1;		//硬件系统复位 0.1s

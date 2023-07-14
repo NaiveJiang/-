@@ -6,8 +6,7 @@
 typedef enum{
 	CORONA = 0x01,
 	FAN = 0x02,
-	DRY = 0x03,
-	STOP_CORONA = 0x04,
+	STOP_CORONA = 0x04,	//由于风机和电晕同时打开时为0x03所以停机设为0x04
 }mainData_e;
 
 typedef struct{

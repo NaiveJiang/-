@@ -42,7 +42,7 @@ void bsp_Init(void)
 	//初始化后备寄存区时钟
 	bsp_BKP_PWRInit();
 	//检测热启动
-	get_controlData()->error_sta |= bkp_hot_activite();
+//	get_controlData()->error_sta |= bkp_hot_activite();
 	//初始化RTC
 	bsp_RTC_Init();
 	//初始化PVD低压检测

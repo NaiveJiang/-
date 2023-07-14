@@ -16,7 +16,7 @@ __IO uint8_t adc1_settlement = 0;
 //ADC1单次采样数据
 __IO float adc_TBI_DC3V3;//变压器原边电流
 __IO float adc_TBV_DC3V3;//变压器原边电压
-__IO float adc_POV3V3;//输出功率AD3.3V
+__IO float adc_POV3V3;//输出功率AD3V
 __IO float adc_HI_DC3V3;//高压放电电流
 __IO float adc_LPV3V3;//生产线控制输出功率电压给定
 __IO float adc_TEMP;//散热器温度检测输入
@@ -303,8 +303,8 @@ void getadc1_average(void){  //采集得到平均值
 	}
 	//赋值
 	adc_TBI_DC3V3 = real[0] * 0.048840048840f;
-	adc_TBV_DC3V3 = real[1] * 0.195360195360f;
-	adc_POV3V3 = real[2] * 10.989010989011f;
+	adc_TBV_DC3V3 = real[1] * 0.244200244200f;
+	adc_POV3V3 = real[2] /* 0.010744810744810f*/;
 	adc_HI_DC3V3 = real[3] * 0.002442002442f;
 	adc_LPV3V3 = real[4] * 0.000244200244f;		//得到百分比  0~10v	即0v~3.3v
 	adc_TEMP = real[5];

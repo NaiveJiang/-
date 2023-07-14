@@ -15,6 +15,7 @@
 #include "app_dry.h"
 #include "app_discharge.h"
 #include "app_ntc.h"
+#include "app_roll_changing.h"
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"
@@ -42,11 +43,22 @@ typedef enum{
 	SPD_MAX,			//速比最大
 	SPD_MIN,			//速比最小
 	MANUAL_POWER,		//手动额定
+	MAX_SPEED,			//速比模式最大速度
+	LOW_POWER,			//最小设定功率
 
 	SPD_UP,				//设定达速
-	ROLLER_DIAMETER,	//滚轴直径
+	ROLLER_DIAMETER_LOCAL,	//本地滚轴直径
+	ROLLER_DIAMETER_EXTERNAL,//外部滚轴直径
 	ROLLER_WIDTH,		//滚轴宽度
-	ROLLER_PULSE,		//滚轴每周脉冲数
+	ROLLER_PULSE_LOCAL,	//本地滚轴每周脉冲数
+	ROLLER_PULSE_EXTERNAL,	//本地滚轴每周脉冲数
+	
+	SET_SPD_DELAY,		//设定线速状态下的延时停止放电时间
+	SET_PULSE_DELAY,	//设定脉冲触发状态下的延时停止放电时间
+	SET_REMAIN,			//设定脉冲采样时的等待清零时间
+	SET_LINE_DELAY,		//设定线控状态下的延时停止放电时间
+	SET_DELAY_LENGTH1,	//设定换卷延迟放电长度1
+	SET_DELAY_LENGTH2,	//设定换卷延迟放电长度2
 	
 	NAME_OF_LIST,
 }nameOfParameter_e;

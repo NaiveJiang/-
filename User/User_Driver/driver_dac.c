@@ -37,10 +37,12 @@ void driver_DAC2_Configuration(void){
 	
 }
 
+uint16_t get_vol;
 //DAC1Êä³ö
 void dac_ch1_voltageOut(float setVoltage){
 	uint16_t voltageOut;
 	voltageOut = (uint16_t)(setVoltage/(3.3f)*4095);
+	get_vol = voltageOut;
 	DAC_SetChannel1Data(DAC_Align_12b_R,voltageOut);
 }
 

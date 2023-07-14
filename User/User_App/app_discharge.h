@@ -6,6 +6,7 @@
 #define INCREASE_DISCHARGE_MAX100MS 2	//2Kw增速 100ms
 #define INCLEASE_TIME 10	//10*10=100ms
 
+
 //脉冲放电
 typedef struct{
 	uint8_t discharge_sw;
@@ -19,7 +20,8 @@ typedef struct{
 
 //达速放电
 typedef struct{
-	float roller_pulse_length;		//滚筒脉冲线长
+	float roller_pulse_length;		//本地滚筒脉冲线长
+	float external_pulase_length;	//外部滚筒脉冲线长
 	float speed;
 	float local_speed;				//本地滚筒速度
 	float external_speed;			//外部生产线速度
@@ -35,7 +37,14 @@ typedef struct{
 	//速比模式
 	float max_spd;					//最大线速
 	float spd_max_pow;				//速比模式下最大功率
+	float spd_min_pow;				//速比模式下最小功率
 	float scale;					//比例功率控制系数
+	//脉冲信号处理
+	uint8_t remain_local_sw;		//停止本地脉冲信号输入时需要清零变量开关
+	uint32_t remain_local_time;		//超过等待时间清空速度
+	uint8_t remain_external_sw;		//停止外部脉冲信号输入时需要清零变量开关
+	uint32_t remain_external_time;	//超过等待时间清空速度
+	uint32_t set_remain_time;		//设定的等待时间
 	//未达速时的延迟放电控制
 	uint8_t delay_sw;
 	uint32_t set_delay_time;		//设定的延时时间，超出该时间暂停放电
@@ -45,8 +54,6 @@ typedef struct{
 
 //放电控制
 typedef struct{
-	pulse_dischargeStruct_t *pulseCtrl;
-	spd_dischargeStruct_t	*spdCtrl;
 	float discharge_power;
 	uint8_t power_ctrlState;
 	uint8_t mode;				//放电模式  0达速模式  1脉冲触发模式
@@ -60,9 +67,12 @@ typedef struct{
 }dischargeStruct_t;
 
 dischargeStruct_t* get_dischargeCtrlData(void);
+pulse_dischargeStruct_t* get_pulseDischargeData(void);
+spd_dischargeStruct_t* get_spdDischargeData(void);
 void app_discharge(void);
 void pulse_dischargeUpdate(void);
 void spd_dischargeUpdate(void);
+void spd_discharge_delay(void);
 float get_speed(uint8_t speedMode);
 float get_line_set_power(uint8_t line_power_mode);
 #endif

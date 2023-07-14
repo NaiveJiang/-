@@ -71,8 +71,6 @@
 #define CJ12OK PEin(2)
 #define LRUN_PORT BSP_GPIOE3		//生产线运行标志
 #define LRUN PEin(3)
-#define DHAL_PORT BSP_GPIOE4		//高压打火报警
-#define DHAL PEin(4)
 #define HIAL_PORT BSP_GPIOE5		//高压放电过流
 #define HIAL PEin(5)
 #define IGBTBAL_PORT BSP_GPIOE6		//IGBTB过流
@@ -85,8 +83,6 @@
 #define IDCAL PEin(9)
 #define QSALARM_PORT BSP_GPIOE10	//缺相报警
 #define QSALARM PEin(10)
-#define HJSH_PORT BSP_GPIOE11		//换卷信号
-#define HJSH PEin(11)
 #define JTJC_PORT BSP_GPIOE13		//急停报警
 #define JTJC PEin(13)
 #define IN_ALARM_PORT BSP_GPIOE14	//系统报警
