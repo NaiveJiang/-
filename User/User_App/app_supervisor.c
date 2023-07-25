@@ -55,16 +55,40 @@ void app_supervisiorTask(void *Parameters){
 //			set_controlState(__ROLL_CHANGING,get_controlData()->control_step);
 //		}
 		
+		
+		//速度信号更新
+		get_spdDischargeData()->speed_signal = get_setStateData(get_powSetData()->set_state,SPEEDSIGNAL);
+
+		//联动信号
+		LKEN = get_setStateData(get_powSetData()->set_state,CONTROLMODE);
+		
 		if(adc_filter_VDC_ADC < LOW_VDC)	//VDC低于470
 			get_controlData()->error_sta |= VDC_LOW_ERROR;	//外部交流输入过低警告
 		else
 			get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
 		
 		//达速检测(如果手动达速，屏蔽达速检测)
-		if(get_spdDischargeData()->local_speed < get_controlData()->set_speed_up)	//大于等于最小设定速度即达速
-			get_controlData()->error_sta |= SPEED_UP_ERROR;	//未达速
-		else
+		if(!get_controlData()->manual_mode){
+			if(get_spdDischargeData()->local_speed < get_controlData()->set_speed_up){	//大于等于最小设定速度即达速
+				get_controlData()->error_sta |= SPEED_UP_ERROR;	//未达速
+				digitalLo(&get_controlData()->speed_up);
+			}
+			else{
+				get_controlData()->error_sta &= ~SPEED_UP_ERROR;	//达速
+				digitalHi(&get_controlData()->speed_up);
+			}
+		}
+		else{
 			get_controlData()->error_sta &= ~SPEED_UP_ERROR;	//达速
+			digitalHi(&get_controlData()->speed_up);
+		}
+		
+		if(get_controlData()->use_pulse_corona){	//使用脉冲触发
+			if(!get_controlData()->speed_up){
+				//未达速处于脉冲触发模式
+				digitalHi(&get_dischargeCtrlData()->mode);
+			}
+		}
 		
 		//线控状态
 		if(LKEN) {	//线控信号有效
@@ -82,11 +106,13 @@ void app_supervisiorTask(void *Parameters){
 			digitalLo(&get_controlData()->line_suspend);
 		}
 		
-		
 		//手动功率转为电压
 		get_dischargeCtrlData()->manual_power = get_controlData()->manual_power * SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
-		//采集电压adc转为输出功率
+		//采集电压adc转为输出功率 kw
 		get_dischargeCtrlData()->current_power = adc_filter_POV3V3 * get_controlData()->rated_power / MAX_POWER_ADC;
+		
+		//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
+		get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 		
 //		//线速状态下，如果输出和真实输出产生的误差大于4kw，说明输出不受控，一定时间后停机并报警
 //		if((fabs(get_spdDischargeData()->discharge_power - get_dischargeCtrlData()->current_power) > 4.0f) && !get_dischargeCtrlData()->mode){
@@ -113,6 +139,7 @@ void app_supervisiorTask(void *Parameters){
 		
 		//写入flash
 		if(get_supervisiorData()->flash_sw){
+			app_flash_dataUpdate();
 			app_FlashWriteUdata();
 			digitalLo(&get_supervisiorData()->flash_sw);
 		}

@@ -22,6 +22,7 @@ typedef enum{
 
 
 typedef struct{
+	uint8_t page_num;			//屏幕的页面号码
 	float temp;					//工作温度
 	float rated_power;			//额定功率
 	
@@ -42,6 +43,7 @@ typedef struct{
 	float power;
 	
 	uint8_t dry_mode;			//湿启动使能
+	uint8_t manual_mode;		//手动达速使能
 	
 	uint32_t error_sta;			//错误报警
 	

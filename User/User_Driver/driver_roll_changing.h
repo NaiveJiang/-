@@ -8,7 +8,7 @@
 #define ROLL_CHANGING_PREEMPTIONPRIORITY 6
 #define ROLL_CHANGING_SUBPRIORITY 0
 
-
+void driver_roll_changing(void);
 
 
 

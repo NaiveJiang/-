@@ -60,6 +60,7 @@ typedef struct{
 	uint8_t line_power_mode;	//生产线功率给定模式	0生产线功率给定电压采样  1生产线功率给定电流采样
 	float line_set_power;		//设定的生产线功率给定
 	float manual_power;			//手动设定的最大功率
+	float power_density;		//设定的功率密度
 	float low_power;			//设定的最小功率，在脉冲触发状态下达速后按照线速控制，不达速按照该功率(手动除外)/速比模式下，计算的速比输出小于该功率，则按照该功率输出
 	float current_power;		//当前功率
 	uint8_t step;

@@ -26,6 +26,7 @@ app_pulseControlStruct_t *get_djCtrlData(void){
 void app_standby(void);
 void app_fanMode(void);
 void app_coronaMode(void);
+void app_dryMode(void);
 void app_stopMode(void);
 void app_inputUpdata(void){
 	driverKeyNowStateUpdate();
@@ -63,7 +64,7 @@ void app_inputTask(void *Parameters){
 			}break;
 			
 			case __DRY:{
-				
+				app_dryMode();
 			}break;
 			
 			case __ROLL_CHANGING:{
@@ -98,7 +99,7 @@ void app_standby(void){
 		}break;
 		case 1:{
 			//等待按下风机启动或电晕启动/湿启动(湿启动为独立页面) 或者线控信号接入
-			if(get_mainData(get_maindata()->main_rev_data,CORONA) || get_mainData(get_maindata()->main_rev_data,FAN) || get_dryData(get_drydata()->dry_rev_data,DRY_ON) || get_controlData()->line_control)
+			if(get_mainData(get_maindata()->main_rev_data,CORONA) || get_mainData(get_maindata()->main_rev_data,FAN) || get_controlData()->dry_mode || get_controlData()->line_control)
 				set_controlState(__STANDBY,99);
 		}break;
 		case 99:{
@@ -162,12 +163,12 @@ void app_fanMode(void){
 			//检测是否存在缺相/低压/外部交流输入过低，如果存在不允许启动电晕
 			if(!(get_controlData()->error_sta & QSALARM_ERROR) && !(get_controlData()->error_sta & DCVCHK_ERROR)){
 				//如果按下了电晕启动键或者湿启动，且CJ3确定已经闭合，启动电晕
-				if((get_mainData(get_maindata()->main_rev_data,CORONA) || get_dryData(get_drydata()->dry_rev_data,DRY_ON) || get_controlData()->line_control) && CJ3OK)	
+				if((get_mainData(get_maindata()->main_rev_data,CORONA) || get_controlData()->dry_mode || get_controlData()->line_control) && CJ3OK)	
 					set_controlState(__FAN_ON,99);
 			}
 		}break;
 		case 99:{
-			if(get_dryData(get_drydata()->dry_rev_data,DRY_ON))
+			if(get_controlData()->dry_mode)
 				set_controlState(__DRY,0);		//进入湿启动模式
 			else
 				set_controlState(__CORONA,0);	//进入电晕模式
@@ -280,12 +281,10 @@ void app_dryMode(void){
 			dac_ch1_voltageOut(0.0f);
 			dac_ch2_voltageOut(0.0f);
 			STANDBY = 0;	//允许3875输出
-			digitalHi(&get_controlData()->dry_mode);	//使能湿启动
 			digitalIncreasing(&get_controlData()->control_step);
 		}break;
 		case 4:{
-			if(!get_dryData(get_drydata()->dry_rev_data,DRY_ON)){	//如果关闭了湿启动
-				digitalLo(&get_controlData()->dry_mode); //清除湿启动标志
+			if(!get_controlData()->dry_mode){	//如果关闭了湿启动
 				digitalIncreasing(&get_controlData()->control_step);
 			}
 			else{

@@ -13,7 +13,7 @@ void app_serialTask(void *Parameters){
 	while(1){
 		vTaskDelayUntil(&xLastWakeTime,SERIAL_TASK_PEROID);
 		//´®¿Ú·¢ËÍ
-		if(!(fp % 50))
+		if(!(fp % 30))
 			app_serialUpdata();
 		fp++;
 	}

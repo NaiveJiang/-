@@ -25,7 +25,7 @@ void app_discharge(void){
 			switch(get_dischargeCtrlData()->step){
 				case 0:{		//状态4，线速比较达速
 					//检测达速，未达速不放电
-					if(!(get_controlData()->error_sta & SPEED_UP_ERROR)){
+					if(get_controlData()->speed_up){
 						//使能3875移相输出
 						STANDBY = 0;
 						digitalIncreasing(&get_dischargeCtrlData()->step);
@@ -33,7 +33,7 @@ void app_discharge(void){
 				}break;
 				case 1:{
 					//如果速度降低到达速以下，延迟放电(22状态),或者触发线控暂停(线控状态无关达速与否，直接开始延时)  手动达速下只能通过停止电晕来停止放电
-					if((get_controlData()->error_sta & SPEED_UP_ERROR || get_controlData()->line_suspend) && !get_rcCtrlData()->state){  //没有触发换卷信号
+					if((!get_controlData()->speed_up || get_controlData()->line_suspend) && !get_rcCtrlData()->state){  //没有触发换卷信号
 						if(!get_controlData()->use_pulse_corona){			//不用脉冲放电模式
 							digitalHi(&get_spdDischargeData()->delay_sw);	//开启延时触发
 							digitalIncreasing(&get_dischargeCtrlData()->step);
@@ -59,7 +59,7 @@ void app_discharge(void){
 							}
 						}
 						else{		//没有线控暂停时，可能是未达速引起的延时放电
-							if(!(get_controlData()->error_sta & SPEED_UP_ERROR)){  //达速
+							if(get_controlData()->speed_up){  //达速
 								digitalLo(&get_spdDischargeData()->delay_sw);	//关闭延时触发
 								digitalClan(&get_spdDischargeData()->delay_time);	//清除延时时间
 								get_dischargeCtrlData()->step = 1;	//状态跳转
@@ -74,7 +74,7 @@ void app_discharge(void){
 					}
 					else{	//非线控状态下
 						//如果此时又达速,非线控状态下回到step1
-						if(!(get_controlData()->error_sta & SPEED_UP_ERROR) && !get_controlData()->line_control){
+						if(get_controlData()->speed_up && !get_controlData()->line_control){
 							digitalLo(&get_spdDischargeData()->delay_sw);	//关闭延时触发
 							digitalClan(&get_spdDischargeData()->delay_time);	//清除延时时间
 							get_dischargeCtrlData()->step = 1;	//状态跳转
@@ -123,7 +123,7 @@ void app_discharge(void){
 		//脉冲触发模式
 		case 1:{
 			//未达速按照脉冲触发
-			if(get_controlData()->error_sta & SPEED_UP_ERROR){
+			if(!get_controlData()->speed_up){
 				pulse_dischargeUpdate();	//脉冲放电
 			}
 			else{	//达速进入线速控制(手动达速自动进入线速状态)
@@ -179,7 +179,9 @@ void pulse_dischargeUpdate(void){
 
 void spd_dischargeUpdate(void){
 	//功率控制模式更新
-	get_dischargeCtrlData()->power_ctrlState = get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE);
+	get_dischargeCtrlData()->power_ctrlState = get_setStateData(get_powSetData()->set_state,POWERMODE);
+	//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
+	get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 	//根据功率控制模式工作
 	switch(get_dischargeCtrlData()->power_ctrlState){
 		case MANUAL_MODE:{	//手动模式，以100ms 2kw速率增加到最大功率
@@ -202,18 +204,14 @@ void spd_dischargeUpdate(void){
 		}break;
 		
 		case POWER_DENSITY_MODE:{	//功率密度模式
-			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
-			get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 			//计算输出功率=给定功率密度*当前线速度*滚轴宽度
-			get_spdDischargeData()->power_density = (float)get_powSetData()->power_density;	//获取给定功率密度
+			get_spdDischargeData()->power_density = get_dischargeCtrlData()->power_density;	//获取给定功率密度
 			get_spdDischargeData()->discharge_power = get_spdDischargeData()->power_density * get_spdDischargeData()->speed * get_spdDischargeData()->roller_width; //计算得到W/m2
 			//输出功率转为dac输出
 			get_spdDischargeData()->discharge_power *= SAMP_MAX_VOLTAGE / (get_controlData()->rated_power * 1000);	//kw换算成w所以要/1000
 		}break;
 		
 		case SPEED_MODE:{	//速比模式
-			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
-			get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 			//计算比例系数
 			get_spdDischargeData()->scale = get_spdDischargeData()->spd_max_pow / get_spdDischargeData()->max_spd;
 			//根据比例系数计算出当前的输出功率
@@ -236,14 +234,14 @@ void spd_dischargeUpdate(void){
 //线速延迟放电操作
 void spd_discharge_delay(void){
 	//功率控制模式更新
-	get_dischargeCtrlData()->power_ctrlState = get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE);
+	get_dischargeCtrlData()->power_ctrlState = get_setStateData(get_powSetData()->set_state,POWERMODE);
+	//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
+	get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 	//根据功率控制模式工作
 	switch(get_dischargeCtrlData()->power_ctrlState){
 		case POWER_DENSITY_MODE:{	//功率密度模式下如果输出小于最小功率按照最小功率放电
-			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
-			get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 			//计算输出功率=给定功率密度*当前线速度*滚轴宽度
-			get_spdDischargeData()->power_density = (float)get_powSetData()->power_density;	//获取给定功率密度
+			get_spdDischargeData()->power_density = get_dischargeCtrlData()->power_density;	//获取给定功率密度
 			get_spdDischargeData()->discharge_power = get_spdDischargeData()->power_density * get_spdDischargeData()->speed * get_spdDischargeData()->roller_width;
 			if(get_spdDischargeData()->discharge_power < get_dischargeCtrlData()->low_power)
 				get_spdDischargeData()->discharge_power = get_dischargeCtrlData()->low_power;
@@ -251,8 +249,6 @@ void spd_discharge_delay(void){
 			get_spdDischargeData()->discharge_power *= SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
 		}break;
 		case SPEED_MODE:{
-			//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
-			get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 			//计算比例系数
 			get_spdDischargeData()->scale = get_spdDischargeData()->spd_max_pow / get_spdDischargeData()->max_spd;			
 			//根据比例系数计算出当前的输出功率

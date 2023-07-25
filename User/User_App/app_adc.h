@@ -4,7 +4,7 @@
 #define ADC_TASK_PEROID 2
 
 typedef enum{
-	ADC_TASK_PRIORITY = 5,
+	ADC_TASK_PRIORITY = 6,
 	ADC_TASK_STACK_SIZE = 512,
 }appAdc_e;
 

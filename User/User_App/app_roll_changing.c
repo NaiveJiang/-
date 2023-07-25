@@ -15,7 +15,7 @@ void app_roll_changing(void){
 		}break;
 		case 1:{
 			//计算当前的位移 m
-			get_rcCtrlData()->length += (uint16_t)(get_rcCtrlData()->speed * 0.01666f * 0.01f);
+			get_rcCtrlData()->length += get_rcCtrlData()->speed * 0.01666f * 0.01f;
 			if(get_rcCtrlData()->length >= get_rcCtrlData()->set_delay_length1){
 				digitalLo(&get_rcCtrlData()->delay_sw);
 				digitalClan(&get_rcCtrlData()->length);
@@ -75,7 +75,7 @@ void app_roll_changing(void){
 		}break;
 		case 4:{
 			//计算当前的位移 m
-			get_rcCtrlData()->length += (uint16_t)(get_rcCtrlData()->speed * 0.01666f * 0.01f);
+			get_rcCtrlData()->length += get_rcCtrlData()->speed * 0.01666f * 0.01f;
 			//延时等待
 			if(get_rcCtrlData()->length >= get_rcCtrlData()->set_delay_length2){
 				DJCLOSE = 0; //闭合电极

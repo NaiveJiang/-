@@ -4,8 +4,8 @@
 #include "util.h"
 
 typedef enum{
-	CORONA = 0x01,
-	FAN = 0x02,
+	CORONA = 0x01,		//电晕
+	FAN = 0x02,			//风机
 	STOP_CORONA = 0x04,	//由于风机和电晕同时打开时为0x03所以停机设为0x04
 }mainData_e;
 

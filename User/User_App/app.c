@@ -12,17 +12,13 @@ void app_ParameterInit(void){
 		
 		parameter[POWER] = DEAFULT_POWER;
 		
-		parameter[CONTROL_MODE] = DEAFULT_CONTROL_MODE;
-		
-		parameter[POWER_MODE] = DEAFULT_POWER_MODE;
-		
-		parameter[SPD_SIGNAL] = DEAFULT_SPD_SIGNAL;
+		parameter[SET_STATE] = DEAFULT_SET_STATE;
 		
 		parameter[POWER_DENSITY] = DEAFULT_POWER_DENSITY;
 		
-		parameter[SPD_MAX] = DEAFULT_SPD_MAX;
+		parameter[SPD_MAX_POW] = DEAFULT_SPD_MAX_POW;
 		
-		parameter[SPD_MIN] = DEAFULT_SPD_MIN;
+		parameter[SPD_MIN_POW] = DEAFULT_SPD_MIN_POW;
 		
 		parameter[MANUAL_POWER] = DEAFULT_MANUAL_POWER;
 		
@@ -73,15 +69,15 @@ void app_ControlParameterLoad(void){
 	//读取flash的控制信息
 	get_controlData()->rated_power = (float)parameter[POWER] * 0.01f;
 	
-	get_controlData()->control_mode = parameter[CONTROL_MODE];
-	get_controlData()->power_mode = parameter[POWER_MODE];
-	get_controlData()->speed_signal = parameter[SPD_SIGNAL];
+	get_powSetData()->set_state = parameter[SET_STATE];
 	
 	//获取控制参数
-	get_controlData()->power_density = (uint16_t)parameter[POWER_DENSITY];
+	get_dischargeCtrlData()->power_density = (float)parameter[POWER_DENSITY];
 	get_spdDischargeData()->max_spd = (float)parameter[MAX_SPEED];
-	get_spdDischargeData()->spd_max_pow = (float)parameter[SPD_MAX] * 0.01f;
-	get_spdDischargeData()->spd_min_pow = (float)parameter[SPD_MIN] * 0.01f;
+	
+	get_spdDischargeData()->spd_max_pow = (float)parameter[SPD_MAX_POW] * 0.01f;
+	get_spdDischargeData()->spd_min_pow = (float)parameter[SPD_MIN_POW] * 0.01f;
+	
 	get_controlData()->manual_power = (float)parameter[MANUAL_POWER] * 0.01f;
 	get_controlData()->set_speed_up = (float)parameter[SPD_UP] * 0.01f;
 	get_dischargeCtrlData()->low_power = (float)parameter[LOW_POWER] * 0.01f;
@@ -90,8 +86,8 @@ void app_ControlParameterLoad(void){
 	get_pulseDischargeData()->set_delay_time = parameter[SET_PULSE_DELAY];
 	get_spdDischargeData()->set_remain_time = parameter[SET_REMAIN];
 	get_spdDischargeData()->set_line_delay_time = parameter[SET_LINE_DELAY];
-	get_rcCtrlData()->set_delay_length1 = parameter[SET_DELAY_LENGTH1];
-	get_rcCtrlData()->set_delay_length2 = parameter[SET_DELAY_LENGTH2];
+	get_rcCtrlData()->set_delay_length1 = (float)parameter[SET_DELAY_LENGTH1] * 0.01f;
+	get_rcCtrlData()->set_delay_length2 = (float)parameter[SET_DELAY_LENGTH2] * 0.01f;
 	
 	//得到滚筒单个脉冲所占线长 
 	get_spdDischargeData()->roller_pulse_length = (float)parameter[ROLLER_DIAMETER_LOCAL] * 0.01f * PI / (float)parameter[ROLLER_PULSE_LOCAL]; //本地滚轴
@@ -99,7 +95,7 @@ void app_ControlParameterLoad(void){
 	get_dryCtrlData()->max_power = get_controlData()->rated_power * 0.5f;	//湿启动功率为额定功率的50%
 	
 	//得到滚筒宽度
-	get_spdDischargeData()->roller_width = (float)parameter[ROLLER_WIDTH];
+	get_spdDischargeData()->roller_width = (float)parameter[ROLLER_WIDTH] * 0.01f;
 }
 
 

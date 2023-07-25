@@ -38,6 +38,7 @@ void TIM2_IRQHandler(void){
 			digitalClan(&get_spdDischargeData()->local_speed);
 			digitalClan(&BSPSI_CALC.get_cnt1);
 			digitalClan(&BSPSI_CALC.get_cnt2);
+			digitalClan(&BSPSI_CALC.pulse_get);
 			digitalClan(&BSPSI_CALC.freq);
 			digitalClan(&BSPSI_CALC.difference_cnt);
 		}
@@ -45,6 +46,7 @@ void TIM2_IRQHandler(void){
 			digitalClan(&get_spdDischargeData()->external_speed);
 			digitalClan(&LSPSI_CALC.get_cnt1);
 			digitalClan(&LSPSI_CALC.get_cnt2);
+			digitalClan(&LSPSI_CALC.pulse_get);
 			digitalClan(&LSPSI_CALC.freq);
 			digitalClan(&LSPSI_CALC.difference_cnt);
 		}
@@ -165,7 +167,7 @@ void TIM5_IRQHandler(void){
 						get_pulseDischargeData()->discharge_power += get_pulseDischargeData()->inc_power;
 						
 						//如果处于手动模式，按照100ms 2kw的增速达到最大手动设置功率
-						if(get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE) == MANUAL_MODE){
+						if(get_setStateData(get_powSetData()->set_state,POWERMODE) == MANUAL_MODE){
 							if(!get_controlData()->line_control){
 								if(get_pulseDischargeData()->discharge_power > get_dischargeCtrlData()->manual_power)
 									get_pulseDischargeData()->discharge_power = get_dischargeCtrlData()->manual_power;
@@ -190,7 +192,7 @@ void TIM5_IRQHandler(void){
 			}
 			else{
 				//手动模式下
-				if(get_ctrlSetData(get_ctrlSetdata()->ctrlSet_rev_data,POWERMODE) == MANUAL_MODE){
+				if(get_setStateData(get_powSetData()->set_state,POWERMODE) == MANUAL_MODE){
 					if(get_dischargeCtrlData()->inc_time >= INCLEASE_TIME && get_dischargeCtrlData()->step == 1){
 						digitalClan(&get_dischargeCtrlData()->inc_time);
 						get_spdDischargeData()->discharge_power += get_spdDischargeData()->inc_power;	//2kw/100ms 增加
@@ -208,7 +210,7 @@ void TIM5_IRQHandler(void){
 				
 			}
 			/*********************************************************************************/
-			TIM_ClearITPendingBit(TIM5,TIM_IT_Update);//清除中断
+			
 //			//线控下的延迟放电
 //			if(get_controlData()->line_control){
 //				if(get_controlData()->line_suspend_delay_sw)
@@ -218,6 +220,7 @@ void TIM5_IRQHandler(void){
 //			}
 			
 		}
+		TIM_ClearITPendingBit(TIM5,TIM_IT_Update);//清除中断
 	}
 	
 }

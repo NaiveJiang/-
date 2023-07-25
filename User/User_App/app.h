@@ -19,14 +19,12 @@
 /*****************************/
 #include "gui_data.h"
 #include "gui_main.h"
-#include "gui_dry.h"
-#include "gui_ctrlSet.h"
 #include "gui_powSet.h"
 
 #define VERSION  2
 
 typedef enum{
-	INIT_PRIORITY = 1,
+	INIT_PRIORITY = 8,
 	INIT_STACK_SIZE = 1600,
 }appInit_e;
 
@@ -35,13 +33,11 @@ typedef enum{
 	NAME_VERSION = 0,
 	
 	POWER,
-	CONTROL_MODE,		//控制模式
-	POWER_MODE,			//功率模式
-	SPD_SIGNAL,			//速度信号
+	SET_STATE,			//工作模式
 	
 	POWER_DENSITY,		//功率密度
-	SPD_MAX,			//速比最大
-	SPD_MIN,			//速比最小
+	SPD_MAX_POW,		//速比最大功率
+	SPD_MIN_POW,		//速比最小功率
 	MANUAL_POWER,		//手动额定
 	MAX_SPEED,			//速比模式最大速度
 	LOW_POWER,			//最小设定功率
