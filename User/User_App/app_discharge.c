@@ -206,21 +206,26 @@ void spd_dischargeUpdate(void){
 		case POWER_DENSITY_MODE:{	//功率密度模式
 			//计算输出功率=给定功率密度*当前线速度*滚轴宽度
 			get_spdDischargeData()->power_density = get_dischargeCtrlData()->power_density;	//获取给定功率密度
-			get_spdDischargeData()->discharge_power = get_spdDischargeData()->power_density * get_spdDischargeData()->speed * get_spdDischargeData()->roller_width; //计算得到W/m2
+			get_spdDischargeData()->discharge_power = get_spdDischargeData()->power_density * get_spdDischargeData()->speed * get_spdDischargeData()->roller_width * 1e-3f; //计算得到W/m2,换算成kw/m2需要除以1000
+			//功率限幅
+			if(get_spdDischargeData()->discharge_power < get_dischargeCtrlData()->low_power)
+				get_spdDischargeData()->discharge_power = get_dischargeCtrlData()->low_power;
+			if(get_spdDischargeData()->discharge_power > get_spdDischargeData()->max_pow)
+				get_spdDischargeData()->discharge_power = get_spdDischargeData()->max_pow;
 			//输出功率转为dac输出
-			get_spdDischargeData()->discharge_power *= SAMP_MAX_VOLTAGE / (get_controlData()->rated_power * 1000);	//kw换算成w所以要/1000
+			get_spdDischargeData()->discharge_power = get_spdDischargeData()->discharge_power * SAMP_MAX_VOLTAGE / get_controlData()->rated_power;	
 		}break;
 		
 		case SPEED_MODE:{	//速比模式
 			//计算比例系数
-			get_spdDischargeData()->scale = get_spdDischargeData()->spd_max_pow / get_spdDischargeData()->max_spd;
+			get_spdDischargeData()->scale = get_spdDischargeData()->max_pow / get_spdDischargeData()->max_spd;
 			//根据比例系数计算出当前的输出功率
 			get_spdDischargeData()->discharge_power = get_spdDischargeData()->scale * get_spdDischargeData()->speed;
 			//如果当前速度下算出的功率小于最小输出功率，则按照最小输出功率输出
 			if(get_spdDischargeData()->discharge_power < get_dischargeCtrlData()->low_power)
 				get_spdDischargeData()->discharge_power = get_dischargeCtrlData()->low_power;
-			if(get_spdDischargeData()->discharge_power > get_spdDischargeData()->spd_max_pow)
-				get_spdDischargeData()->discharge_power = get_spdDischargeData()->spd_max_pow;
+			if(get_spdDischargeData()->discharge_power > get_spdDischargeData()->max_pow)
+				get_spdDischargeData()->discharge_power = get_spdDischargeData()->max_pow;
 			//输出功率转为dac输出
 			get_spdDischargeData()->discharge_power *= SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
 		}break;
@@ -250,14 +255,14 @@ void spd_discharge_delay(void){
 		}break;
 		case SPEED_MODE:{
 			//计算比例系数
-			get_spdDischargeData()->scale = get_spdDischargeData()->spd_max_pow / get_spdDischargeData()->max_spd;			
+			get_spdDischargeData()->scale = get_spdDischargeData()->max_pow / get_spdDischargeData()->max_spd;			
 			//根据比例系数计算出当前的输出功率
 			get_spdDischargeData()->discharge_power = get_spdDischargeData()->scale * get_spdDischargeData()->speed;
 			//如果当前速度下算出的功率小于最小输出功率，则按照最小输出功率输出
-			if(get_spdDischargeData()->discharge_power < get_spdDischargeData()->spd_min_pow)
-				get_spdDischargeData()->discharge_power = get_spdDischargeData()->spd_min_pow;
-			if(get_spdDischargeData()->discharge_power > get_spdDischargeData()->spd_max_pow)
-				get_spdDischargeData()->discharge_power = get_spdDischargeData()->spd_max_pow;
+			if(get_spdDischargeData()->discharge_power < get_dischargeCtrlData()->low_power)
+				get_spdDischargeData()->discharge_power = get_dischargeCtrlData()->low_power;
+			if(get_spdDischargeData()->discharge_power > get_spdDischargeData()->max_pow)
+				get_spdDischargeData()->discharge_power = get_spdDischargeData()->max_pow;
 			//输出功率转为dac输出
 			get_spdDischargeData()->discharge_power *= SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
 		}break;

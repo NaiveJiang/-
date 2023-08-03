@@ -304,7 +304,7 @@ void getadc1_average(void){  //采集得到平均值
 	//赋值
 	adc_TBI_DC3V3 = real[0] * 0.048840048840f;
 	adc_TBV_DC3V3 = real[1] * 0.244200244200f;
-	adc_POV3V3 = real[2] /* 0.010744810744810f*/;
+	adc_POV3V3 = real[2] /* 0.010744810744810f*/; //得到百分比
 	adc_HI_DC3V3 = real[3] * 0.002442002442f;
 	adc_LPV3V3 = real[4] * 0.000244200244f;		//得到百分比  0~10v	即0v~3.3v
 	adc_TEMP = real[5];

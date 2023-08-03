@@ -69,6 +69,7 @@ void app_roll_changing(void){
 			
 			//打开电极
 			DJCLOSE = 1;
+			get_rcCtrlData()->state = 2; //换卷状态更新
 			digitalHi(&get_rcCtrlData()->delay_sw);	//开启延迟触发
 			
 			digitalIncreasing(&get_rcCtrlData()->step);

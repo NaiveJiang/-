@@ -1,8 +1,9 @@
 #include "app.h"
 
 
-formatTrans16Struct_t powData;
+
 //发送用联合体
+formatTrans32Struct_t errorSend;
 formatTrans16Struct_t powerSend;
 formatTrans16Struct_t speedSend;
 formatTrans16Struct_t VDC_S;
@@ -22,6 +23,23 @@ formatTrans16Struct_t powerRev;
 formatTrans16Struct_t mulRev;
 formatTrans16Struct_t spdRev;
 formatTrans16Struct_t denRev;
+
+formatTrans16Struct_t ratepowerRev;
+formatTrans16Struct_t maxpowerRev;
+formatTrans16Struct_t minpowerRev;
+formatTrans16Struct_t maxspeedRev;
+formatTrans16Struct_t local_rollerdiameterRev;
+formatTrans16Struct_t coronawidthRev;
+formatTrans16Struct_t local_rollerpulseRev;
+formatTrans16Struct_t speedupRev;
+formatTrans16Struct_t external_rollerdiameterRev;
+formatTrans16Struct_t external_rollerpulseRev;
+formatTrans16Struct_t speeddelayRev;
+formatTrans16Struct_t linedelayRev;
+formatTrans16Struct_t pulsedelayRev;
+formatTrans16Struct_t electrode_open_lengthRev;
+formatTrans16Struct_t electrode_close_lengthRev;
+
 uint8_t get_decimal_num(float num){
 	uint32_t int_num;
 	float decimal_num;
@@ -38,6 +56,9 @@ void gui_send_data(USART_TypeDef *USARTx){
 	array[index_ptr++] = GUI_ADDR;	
 	array[index_ptr++] = 0;   		//帧长
 	
+	array[index_ptr++] = get_controlData()->page_num; //发送页面号，防止接收错误页面信息乱码
+	errorSend.u32_temp = get_controlData()->error_sta;
+	//发送内容
 	switch(get_controlData()->page_num){
 		//Main
 		case 1:{
@@ -126,7 +147,13 @@ void gui_send_data(USART_TypeDef *USARTx){
 		}break;
 		default:break;
 	}
+	//换卷信号
+	array[index_ptr++] = get_rcCtrlData()->state;
 	
+	//错误报警
+	for(uint8_t i = 0; i < 4; i++){
+		array[index_ptr++] = errorSend.u8_temp[i];
+	}
 	
 	array[index_ptr++] = GUI_TAIL;	//帧尾
 	array[index_ptr++] = GUI_LAST;
@@ -168,16 +195,16 @@ void gui_data_unPackge(uint8_t *receive_data){
 				powerRev.u8_temp[i] = receive_data[index_ptr++];
 			switch(get_dischargeCtrlData()->power_ctrlState){
 				case MANUAL_MODE:{
-					get_dischargeCtrlData()->manual_power = ((float)powerRev.u16_temp) * 0.01f;
+					get_controlData()->manual_power = ((float)powerRev.u16_temp) * 0.01f;
 				}break;
 				case POWER_DENSITY_MODE:{
-					get_dischargeCtrlData()->power_density = ((float)powerRev.u16_temp) * 0.01f;
+					get_dischargeCtrlData()->power_density = ((float)powerRev.u16_temp);
 				}break;
 				case SPEED_MODE:{
-					get_spdDischargeData()->spd_max_pow = ((float)powerRev.u16_temp) * 0.01f;
+					get_spdDischargeData()->max_pow = ((float)powerRev.u16_temp) * 0.01f;
 				}break;
 			}
-			//当前控制模式
+			//当前功率模式
 			get_dischargeCtrlData()->power_ctrlState = get_setStateData(receive_data[index_ptr++],POWERMODE);
 			//flash标志
 			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
@@ -194,8 +221,8 @@ void gui_data_unPackge(uint8_t *receive_data){
 				denRev.u8_temp[i] = receive_data[index_ptr++];
 			//控制数据更新
 			get_controlData()->manual_power = ((float)mulRev.u16_temp) * 0.01f;
-			get_dischargeCtrlData()->power_density = ((float)denRev.u16_temp) * 0.01f;
-			get_spdDischargeData()->spd_max_pow = ((float)spdRev.u16_temp) * 0.01f;
+			get_dischargeCtrlData()->power_density = (float)denRev.u16_temp;
+			get_spdDischargeData()->max_pow = ((float)spdRev.u16_temp) * 0.01f;
 			//flash标志
 			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
 		}break;
@@ -214,7 +241,75 @@ void gui_data_unPackge(uint8_t *receive_data){
 		//ParameterSet
 		case 5:{
 			//得到参数设置页面的数据
-			
+			for(uint8_t i = 0; i < 2; i++){
+				ratepowerRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				maxpowerRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				minpowerRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				maxspeedRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				coronawidthRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				local_rollerdiameterRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				local_rollerpulseRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				external_rollerdiameterRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				external_rollerpulseRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				speedupRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				speeddelayRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				linedelayRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				pulsedelayRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				electrode_open_lengthRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				electrode_close_lengthRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			get_controlData()->rated_power = (float)ratepowerRev.u16_temp * 1e-2f;					//额定功率
+			get_spdDischargeData()->max_pow = (float)maxpowerRev.u16_temp * 1e-2f;					//线速下的最大输出功率
+			get_dischargeCtrlData()->low_power = (float)minpowerRev.u16_temp * 1e-2f;  				//最低输出功率
+			get_spdDischargeData()->max_spd = (float)maxspeedRev.u16_temp * 1e-2f;					//最大线速
+			get_spdDischargeData()->roller_width = (float)coronawidthRev.u16_temp * 1e-2f;			//放电宽度
+			parameter[ROLLER_DIAMETER_LOCAL] = (uint32_t)local_rollerdiameterRev.u16_temp;  		//本地滚轴直径mm
+			parameter[ROLLER_PULSE_LOCAL] = (uint32_t)local_rollerpulseRev.u16_temp;			//本地码盘齿数
+			parameter[ROLLER_DIAMETER_EXTERNAL] = (uint32_t)external_rollerdiameterRev.u16_temp;	//外部滚轴直径mm
+			parameter[ROLLER_PULSE_EXTERNAL] = (uint32_t)external_rollerpulseRev.u16_temp;	//外部脉冲齿数
+			get_controlData()->set_speed_up = (float)speedupRev.u16_temp * 1e-2f;					//设定达速
+			get_spdDischargeData()->set_delay_time = (uint32_t)speeddelayRev.u16_temp;				//线速延时放电时间
+			get_spdDischargeData()->set_line_delay_time = (uint32_t)linedelayRev.u16_temp;			//线控延时放电时间
+			get_pulseDischargeData()->set_delay_time = (uint32_t)pulsedelayRev.u16_temp;			//脉冲延时放电时间
+			get_rcCtrlData()->set_delay_length1 = (float)electrode_open_lengthRev.u16_temp * 1e-2f;	//抬电极距离m
+			get_rcCtrlData()->set_delay_length2 = (float)electrode_close_lengthRev.u16_temp * 1e-2f;//合电极距离m
+			//计算新的滚轴线脉冲
+			get_spdDischargeData()->roller_pulse_length = (float)parameter[ROLLER_DIAMETER_LOCAL] * (1e-5f) * PI / (float)parameter[ROLLER_PULSE_LOCAL]; //本地滚轴
+			get_spdDischargeData()->external_pulase_length = (float)parameter[ROLLER_DIAMETER_EXTERNAL] * (1e-5f) * PI / (float)parameter[ROLLER_PULSE_EXTERNAL]; //外地滚轴
+			//计算新的湿启动最大功率
+			get_dryCtrlData()->max_power = get_controlData()->rated_power * 0.5f;
+			//当前控制模式
+			get_dischargeCtrlData()->power_ctrlState = get_setStateData(receive_data[index_ptr++],POWERMODE);
+			//flash更新
+			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
 		}break;
 		//PulseTrigger
 		case 7:{

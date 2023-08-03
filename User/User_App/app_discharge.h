@@ -28,6 +28,7 @@ typedef struct{
 	float line_voltage_speed;		//生产线速度电压信号
 	float line_current_speed;		//生产线速度电流信号
 	float discharge_power;			//dac输出
+	float max_pow;					//速比模式下最大功率
 	uint8_t speed_signal;			//速度信号 0本地脉冲 1外部脉冲 2生产线电压 3生产线电流
 	//手动模式
 	float inc_power;				//功率增量
@@ -36,8 +37,6 @@ typedef struct{
 	float roller_width;				//滚轴宽度
 	//速比模式
 	float max_spd;					//最大线速
-	float spd_max_pow;				//速比模式下最大功率
-	float spd_min_pow;				//速比模式下最小功率
 	float scale;					//比例功率控制系数
 	//脉冲信号处理
 	uint8_t remain_local_sw;		//停止本地脉冲信号输入时需要清零变量开关

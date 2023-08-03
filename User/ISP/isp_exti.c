@@ -17,7 +17,7 @@ void EXTI15_10_IRQHandler(void){
 		if(get_controlState() != __DRY){	//不为湿启动状态
 			HJSHDL = 1;	//输出换卷延时
 			if(!get_rcCtrlData()->state){
-				digitalHi(&get_rcCtrlData()->state);
+				digitalHi(&get_rcCtrlData()->state); //换卷触发信号
 				//记录上一次的状态
 				get_controlData()->last_control_step = get_controlData()->control_step;
 				last_controlState = get_controlState();

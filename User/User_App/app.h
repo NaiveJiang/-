@@ -36,8 +36,7 @@ typedef enum{
 	SET_STATE,			//工作模式
 	
 	POWER_DENSITY,		//功率密度
-	SPD_MAX_POW,		//速比最大功率
-	SPD_MIN_POW,		//速比最小功率
+	MAX_POW,			//输出最大功率
 	MANUAL_POWER,		//手动额定
 	MAX_SPEED,			//速比模式最大速度
 	LOW_POWER,			//最小设定功率
