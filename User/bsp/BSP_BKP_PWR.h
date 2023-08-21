@@ -7,6 +7,9 @@
 #define PVD_PREEMPTIONPRIORITY 8
 #define PVD_SUBPRIORITY 0
 
+#define TAMP_PREEMPTIONPRIORITY 8
+#define TAMP_SUBPRIORITY 0
+
 #define RTC_BKPREG BKP_DR1				//RTC配置校验寄存器，避免重复配置
 #define ACTIVITE_BKPREG BKP_DR2			//热启动检测，确认启动状态
 #define CONTROL_STATE_BKPREG BKP_DR3	//工作状态,每隔0.1s写入BKP
@@ -23,6 +26,7 @@ typedef struct{
 
 void bsp_BKP_PWRInit(void);
 void bsp_PVDInit(void);
+void bsp_TAMPInit(void);
 uint32_t bkp_hot_activite(void);
 
 

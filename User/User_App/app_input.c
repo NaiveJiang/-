@@ -35,14 +35,14 @@ void app_inputUpdata(void){
 	appInput.loops += INPUT_TASK_PERIOD;
 }
 
-void app_djControl(void){
-	get_djCtrlData()->mode = get_djCtrlData()->sw;	//获取电极控制状态
-	if(get_djCtrlData()->mode != get_djCtrlData()->last_mode){
-		if(get_djCtrlData()->mode) pulse_outputHigh(&DJOPEN,100);
-		else pulse_outputHigh(&DJCLOSE,100);
-	}
-	get_djCtrlData()->last_mode = get_djCtrlData()->mode;	//状态更新
-}
+//void app_djControl(void){
+//	get_djCtrlData()->mode = get_djCtrlData()->sw;	//获取电极控制状态
+//	if(get_djCtrlData()->mode != get_djCtrlData()->last_mode){
+//		if(get_djCtrlData()->mode) pulse_outputHigh(&DJOPEN,100);
+//		else pulse_outputHigh(&DJCLOSE,100);
+//	}
+//	get_djCtrlData()->last_mode = get_djCtrlData()->mode;	//状态更新
+//}
 
 void app_inputTask(void *Parameters){
 	TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -76,8 +76,8 @@ void app_inputTask(void *Parameters){
 			}break;
 		}
 		
-		//放电架控制
-		app_djControl();
+//		//放电架控制
+//		app_djControl();
 		
 		app_inputUpdata();
 //		can_Send(USE_CANx,&can_id20A);
@@ -163,8 +163,11 @@ void app_fanMode(void){
 			//检测是否存在缺相/低压/外部交流输入过低，如果存在不允许启动电晕
 			if(!(get_controlData()->error_sta & QSALARM_ERROR) && !(get_controlData()->error_sta & DCVCHK_ERROR)){
 				//如果按下了电晕启动键或者湿启动，且CJ3确定已经闭合，启动电晕
-				if((get_mainData(get_maindata()->main_rev_data,CORONA) || get_controlData()->dry_mode || get_controlData()->line_control) && CJ3OK)	
+				if((get_mainData(get_maindata()->main_rev_data,CORONA) || get_controlData()->dry_mode || get_controlData()->line_control) && CJ3OK){	
+					digitalHi(&get_supervisiorData()->start_delay_sw);	//开启计时等待VDC稳定
+					digitalClan(&get_supervisiorData()->start_delay); //清空重新计数
 					set_controlState(__FAN_ON,99);
+				}
 			}
 		}break;
 		case 99:{
@@ -328,6 +331,10 @@ void app_dryMode(void){
 void app_stopMode(void){
 	switch(get_controlData()->control_step){
 		case 0:{
+			//产生停机报警后，输出使硬件停机
+			if(get_supervisiorData()->stop_alarm) ALARM = 1;
+			//进入停机自动清除电晕状态
+			get_maindata()->main_rev_data &= ~CORONA;
 			if(get_dischargeCtrlData()->current_power <= 10.0f){
 				digitalIncreasing(&get_controlData()->control_step);
 			}
@@ -361,23 +368,63 @@ void app_stopMode(void){
 			//关闭直流功率电源
 			pulse_outputHigh(&STOP_P,100);
 			
+			
 			digitalIncreasing(&get_controlData()->control_step);
 		}break;
 		case 2:{
 			vTaskDelay(1000);  //延时1s检测CJ1/CJ2是否断开
 			//检查CJ1/CJ2
-			if(!CJ12OK) get_controlData()->control_step = 99;
-			else{
+			if(!CJ12OK){	//CJ1/CJ2正常
+				if(get_supervisiorData()->stop_alarm){	//存在其他停机错误报警
+					digitalIncreasing(&get_controlData()->control_step);	//进入故障停机状态
+				}
+				else{
+					//如果没有锁机
+					if(!get_controlData()->lock && !get_controlData()->lock_tamp)
+						set_controlState(__STOP,99);	//退出停机模式
+					else
+						set_controlState(__STOP,4);//进入上锁状态
+				}
+			}
+			else{ //CJ1/CJ2无法断开
 				if(PUPOK){
 					ALARM = 1;
-					STOP_P = 1;
-					digitalIncreasing(&get_controlData()->control_step);
+					digitalHi(&get_supervisiorData()->stop_alarm);	//产生停机报警
+					digitalIncreasing(&get_controlData()->control_step);	//进入故障停机状态
 				}
 			}
 		}break;
 		case 3:{	//等待故障复位
 			//如果收到故障复位命令(屏上确认)（补充）
-			
+			STOP_P = 1; 
+			if(get_controlData()->error_reset){
+				digitalLo(&get_controlData()->error_reset);
+				//使能故障复位
+				pulse_outputHigh(&RESET_SYS,10);
+				//硬件停机解除
+				ALARM = 0;
+				STOP_P = 0;
+				//清除停机报警
+				digitalLo(&get_supervisiorData()->stop_alarm);
+				//清除打火报警
+				get_controlData()->error_sta &= ~HIGH_VOLTAGE_SPARK_ERROR;	//清空打火报警
+				get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
+				get_controlData()->error_sta &= ~VDC_LOW_WARN;	//解决后清除报警
+				
+				if(!get_controlData()->lock && !get_controlData()->lock_tamp)	//没有锁机
+					set_controlState(__STOP,99);
+				else
+					digitalIncreasing(&get_controlData()->control_step); //锁机状态
+			}
+		}break;
+		case 4:{	//锁机状态
+			if(!get_controlData()->lock && !get_controlData()->lock_tamp){	//解锁
+				//如果存在停机故障，需要返回故障复位
+				if(get_supervisiorData()->stop_alarm)
+					set_controlState(__STOP,3);
+				else
+					set_controlState(__STOP,99);	//进入待机
+			}
 		}break;
 		case 99:{
 			//根据CJ3回到相关状态

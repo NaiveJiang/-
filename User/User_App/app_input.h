@@ -4,7 +4,7 @@
 #include "util.h"
 
 #define INPUT_TASK_PERIOD	5
-
+#define START_INIT_TIME 600
 typedef enum{
 	INPUT_PRIORITY = 6,
 	INPUT_STACK_SIZE = 512,
@@ -22,6 +22,8 @@ typedef enum{
 
 
 typedef struct{
+	uint8_t start_init;			//开机初始化
+	uint32_t start_time;		//开机初始化时间
 	uint8_t page_num;			//屏幕的页面号码
 	float temp;					//工作温度
 	float rated_power;			//额定功率
@@ -31,6 +33,7 @@ typedef struct{
 	uint8_t speed_signal;		//速度信号
 	
 	uint8_t speed_up;			//达速标志
+	uint8_t fy_ok;				//负压标志
 	
 	uint16_t power_density;		//功率密度
 	float speed_max;			//最大线速功率
@@ -63,6 +66,26 @@ typedef struct{
 	uint8_t use_pulse_corona;		//允许脉冲放电
 	uint8_t corona_in_low_sw;		//启动时的第一个脉冲触发放电
 	uint32_t low_corona_time;		//脉冲放电不能连续，下降沿触发放电3s左右
+	
+	//故障复位
+	uint8_t error_reset;
+	
+	//RTC计时
+	uint32_t rtc_sec;	//秒
+	uint32_t rtc_hour;	//小时
+	uint32_t last_hour;
+	uint32_t rtc_day1;	//日期1
+	uint32_t rtc_day2;	//日期2
+	uint32_t rtc_day3;	//日期3
+	uint8_t remain_day;
+	
+	//上锁
+	uint8_t lock;
+	uint8_t lock_tamp;	//入侵时上的锁
+	uint32_t password[3]; //存储在机内的密码
+	uint32_t verify_password; //需要验证的密码
+	uint8_t pwd_ok;	//密码输入是否正确
+	
 }appControlStruct_t;
 
 

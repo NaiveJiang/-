@@ -41,6 +41,8 @@ void bsp_Init(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	//初始化后备寄存区时钟
 	bsp_BKP_PWRInit();
+	//初始化TAMP入侵检测
+	bsp_TAMPInit();
 	//检测热启动
 //	get_controlData()->error_sta |= bkp_hot_activite();
 	//初始化RTC

@@ -25,6 +25,101 @@ void app_sup_LE(void){
 	else get_controlData()->error_sta &= 0xFFFFFF87;
 }
 
+void remain_day(void){
+	if(get_controlData()->rtc_day1){	//期限1未到
+		if(get_controlData()->rtc_day1 <= 15 && get_controlData()->rtc_day1 > 5){  //还剩下15天
+			get_controlData()->remain_day = 1;
+		}
+		else if(get_controlData()->rtc_day1 <= 5){	//还剩下5天
+			get_controlData()->remain_day = 2;
+		}
+		else{	//期限1大于15天
+			digitalClan(&get_controlData()->remain_day); 
+		}
+	}
+	else{	//期限1已到
+		if(get_controlData()->rtc_day2){ //期限2未到
+			if(get_controlData()->rtc_day2 <= 15 && get_controlData()->rtc_day2 > 5){  //还剩下15天
+				get_controlData()->remain_day = 4;
+			}
+			else if(get_controlData()->rtc_day1 <= 5){	//还剩下5天
+				get_controlData()->remain_day = 5;
+			}
+			else{ //期限2大于15天，日期1上锁时为3，日期1解锁时为0
+				if(!get_controlData()->lock) //如果日期1已经解锁
+					digitalClan(&get_controlData()->remain_day); 
+			}
+		}
+		else{	//期限2已到
+			if(get_controlData()->rtc_day3){ //期限3未到
+				if(get_controlData()->rtc_day1 <= 15 && get_controlData()->rtc_day1 > 5){  //还剩下15天
+					get_controlData()->remain_day = 7;
+				}
+				else if(get_controlData()->rtc_day1 <= 5){	//还剩下5天
+					get_controlData()->remain_day = 8;
+				}
+				else{	//期限3大于15天，日期2上锁为6，日期2解锁为0
+					if(!get_controlData()->lock) //如果日期2已经解锁
+						digitalClan(&get_controlData()->remain_day);
+				}
+			}
+			else{	//期限3已到
+				if(get_controlData()->lock)  //上锁状态
+					get_controlData()->remain_day = 9;
+				else
+					digitalClan(&get_controlData()->remain_day);
+			}
+		}
+	}
+}
+
+void lock_to_unlock(void){
+	if(!get_controlData()->rtc_day1){	//如果期限1已到
+		if(get_controlData()->rtc_day2){	//期限2未到
+			//输入第一把锁的密码正确解锁
+			if(get_controlData()->verify_password == get_controlData()->password[0]){
+				digitalLo(&get_controlData()->lock);	//机器解锁
+				digitalHi(&get_controlData()->pwd_ok);
+			}
+			else{
+				digitalHi(&get_controlData()->lock); //密码错误机器上锁
+				digitalLo(&get_controlData()->pwd_ok);
+				//如果期限2小于15则按照小于15天的方法处理
+				if(get_controlData()->rtc_day2 > 15)
+					get_controlData()->remain_day = 3; //日期1锁机
+			}
+		}
+		else{	//期限2已到
+			if(get_controlData()->rtc_day3){	//期限3未到
+				//输入第二把锁的密码正确解锁
+				if(get_controlData()->verify_password == get_controlData()->password[1]){
+					digitalLo(&get_controlData()->lock);	//机器解锁
+					digitalHi(&get_controlData()->pwd_ok);
+				}
+				else{
+					digitalHi(&get_controlData()->lock); //密码错误机器上锁
+					digitalLo(&get_controlData()->pwd_ok);
+					//如果期限3小于15则按照小于15天的方法处理
+					if(get_controlData()->rtc_day3 > 15)
+						get_controlData()->remain_day = 6;	//日期2锁机
+				}
+			}
+			else{	//期限3已到
+				//输入第三把锁的密码正确解锁
+				if(get_controlData()->verify_password == get_controlData()->password[2]){
+					digitalLo(&get_controlData()->lock);	//机器解锁
+					digitalHi(&get_controlData()->pwd_ok);
+				}
+				else{
+					digitalHi(&get_controlData()->lock); //密码错误机器上锁
+					digitalLo(&get_controlData()->pwd_ok);
+					get_controlData()->remain_day = 9;	//日期3锁机
+				}
+			}
+		}
+	}
+}
+
 //状态机监控
 void app_supervisiorTask(void *Parameters){
 	TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -39,7 +134,7 @@ void app_supervisiorTask(void *Parameters){
 		error_set(&JTJC,EMERGENCY_STOP,1);				//急停报警
 		error_set(&IN_ALARM,SYSTEM_ERROR,1);				//系统报警
 		error_set(&PVDD,POWER_DOWN_ERROR,1);				//低压电源检测
-		error_set(&DHAL,HIGH_VOLTAGE_SPARK_ERROR,1);		//高压打火报警		
+//		error_set(&DHAL,HIGH_VOLTAGE_SPARK_ERROR,1);		//高压打火报警		
 		error_set(&HIAL,HIGH_VOLTAGE_OVERCURRENT,1);		//高压放电过流
 		error_set(&IGBTBAL,IGBTB_OVERCURRENT,1);			//IGBTB过流
 		error_set(&IGBTAAL,IGBTA_OVERCURRENT,1);			//IGBTA过流
@@ -58,31 +153,59 @@ void app_supervisiorTask(void *Parameters){
 		
 		//速度信号更新
 		get_spdDischargeData()->speed_signal = get_setStateData(get_powSetData()->set_state,SPEEDSIGNAL);
-
+		
+		
 		//联动信号
 		LKEN = get_setStateData(get_powSetData()->set_state,CONTROLMODE);
 		
-		if(adc_filter_VDC_ADC < LOW_VDC)	//VDC低于470
-			get_controlData()->error_sta |= VDC_LOW_ERROR;	//外部交流输入过低警告
-		else
-			get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
+		//只有在电晕状态VDC的检测是正常的
+		if(get_controlState() == __CORONA){
+			//触发电晕时，需要等待一段时间使VDC稳定
+			if(get_supervisiorData()->start_delay >= START_DELAY_TIME){
+				if(adc_filter_VDC_ADC < LOW_VDC)	//VDC低于450
+					get_controlData()->error_sta |= VDC_LOW_ERROR;	//外部交流输入过低警告
+				else
+					get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
+				
+				if(adc_filter_VDC_ADC < WARN_VDC)	//VDC低于470
+					get_controlData()->error_sta |= VDC_LOW_WARN;	//外部交流输入预警
+				else
+					get_controlData()->error_sta &= ~VDC_LOW_WARN;	//解决后清除预警
+			}
+		}
 		
 		//达速检测(如果手动达速，屏蔽达速检测)
 		if(!get_controlData()->manual_mode){
 			if(get_spdDischargeData()->local_speed < get_controlData()->set_speed_up){	//大于等于最小设定速度即达速
-				get_controlData()->error_sta |= SPEED_UP_ERROR;	//未达速
 				digitalLo(&get_controlData()->speed_up);
+				SPDUP = 0;
 			}
 			else{
-				get_controlData()->error_sta &= ~SPEED_UP_ERROR;	//达速
 				digitalHi(&get_controlData()->speed_up);
+				SPDUP = 1;
 			}
 		}
 		else{
-			get_controlData()->error_sta &= ~SPEED_UP_ERROR;	//达速
 			digitalHi(&get_controlData()->speed_up);
+			SPDUP = 1;
 		}
 		
+		//负压检测
+		if(!FYKL){ //屏蔽负压开关时候不检测
+			if((get_controlData()->error_sta & 0x78) == NEGATIVE_PRESSURE){
+				//无负压
+				digitalLo(&get_controlData()->fy_ok);
+			}
+			else{
+				//有负压
+				digitalHi(&get_controlData()->fy_ok);
+			}
+		}
+		else{
+			//无负压
+			digitalLo(&get_controlData()->fy_ok);
+		}
+			
 		if(get_controlData()->use_pulse_corona){	//使用脉冲触发
 			if(!get_controlData()->speed_up){
 				//未达速处于脉冲触发模式
@@ -124,10 +247,60 @@ void app_supervisiorTask(void *Parameters){
 //			
 //		}
 		
-		//报警停机
+		/************************************************************************************/
+		//如果收到打火报警后，需要进行打火复位
+		if((get_controlData()->error_sta & HIGH_VOLTAGE_SPARK_ERROR) && (get_supervisiorData()->spark_last_count != get_supervisiorData()->spark_count)){
+			pulse_outputLow(&RESET_DH,50);	//打火复位
+		}
+		//防止重复触发
+		get_supervisiorData()->spark_last_count = get_supervisiorData()->spark_count;
 		
+		/************************************************************************************/
+		//报警停机(一些报警会使得机器停机)
+		//开机1s系统稳定后在检测停机报警
+		if(get_controlData()->start_init){
+			//互锁开关停机
+			if(!PBLE3){		//解除互锁开关屏蔽
+				//触发互锁开关必定停机
+				if(get_controlData()->error_sta & 0x78){
+					digitalHi(&get_supervisiorData()->stop_alarm);	//停机故障
+					if(get_controlState() != __STOP)
+						set_controlState(__STOP,0);	//进入停机
+				}
+			}
+			//其他报警停机
+			if(get_controlData()->error_sta & 0x7F386){
+				digitalHi(&get_supervisiorData()->stop_alarm);	//停机故障
+				if(get_controlState() != __STOP)
+					set_controlState(__STOP,0);	//进入停机
+			}
+		}
+		/************************************************************************************/
 		//获取温度
 		get_controlData()->temp = get_ntc_temp(ntc_adc,(uint16_t)adc_filter_TEMP,BASE_TEMP) * 0.1f;		
+		
+		//如果输入的密码为日期3的密码，直接彻底解锁
+		if(get_controlData()->verify_password != get_controlData()->password[2]){
+			//上锁处理
+			lock_to_unlock();
+		
+			//剩余时间处理
+			remain_day();
+		}
+		else{
+			digitalLo(&get_controlData()->lock); //解锁
+			digitalHi(&get_controlData()->pwd_ok);
+			digitalClan(&get_controlData()->remain_day); 
+		}
+		
+		
+		if(get_controlData()->lock || get_controlData()->lock_tamp){ //上锁了
+			//如果已经处于停机状态，则不用再执行
+			//如果此时还在放电状态，必须要按下停机才能进入锁机，否则无法停止放电
+			if(get_controlState() != __CORONA && get_controlState() != __STOP) //如果当前不是放电状态和停机状态
+				set_controlState(__STOP,0);	//强制停机，进入锁机状态
+			
+		}
 		
 		/***************************test******************************/
 		if(rst_error){	//故障复位

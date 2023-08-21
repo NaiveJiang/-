@@ -17,7 +17,7 @@ void driver_port_Init(void){
 	BSP_GPIO_Init(OPIN1_PORT,GPIO_Mode_IPD);//光耦输入1
 	
 	//脉冲信号输出
-	BSP_GPIO_Init(DJOPEN_PORT,GPIO_Mode_Out_PP);	//打开电极			0.1s脉冲
+	BSP_GPIO_Init(SPDUP_PORT,GPIO_Mode_Out_PP);	//打开电极			0.1s脉冲
 	BSP_GPIO_Init(DJCLOSE_PORT,GPIO_Mode_Out_PP);	//关闭电极			0.1s脉冲
 	BSP_GPIO_Init(O2CJ3_PORT,GPIO_Mode_Out_PP);		//启动臭氧风机 		0.1s脉冲
 	BSP_GPIO_Init(STOPCJ3_PORT,GPIO_Mode_Out_PP);	//启动CJ1上电		0.1s脉冲
@@ -61,7 +61,7 @@ void driver_port_Init(void){
 	BSP_GPIO_LockConfig(LE2_PORT);
 	BSP_GPIO_LockConfig(LE3_PORT);
 	BSP_GPIO_LockConfig(OPIN1_PORT);
-	BSP_GPIO_LockConfig(DJOPEN_PORT);
+	BSP_GPIO_LockConfig(SPDUP_PORT);
 	BSP_GPIO_LockConfig(O2CJ3_PORT);
 	BSP_GPIO_LockConfig(STOPCJ3_PORT);
 	BSP_GPIO_LockConfig(UPEDCJ2_PORT);

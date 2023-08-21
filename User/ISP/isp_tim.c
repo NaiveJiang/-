@@ -19,7 +19,12 @@ void TIM2_IRQHandler(void){
 		}else{
 			digitalIncreasing(&get_supervisiorData()->write_bkp_time);
 		}
-		
+		/**********************************************************************/
+		if(get_supervisiorData()->start_delay_sw){
+			digitalIncreasing(&get_supervisiorData()->start_delay);	//触发计数
+			if(get_supervisiorData()->start_delay >= START_DELAY_TIME)
+				digitalLo(&get_supervisiorData()->start_delay_sw); //停止触发
+		}
 		/**********************************************************************/
 		//仅在线控模式下进行清空
 		if(get_spdDischargeData()->remain_local_sw && !get_dischargeCtrlData()->mode){
@@ -56,12 +61,41 @@ void TIM2_IRQHandler(void){
 			get_rcCtrlData()->speed = get_speed(get_spdDischargeData()->speed_signal);
 		}
 		/**********************************************************************/
+		//打火计时
+		if(get_supervisiorData()->spark_tim_sw){
+			digitalIncreasing(&get_supervisiorData()->spark_tim);//10ms自增
+			if(get_supervisiorData()->spark_tim >= 6000){	//超过1min
+				digitalClan(&get_supervisiorData()->spark_tim);	//清空时间
+				digitalLo(&get_supervisiorData()->spark_tim_sw);	//结束计时
+				if(get_supervisiorData()->spark_count >= 5){	//如果1min之内超过5次打火
+					//触发停机报警
+					digitalHi(&get_supervisiorData()->stop_alarm);
+					if(get_controlState() != __STOP)
+					set_controlState(__STOP,0);	//进入停机
+				}
+				else{
+					//清空打火累计
+					digitalClan(&get_supervisiorData()->spark_count);
+					get_controlData()->error_sta &= ~HIGH_VOLTAGE_SPARK_ERROR;	//清空打火报警
+				}
+				
+			}
+		}
+		/**********************************************************************/
+		//初始化计时
+		if(!get_controlData()->start_init){
+			digitalIncreasing(&get_controlData()->start_time);
+			if(get_controlData()->start_time >= START_INIT_TIME){
+				digitalClan(&get_controlData()->start_time);
+				digitalHi(&get_controlData()->start_init);	//初始化完成标志
+			}
+		}
+		/**********************************************************************/
 		TIM_ClearITPendingBit(TIM2,TIM_IT_Update);//清除中断
 	}
 	
 }
 
-//bug 当没有脉冲信号输入的时候仍保存着有信号输入的数据
 void TIM4_IRQHandler(void){
 	
 	//CNT溢出中断

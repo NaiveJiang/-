@@ -55,6 +55,18 @@ typedef enum{
 	SET_DELAY_LENGTH1,	//设定换卷延迟放电长度1
 	SET_DELAY_LENGTH2,	//设定换卷延迟放电长度2
 	
+	C_SEC,	//秒
+	C_HOR,	//时
+	C_DAY1,	//日1
+	C_DAY2,	//日2
+	C_DAY3,	//日3
+	
+	PWD1,	//密码1
+	PWD2,	//密码2
+	PWD3,	//密码3
+	
+	V_PWD,	//确认密码
+	
 	NAME_OF_LIST,
 }nameOfParameter_e;
 

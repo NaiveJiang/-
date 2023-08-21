@@ -23,6 +23,7 @@
 #define abs(x) ( (x)>0?(x):-(x) )
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
+#define zerov(a) ((a) < 0 ? 0 : (a))
 #define yield(n)		    vTaskDelay(n)
 
 #define	UTIL_STACK_CHECK	    12

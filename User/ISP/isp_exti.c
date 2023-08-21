@@ -2,7 +2,15 @@
 
 void EXTI4_IRQHandler(void){
 	if(EXTI_GetITStatus(EXTI_Line4) != RESET){
+		//产生打火报警
+		get_controlData()->error_sta |= HIGH_VOLTAGE_SPARK_ERROR;
 		//产生较大打火
+		if(!get_supervisiorData()->spark_tim_sw){
+			digitalHi(&get_supervisiorData()->spark_tim_sw);	//触发计时1分钟
+		}
+		//打火次数累加
+		digitalIncreasing(&get_supervisiorData()->spark_count);
+		
 		get_dryCtrlData()->dry_power *= 0.5f; //降低输出功率到当前功率的50%
 		digitalHi(&get_dryCtrlData()->spark_wait);
 		digitalClan(&get_dryCtrlData()->dry_time);	//重新计时

@@ -18,7 +18,7 @@ void app_dryCtrl(void){
 	
 	if(dryCtrlData.spark_wait){	//产生较大打火,降低到当前功率的50%
 		digitalLo(&dryCtrlData.spark_wait);
-		pulse_outputLow(&RESET_DH,1);	//打火复位
+		pulse_outputLow(&RESET_DH,50);	//打火复位
 	}
 	
 	//最大输出为额定功率的50%

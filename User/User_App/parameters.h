@@ -11,7 +11,7 @@
 #define DEAFULT_ROLLER_DIAMETER_LOACAL 40000		//本地滚轴直径0.40000M(400.00mm)  需要求出滚轴周长=滚轴直径*pi
 #define DEAFULT_ROLLER_PULSE_LOCAL 50				//本地滚轴每周脉冲数50  计算出1个脉冲的线长度=滚轴周长/滚轴每周脉冲数
 #define DEAFULT_ROLLER_DIAMETER_EXTERNAL 30000		//外地滚轴直径0.30000M(300.00mm)  需要求出滚轴周长=滚轴直径*pi
-#define DEAFULT_ROLLER_PULSE_EXTERNAL 512	//外部滚轴每周脉冲数512 计算出1个脉冲的线长度=滚轴周长/滚轴每周脉冲数
+#define DEAFULT_ROLLER_PULSE_EXTERNAL 512			//外部滚轴每周脉冲数512 计算出1个脉冲的线长度=滚轴周长/滚轴每周脉冲数
 
 #define DEAFULT_SPD_UP 50				//设定达速0.50m/min，需要再除以60得到m/s
 
@@ -33,5 +33,18 @@
 #define DEAFULT_SET_DELAY_LENGTH1 	1000 		//设定换卷延迟放电长度1 10.00m
 #define DEAFULT_SET_DELAY_LENGTH2	1000		//设定换卷延迟放电长度2 10.00m
 
+//运行时间
+#define DEAFULT_SEC 0
+#define DEAFULT_HOR 0
+#define DEAFULT_DAY1 100
+#define DEAFULT_DAY2 250
+#define DEAFULT_DAY3 365
+
+//密码
+#define DEAFULT_PASSWORD1 114514
+#define DEAFULT_PASSWORD2 1919
+#define DEAFULT_PASSWORD3 810
+
+#define DEAFULT_VERIFY_PASSWORD 0
 
 #endif

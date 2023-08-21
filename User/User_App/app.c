@@ -48,6 +48,24 @@ void app_ParameterInit(void){
 		
 		parameter[ROLLER_PULSE_EXTERNAL] = DEAFULT_ROLLER_PULSE_EXTERNAL;
 		
+		parameter[C_SEC] = DEAFULT_SEC;
+		
+		parameter[C_HOR] = DEAFULT_HOR;
+		
+		parameter[C_DAY1] = DEAFULT_DAY1;
+		
+		parameter[C_DAY2] = DEAFULT_DAY2;
+		
+		parameter[C_DAY3] = DEAFULT_DAY3;
+		
+		parameter[PWD1] = DEAFULT_PASSWORD1;
+		
+		parameter[PWD2] = DEAFULT_PASSWORD2;
+		
+		parameter[PWD3] = DEAFULT_PASSWORD3;
+		
+		parameter[V_PWD] = DEAFULT_VERIFY_PASSWORD;
+		
 	}
 	
 	//从flash中读取版本号
@@ -87,6 +105,20 @@ void app_ControlParameterLoad(void){
 	
 	get_rcCtrlData()->set_delay_length1 = (float)parameter[SET_DELAY_LENGTH1] * 1e-2f;
 	get_rcCtrlData()->set_delay_length2 = (float)parameter[SET_DELAY_LENGTH2] * 1e-2f;
+	
+	//获取机器运行时间
+	get_controlData()->rtc_sec = parameter[C_SEC];
+	get_controlData()->rtc_hour = parameter[C_HOR];
+	get_controlData()->rtc_day1 = parameter[C_DAY1];
+	get_controlData()->rtc_day2 = parameter[C_DAY2];
+	get_controlData()->rtc_day3 = parameter[C_DAY3];
+	
+	//机器密码
+	get_controlData()->password[0] = parameter[PWD1];
+	get_controlData()->password[1] = parameter[PWD2];
+	get_controlData()->password[2] = parameter[PWD3];
+	
+	get_controlData()->verify_password = parameter[V_PWD];
 	
 	//得到滚筒单个脉冲所占线长 
 	get_spdDischargeData()->roller_pulse_length = (float)parameter[ROLLER_DIAMETER_LOCAL] * (1e-5f) * PI / (float)parameter[ROLLER_PULSE_LOCAL]; //本地滚轴

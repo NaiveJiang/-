@@ -26,8 +26,8 @@
 #define OPIN1 PCin(7)
 
 //脉冲信号输出
-#define DJOPEN_PORT BSP_GPIOB5		//打开电极		0.1s
-#define DJOPEN PBout(5)
+#define SPDUP_PORT BSP_GPIOB5		//打开电极		0.1s
+#define SPDUP PBout(5)
 #define DJCLOSE_PORT BSP_GPIOB8		//关闭电极		0.1s
 #define DJCLOSE PBout(8)
 #define O2CJ3_PORT BSP_GPIOD0		//启动臭氧风机	0.1s

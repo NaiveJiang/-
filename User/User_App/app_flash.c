@@ -37,8 +37,20 @@ void app_flash_dataUpdate(void){
 	parameter[SET_STATE] = (uint32_t)get_powSetData()->set_state;						//工作状态
 	
 	parameter[POWER_DENSITY] = (uint32_t)get_dischargeCtrlData()->power_density; 		//功率密度 kw/m2
-	parameter[MANUAL_POWER] = (uint32_t)(get_controlData()->manual_power * 100);	//手动功率
+	parameter[MANUAL_POWER] = (uint32_t)(get_controlData()->manual_power * 100);		//手动功率
 	
 	parameter[SET_REMAIN] = get_spdDischargeData()->set_remain_time;
+	
+	parameter[C_SEC] = get_controlData()->rtc_sec;
+	parameter[C_HOR] = get_controlData()->rtc_hour;
+	parameter[C_DAY1] = get_controlData()->rtc_day1;
+	parameter[C_DAY2] = get_controlData()->rtc_day2;
+	parameter[C_DAY3] = get_controlData()->rtc_day3;
+	
+	parameter[PWD1] = get_controlData()->password[0];
+	parameter[PWD1] = get_controlData()->password[1];
+	parameter[PWD1] = get_controlData()->password[2];
+	
+	parameter[V_PWD] = get_controlData()->verify_password;
 }
 

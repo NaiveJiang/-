@@ -4,6 +4,7 @@
 
 //发送用联合体
 formatTrans32Struct_t errorSend;
+formatTrans32Struct_t totaltimeSend;
 formatTrans16Struct_t powerSend;
 formatTrans16Struct_t speedSend;
 formatTrans16Struct_t VDC_S;
@@ -18,7 +19,27 @@ formatTrans16Struct_t LPV_S;
 formatTrans16Struct_t LPMA_S;
 formatTrans16Struct_t PGD;
 formatTrans16Struct_t POUT_S;
+
+formatTrans16Struct_t ratepowerSend;
+formatTrans16Struct_t maxpowerSend;
+formatTrans16Struct_t minpowerSend;
+formatTrans16Struct_t maxspeedSend;
+formatTrans16Struct_t coronawidthSend;
+formatTrans16Struct_t local_rollerdiameterSend;
+formatTrans16Struct_t local_rollerpulseSend;
+formatTrans16Struct_t external_rollerdiameterSend;
+formatTrans16Struct_t external_rollerpulseSend;
+formatTrans16Struct_t speedupSend;
+formatTrans16Struct_t speeddelaySend;
+formatTrans16Struct_t linedelaySend;
+formatTrans16Struct_t pulsedelaySend;
+formatTrans16Struct_t electrode_open_lengthSend;
+formatTrans16Struct_t electrode_close_lengthSend;
+
 //接收用联合体
+formatTrans32Struct_t dayRev[3];
+formatTrans32Struct_t passwordRev[3];
+formatTrans32Struct_t verify_passwordRev;
 formatTrans16Struct_t powerRev;
 formatTrans16Struct_t mulRev;
 formatTrans16Struct_t spdRev;
@@ -60,6 +81,68 @@ void gui_send_data(USART_TypeDef *USARTx){
 	errorSend.u32_temp = get_controlData()->error_sta;
 	//发送内容
 	switch(get_controlData()->page_num){
+		case 0:{ //初始化会发送机器参数进行覆盖
+			ratepowerSend.u16_temp = parameter[POWER];
+			maxpowerSend.u16_temp = parameter[MAX_POW];
+			minpowerSend.u16_temp = parameter[LOW_POWER];
+			maxspeedSend.u16_temp = parameter[MAX_SPEED];
+			coronawidthSend.u16_temp = parameter[ROLLER_WIDTH];
+			local_rollerdiameterSend.u16_temp = parameter[ROLLER_DIAMETER_LOCAL];
+			local_rollerpulseSend.u16_temp = parameter[ROLLER_PULSE_LOCAL];
+			external_rollerdiameterSend.u16_temp = parameter[ROLLER_DIAMETER_EXTERNAL];
+			external_rollerpulseSend.u16_temp = parameter[ROLLER_PULSE_EXTERNAL];
+			speedupSend.u16_temp = parameter[SPD_UP];
+			speeddelaySend.u16_temp = parameter[SET_SPD_DELAY];
+			linedelaySend.u16_temp = parameter[SET_LINE_DELAY];
+			pulsedelaySend.u16_temp = parameter[SET_PULSE_DELAY];
+			electrode_open_lengthSend.u16_temp = parameter[SET_DELAY_LENGTH1];
+			electrode_close_lengthSend.u16_temp = parameter[SET_DELAY_LENGTH2];
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = ratepowerSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = maxpowerSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = minpowerSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = maxspeedSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = coronawidthSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = local_rollerdiameterSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = local_rollerpulseSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = external_rollerdiameterSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = external_rollerpulseSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = speedupSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = speeddelaySend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = linedelaySend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = pulsedelaySend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = electrode_open_lengthSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = electrode_close_lengthSend.u8_temp[i];
+			}
+		}break;
 		//Main
 		case 1:{
 			//当前功率 小数点保留后两位
@@ -73,6 +156,7 @@ void gui_send_data(USART_TypeDef *USARTx){
 				array[index_ptr++] = speedSend.u8_temp[i];
 			//达速标志
 			array[index_ptr++] = get_controlData()->speed_up;
+			array[index_ptr++] = get_controlData()->fy_ok;
 		}break;
 		//PowerSet
 		case 2:{
@@ -145,6 +229,24 @@ void gui_send_data(USART_TypeDef *USARTx){
 				array[index_ptr++] = POUT_S.u8_temp[i];
 			}
 		}break;
+		//TotalTime
+		case 9:{
+			totaltimeSend.u32_temp = get_controlData()->rtc_hour;
+			//使用时长
+			for(uint8_t i = 0; i < 4; i++){
+				array[index_ptr++] = totaltimeSend.u8_temp[i];
+			}
+		}break;
+		//LockNote
+		case 10:{
+			//距离锁机结束剩余时间
+			array[index_ptr++] = get_controlData()->remain_day;
+		}break;
+		//UnLock
+		case 12:{
+			//密码是否正确标志
+			array[index_ptr++] = get_controlData()->pwd_ok;
+		}break;
 		default:break;
 	}
 	//换卷信号
@@ -154,6 +256,9 @@ void gui_send_data(USART_TypeDef *USARTx){
 	for(uint8_t i = 0; i < 4; i++){
 		array[index_ptr++] = errorSend.u8_temp[i];
 	}
+	
+	//停机报警
+	array[index_ptr++] = get_supervisiorData()->stop_alarm;
 	
 	array[index_ptr++] = GUI_TAIL;	//帧尾
 	array[index_ptr++] = GUI_LAST;
@@ -315,6 +420,54 @@ void gui_data_unPackge(uint8_t *receive_data){
 		case 7:{
 			//得到脉冲触发页面数据
 			get_controlData()->use_pulse_corona = receive_data[index_ptr++];  //脉冲触发
+			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
+		}break;
+		//ErrorCode
+		case 8:{
+			//故障复位信号
+			get_controlData()->error_reset = receive_data[index_ptr++];
+		}break;
+		//MachineLock
+		case 11:{
+			//设定的三个日期以及对应的密码
+			for(uint8_t i = 0; i < 4; i++){
+				dayRev[0].u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 4; i++){
+				dayRev[1].u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 4; i++){
+				dayRev[2].u8_temp[i] = receive_data[index_ptr++];
+			}
+
+			for(uint8_t i = 0; i < 4; i++){
+				passwordRev[0].u8_temp[i] = receive_data[index_ptr++];
+			}			
+			for(uint8_t i = 0; i < 4; i++){
+				passwordRev[1].u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 4; i++){
+				passwordRev[2].u8_temp[i] = receive_data[index_ptr++];
+			}
+			
+			get_controlData()->rtc_day1 = dayRev[0].u32_temp;
+			get_controlData()->rtc_day2 = dayRev[1].u32_temp;
+			get_controlData()->rtc_day3 = dayRev[2].u32_temp;
+			get_controlData()->password[0] = passwordRev[0].u32_temp;
+			get_controlData()->password[1] = passwordRev[1].u32_temp;
+			get_controlData()->password[2] = passwordRev[2].u32_temp;
+			
+			//flash更新
+			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
+		}break;
+		//UnLock
+		case 12:{
+			//获得发送的密码
+			for(uint8_t i = 0; i < 4; i++){
+				verify_passwordRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			get_controlData()->verify_password = verify_passwordRev.u32_temp;
+			//flash更新
 			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
 		}break;
 		default: break;
