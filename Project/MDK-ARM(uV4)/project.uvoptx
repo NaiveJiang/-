@@ -330,6 +330,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>last_controlState</ItemText>
         </Ww>
+        <Ww>
+          <count>35</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>powerSend</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>

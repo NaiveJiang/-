@@ -126,10 +126,10 @@ void app_discharge(void){
 			if(!get_controlData()->speed_up){
 				pulse_dischargeUpdate();	//脉冲放电
 			}
-			else{	//达速进入线速控制(手动达速自动进入线速状态)
-				digitalLo(&get_dischargeCtrlData()->mode);
-				digitalClan(&get_dischargeCtrlData()->step);
-			}
+//			else{	//达速进入线速控制(手动达速自动进入线速状态)
+//				digitalLo(&get_dischargeCtrlData()->mode);
+//				digitalClan(&get_dischargeCtrlData()->step);
+//			}
 		}break;
 		default:break;
 	}

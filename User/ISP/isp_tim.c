@@ -26,18 +26,6 @@ void TIM2_IRQHandler(void){
 				digitalLo(&get_supervisiorData()->start_delay_sw); //停止触发
 		}
 		/**********************************************************************/
-		//仅在线控模式下进行清空
-		if(get_spdDischargeData()->remain_local_sw && !get_dischargeCtrlData()->mode){
-			digitalDecline(&get_spdDischargeData()->remain_local_time);
-			if(!get_spdDischargeData()->remain_local_time)
-				digitalLo(&get_spdDischargeData()->remain_local_sw);
-		}
-		if(get_spdDischargeData()->remain_external_sw && !get_dischargeCtrlData()->mode){
-			digitalDecline(&get_spdDischargeData()->remain_external_time);
-			if(!get_spdDischargeData()->remain_external_time)
-				digitalLo(&get_spdDischargeData()->remain_external_sw);
-		}
-		/**********************************************************************/
 		//清空相关变量
 		if(!get_spdDischargeData()->remain_local_sw && !get_dischargeCtrlData()->mode){
 			digitalClan(&get_spdDischargeData()->local_speed);
@@ -54,6 +42,18 @@ void TIM2_IRQHandler(void){
 			digitalClan(&LSPSI_CALC.pulse_get);
 			digitalClan(&LSPSI_CALC.freq);
 			digitalClan(&LSPSI_CALC.difference_cnt);
+		}
+		/**********************************************************************/
+		//仅在线控模式下进行清空
+		if(get_spdDischargeData()->remain_local_sw && !get_dischargeCtrlData()->mode){
+			digitalDecline(&get_spdDischargeData()->remain_local_time);
+			if(!get_spdDischargeData()->remain_local_time)
+				digitalLo(&get_spdDischargeData()->remain_local_sw);
+		}
+		if(get_spdDischargeData()->remain_external_sw && !get_dischargeCtrlData()->mode){
+			digitalDecline(&get_spdDischargeData()->remain_external_time);
+			if(!get_spdDischargeData()->remain_external_time)
+				digitalLo(&get_spdDischargeData()->remain_external_sw);
 		}
 		/**********************************************************************/
 		//触发换卷信号的延迟放电后，开始采样当前速度 m/min
@@ -121,16 +121,21 @@ void TIM4_IRQHandler(void){
 			TIM4->CCR1 = 0;
 		}
 		else{
-			TIM4->CCR1 = 0;
 			BSPSI_CALC.get_cnt1 = TIM4->CCR1; //得到第一个上升沿的CNT值
 			digitalHi(&BSPSI_CALC.pulse_get);
 		}
 		/********************************************************************************************************************************/
 		//脉冲触发模式
 		if(get_dischargeCtrlData()->mode){
-			//置位脉冲触发标志
-			digitalHi(&get_pulseDischargeData()->discharge_sw);
-			get_pulseDischargeData()->discharge_time = get_pulseDischargeData()->set_delay_time;	//重新装填时间
+//			//如果达速，就退出脉冲状态
+//			if(get_spdDischargeData()->local_speed > get_controlData()->set_speed_up){
+//				digitalLo(&get_dischargeCtrlData()->mode);
+//			}
+//			else{
+				//置位脉冲触发标志
+				digitalHi(&get_pulseDischargeData()->discharge_sw);
+				get_pulseDischargeData()->discharge_time = get_pulseDischargeData()->set_delay_time;	//重新装填时间
+//			}
 		}
 		/********************************************************************************************************************************/
 		TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);//清除中断

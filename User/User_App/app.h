@@ -67,6 +67,8 @@ typedef enum{
 	
 	V_PWD,	//»∑»œ√‹¬Î
 	
+	PULSE_ON,
+	
 	NAME_OF_LIST,
 }nameOfParameter_e;
 

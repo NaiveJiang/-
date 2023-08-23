@@ -46,5 +46,7 @@
 #define DEAFULT_PASSWORD3 810
 
 #define DEAFULT_VERIFY_PASSWORD 0
+//pulse
+#define DEAFULT_PULSE_CORONA 0
 
 #endif

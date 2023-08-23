@@ -66,6 +66,8 @@ void app_ParameterInit(void){
 		
 		parameter[V_PWD] = DEAFULT_VERIFY_PASSWORD;
 		
+		parameter[PULSE_ON] = DEAFULT_PULSE_CORONA;
+		
 	}
 	
 	//从flash中读取版本号
@@ -127,6 +129,8 @@ void app_ControlParameterLoad(void){
 	
 	//得到滚筒宽度
 	get_spdDischargeData()->roller_width = (float)parameter[ROLLER_WIDTH] * 1e-2f;
+	
+	get_controlData()->use_pulse_corona = parameter[PULSE_ON];
 }
 
 

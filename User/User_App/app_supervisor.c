@@ -158,7 +158,7 @@ void app_supervisiorTask(void *Parameters){
 		//联动信号
 		LKEN = get_setStateData(get_powSetData()->set_state,CONTROLMODE);
 		
-		//只有在电晕状态VDC的检测是正常的
+//		//只有在电晕状态VDC的检测是正常的
 		if(get_controlState() == __CORONA){
 			//触发电晕时，需要等待一段时间使VDC稳定
 			if(get_supervisiorData()->start_delay >= START_DELAY_TIME){
@@ -183,6 +183,13 @@ void app_supervisiorTask(void *Parameters){
 			else{
 				digitalHi(&get_controlData()->speed_up);
 				SPDUP = 1;
+				//达速后切换为线速状态
+				digitalLo(&get_dischargeCtrlData()->mode);
+//				if(get_dischargeCtrlData()->mode){	//如果是脉冲放电状态
+//					//达速直接进入线速放电
+//					digitalLo(&get_dischargeCtrlData()->mode);
+//					digitalClan(&get_dischargeCtrlData()->step);
+//				}
 			}
 		}
 		else{
@@ -205,11 +212,15 @@ void app_supervisiorTask(void *Parameters){
 			//无负压
 			digitalLo(&get_controlData()->fy_ok);
 		}
-			
-		if(get_controlData()->use_pulse_corona){	//使用脉冲触发
+		
+		//使用脉冲触发
+		if(get_controlData()->use_pulse_corona){	
 			if(!get_controlData()->speed_up){
 				//未达速处于脉冲触发模式
 				digitalHi(&get_dischargeCtrlData()->mode);
+				//拉高两个标志位防止切换线速状态清空
+				digitalHi(&get_spdDischargeData()->remain_local_sw);
+				digitalHi(&get_spdDischargeData()->remain_external_sw);
 			}
 		}
 		

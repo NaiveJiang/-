@@ -427,6 +427,8 @@ void app_stopMode(void){
 			}
 		}break;
 		case 99:{
+			//停机清除速度
+			
 			//根据CJ3回到相关状态
 			if(CJ3OK)	//风机还在运行，回到状态1
 				set_controlState(__FAN_ON,4);

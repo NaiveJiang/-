@@ -142,6 +142,7 @@ void gui_send_data(USART_TypeDef *USARTx){
 			for(uint8_t i = 0; i < 2; i++){
 				array[index_ptr++] = electrode_close_lengthSend.u8_temp[i];
 			}
+			array[index_ptr++] = get_controlData()->use_pulse_corona;
 		}break;
 		//Main
 		case 1:{

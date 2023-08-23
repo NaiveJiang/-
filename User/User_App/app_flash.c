@@ -52,5 +52,6 @@ void app_flash_dataUpdate(void){
 	parameter[PWD1] = get_controlData()->password[2];
 	
 	parameter[V_PWD] = get_controlData()->verify_password;
+	parameter[PULSE_ON] = get_controlData()->use_pulse_corona;
 }
 

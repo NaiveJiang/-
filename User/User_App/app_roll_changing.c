@@ -96,7 +96,8 @@ void app_roll_changing(void){
 		case 99:{
 			HJSHDL = 0;	//换卷延时关闭
 			digitalLo(&get_rcCtrlData()->state);	//清零换卷标志
-			digitalClan(&get_rcCtrlData()->step);	
+			digitalClan(&get_rcCtrlData()->step);
+			digitalClan(&get_rcCtrlData()->speed);
 			set_controlState(get_last_controlState(),get_controlData()->last_control_step);	//回到原来的状态
 		}break;
 	}
