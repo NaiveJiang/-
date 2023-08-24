@@ -410,6 +410,8 @@ void app_stopMode(void){
 				get_controlData()->error_sta &= ~HIGH_VOLTAGE_SPARK_ERROR;	//清空打火报警
 				get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
 				get_controlData()->error_sta &= ~VDC_LOW_WARN;	//解决后清除报警
+				digitalClan(&get_supervisiorData()->spark_count);
+				digitalClan(&get_supervisiorData()->spark_last_count);
 				
 				if(!get_controlData()->lock && !get_controlData()->lock_tamp)	//没有锁机
 					set_controlState(__STOP,99);

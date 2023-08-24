@@ -27,7 +27,7 @@ typedef struct{
 
 
 
-
+void dhal_init(void);
 void app_dryCtrl(void);
 dryStruct_t* get_dryCtrlData(void);
 

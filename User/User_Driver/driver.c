@@ -4,6 +4,7 @@ void driver_Init(void){
 	//IO口初始化
 	driver_port_Init();
 	driver_roll_changing();
+	dhal_init();
 	//如果为冷启动，先进行端口准备
 	if(!(get_controlData()->error_sta & IN_HOT_ACTIVE)) driver_port_detection();
 	//辅助定时器配置

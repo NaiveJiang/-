@@ -178,6 +178,7 @@ void gui_send_data(USART_TypeDef *USARTx){
 			for(uint8_t i = 0; i < 2; i++){
 				array[index_ptr++] = powerSend.u8_temp[i];
 			}
+			array[index_ptr++] = get_controlData()->fy_ok;
 		}break;
 		//Test
 		case 6:{
@@ -336,6 +337,7 @@ void gui_data_unPackge(uint8_t *receive_data){
 		case 3:{
 			//得到湿启动页面的数据
 			get_controlData()->dry_mode = receive_data[index_ptr++];
+			get_maindata()->main_rev_data = receive_data[index_ptr++];
 		}break;
 		//M_UTD
 		case 4:{

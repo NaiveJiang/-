@@ -64,21 +64,24 @@ void TIM2_IRQHandler(void){
 		//打火计时
 		if(get_supervisiorData()->spark_tim_sw){
 			digitalIncreasing(&get_supervisiorData()->spark_tim);//10ms自增
-			if(get_supervisiorData()->spark_tim >= 6000){	//超过1min
+			if(get_supervisiorData()->spark_tim < 6000){	//1min内
+				if(get_supervisiorData()->spark_count >= 5){	//如果1min之内超过5次打火
+					if(!get_supervisiorData()->stop_alarm){
+						//触发停机报警
+						digitalHi(&get_supervisiorData()->stop_alarm);
+						if(get_controlState() != __STOP)
+							set_controlState(__STOP,0);	//进入停机
+					}
+				}
+			}
+			else{ //1min后
 				digitalClan(&get_supervisiorData()->spark_tim);	//清空时间
 				digitalLo(&get_supervisiorData()->spark_tim_sw);	//结束计时
-				if(get_supervisiorData()->spark_count >= 5){	//如果1min之内超过5次打火
-					//触发停机报警
-					digitalHi(&get_supervisiorData()->stop_alarm);
-					if(get_controlState() != __STOP)
-					set_controlState(__STOP,0);	//进入停机
-				}
-				else{
+				if(get_supervisiorData()->spark_count < 5){ //如果1min后少于5次打火
 					//清空打火累计
 					digitalClan(&get_supervisiorData()->spark_count);
 					get_controlData()->error_sta &= ~HIGH_VOLTAGE_SPARK_ERROR;	//清空打火报警
 				}
-				
 			}
 		}
 		/**********************************************************************/
