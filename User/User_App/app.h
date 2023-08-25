@@ -55,6 +55,9 @@ typedef enum{
 	SET_DELAY_LENGTH1,	//设定换卷延迟放电长度1
 	SET_DELAY_LENGTH2,	//设定换卷延迟放电长度2
 	
+	SET_PWR_HI_WARN,
+	SET_PWR_LO_WARN,
+	
 	C_SEC,	//秒
 	C_HOR,	//时
 	C_DAY1,	//日1

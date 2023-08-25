@@ -7,6 +7,7 @@ formatTrans32Struct_t errorSend;
 formatTrans32Struct_t totaltimeSend;
 formatTrans16Struct_t powerSend;
 formatTrans16Struct_t speedSend;
+formatTrans16Struct_t watdenSend;
 formatTrans16Struct_t VDC_S;
 formatTrans16Struct_t IDC_S;
 formatTrans16Struct_t TBV_S;
@@ -35,6 +36,8 @@ formatTrans16Struct_t linedelaySend;
 formatTrans16Struct_t pulsedelaySend;
 formatTrans16Struct_t electrode_open_lengthSend;
 formatTrans16Struct_t electrode_close_lengthSend;
+formatTrans16Struct_t pwr_hi_warnSend;
+formatTrans16Struct_t pwr_lo_warnSend;
 
 //接收用联合体
 formatTrans32Struct_t dayRev[3];
@@ -60,6 +63,8 @@ formatTrans16Struct_t linedelayRev;
 formatTrans16Struct_t pulsedelayRev;
 formatTrans16Struct_t electrode_open_lengthRev;
 formatTrans16Struct_t electrode_close_lengthRev;
+formatTrans16Struct_t pwr_hi_warnRev;
+formatTrans16Struct_t pwr_lo_warnRev;
 
 uint8_t get_decimal_num(float num){
 	uint32_t int_num;
@@ -97,6 +102,8 @@ void gui_send_data(USART_TypeDef *USARTx){
 			pulsedelaySend.u16_temp = parameter[SET_PULSE_DELAY];
 			electrode_open_lengthSend.u16_temp = parameter[SET_DELAY_LENGTH1];
 			electrode_close_lengthSend.u16_temp = parameter[SET_DELAY_LENGTH2];
+			pwr_hi_warnSend.u16_temp = parameter[SET_PWR_HI_WARN];
+			pwr_lo_warnSend.u16_temp = parameter[SET_PWR_LO_WARN];
 			for(uint8_t i = 0; i < 2; i++){
 				array[index_ptr++] = ratepowerSend.u8_temp[i];
 			}
@@ -142,6 +149,12 @@ void gui_send_data(USART_TypeDef *USARTx){
 			for(uint8_t i = 0; i < 2; i++){
 				array[index_ptr++] = electrode_close_lengthSend.u8_temp[i];
 			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = pwr_hi_warnSend.u8_temp[i];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = pwr_lo_warnSend.u8_temp[i];
+			}
 			array[index_ptr++] = get_controlData()->use_pulse_corona;
 		}break;
 		//Main
@@ -155,9 +168,24 @@ void gui_send_data(USART_TypeDef *USARTx){
 			speedSend.u16_temp = (uint16_t)(get_spdDischargeData()->speed * 100);
 			for(uint8_t i = 0; i < 2; i++)
 				array[index_ptr++] = speedSend.u8_temp[i];
+			//当前功率密度
+			if(get_spdDischargeData()->speed)
+					watdenSend.u16_temp = (uint16_t)((get_dischargeCtrlData()->current_power * 1000) / (get_spdDischargeData()->speed * get_spdDischargeData()->roller_width));
+				else
+					watdenSend.u16_temp = 0;
+			for(uint8_t i = 0; i < 2; i++){
+				array[index_ptr++] = watdenSend.u8_temp[i];
+			}
 			//达速标志
 			array[index_ptr++] = get_controlData()->speed_up;
+			//放电标志
+			array[index_ptr++] = get_controlData()->corona_on;
+			//负压标志
 			array[index_ptr++] = get_controlData()->fy_ok;
+			//联动信号
+			array[index_ptr++] = get_controlData()->line_control;
+			//联动暂停
+			array[index_ptr++] = get_controlData()->line_suspend;
 		}break;
 		//PowerSet
 		case 2:{
@@ -187,7 +215,7 @@ void gui_send_data(USART_TypeDef *USARTx){
 			TBV_S.u16_temp = (uint16_t)(adc_filter_TBV_DC3V3 * 4.125f);
 			TBI_S.u16_temp = (uint16_t)(adc_filter_TBI_DC3V3 * 16.500f);
 			HV_S.u16_temp = (uint16_t)(adc_filter_HV_DC3V3 * 0.264f);
-			HI_S.u16_temp = (uint16_t)(adc_filter_HI_DC3V3 * 330);
+			HI_S.u16_temp = (uint16_t)(adc_filter_HI_DC3V3 * 220);
 			LSPV_S.u16_temp = (uint16_t)(adc_filter_LSPV3V3 * 3300);
 			LSPI_S.u16_temp = (uint16_t)(adc_filter_LSPI3V3 * 2640 + 660);
 			LPV_S.u16_temp = (uint16_t)(adc_filter_LPV3V3 * 3300);
@@ -394,6 +422,12 @@ void gui_data_unPackge(uint8_t *receive_data){
 			for(uint8_t i = 0; i < 2; i++){
 				electrode_close_lengthRev.u8_temp[i] = receive_data[index_ptr++];
 			}
+			for(uint8_t i = 0; i < 2; i++){
+				pwr_hi_warnRev.u8_temp[i] = receive_data[index_ptr++];
+			}
+			for(uint8_t i = 0; i < 2; i++){
+				pwr_lo_warnRev.u8_temp[i] = receive_data[index_ptr++];
+			}
 			get_controlData()->rated_power = (float)ratepowerRev.u16_temp * 1e-2f;					//额定功率
 			get_spdDischargeData()->max_pow = (float)maxpowerRev.u16_temp * 1e-2f;					//线速下的最大输出功率
 			get_dischargeCtrlData()->low_power = (float)minpowerRev.u16_temp * 1e-2f;  				//最低输出功率
@@ -409,6 +443,8 @@ void gui_data_unPackge(uint8_t *receive_data){
 			get_pulseDischargeData()->set_delay_time = (uint32_t)pulsedelayRev.u16_temp;			//脉冲延时放电时间
 			get_rcCtrlData()->set_delay_length1 = (float)electrode_open_lengthRev.u16_temp * 1e-2f;	//抬电极距离m
 			get_rcCtrlData()->set_delay_length2 = (float)electrode_close_lengthRev.u16_temp * 1e-2f;//合电极距离m
+			get_supervisiorData()->pwr_hi_warn = (float)pwr_hi_warnRev.u16_temp * 1e-2f;
+			get_supervisiorData()->pwr_lo_warn = (float)pwr_lo_warnRev.u16_temp * 1e-2f;
 			//计算新的滚轴线脉冲
 			get_spdDischargeData()->roller_pulse_length = (float)parameter[ROLLER_DIAMETER_LOCAL] * (1e-5f) * PI / (float)parameter[ROLLER_PULSE_LOCAL]; //本地滚轴
 			get_spdDischargeData()->external_pulase_length = (float)parameter[ROLLER_DIAMETER_EXTERNAL] * (1e-5f) * PI / (float)parameter[ROLLER_PULSE_EXTERNAL]; //外地滚轴

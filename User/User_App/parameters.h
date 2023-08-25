@@ -33,6 +33,9 @@
 #define DEAFULT_SET_DELAY_LENGTH1 	1000 		//设定换卷延迟放电长度1 10.00m
 #define DEAFULT_SET_DELAY_LENGTH2	1000		//设定换卷延迟放电长度2 10.00m
 
+#define DEAFULT_SET_PWR_HI_WARN 2500
+#define DEAFULT_SET_PWR_LO_WARN 0
+
 //运行时间
 #define DEAFULT_SEC 0
 #define DEAFULT_HOR 0

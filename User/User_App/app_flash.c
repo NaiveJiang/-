@@ -34,6 +34,10 @@ void app_flash_dataUpdate(void){
 	parameter[SET_PULSE_DELAY] = get_pulseDischargeData()->set_delay_time;
 	parameter[SET_DELAY_LENGTH1] = (uint32_t)(get_rcCtrlData()->set_delay_length1 * 100);
 	parameter[SET_DELAY_LENGTH2] = (uint32_t)(get_rcCtrlData()->set_delay_length2 * 100);
+	
+	parameter[SET_PWR_HI_WARN] = (uint32_t)(get_supervisiorData()->pwr_hi_warn * 100);
+	parameter[SET_PWR_LO_WARN] = (uint32_t)(get_supervisiorData()->pwr_lo_warn * 100);
+	
 	parameter[SET_STATE] = (uint32_t)get_powSetData()->set_state;						//工作状态
 	
 	parameter[POWER_DENSITY] = (uint32_t)get_dischargeCtrlData()->power_density; 		//功率密度 kw/m2

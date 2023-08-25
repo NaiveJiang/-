@@ -59,6 +59,12 @@ typedef struct{
 	uint8_t spark_count;	//打火次数
 	uint32_t spark_tim;
 	uint8_t spark_last_count;
+	
+	//功率过高警告
+	float pwr_hi_warn;
+	//功率过低警告
+	float pwr_lo_warn;
+	
 }appSupStruct_t;
 
 

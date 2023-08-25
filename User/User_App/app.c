@@ -36,6 +36,10 @@ void app_ParameterInit(void){
 		
 		parameter[SET_DELAY_LENGTH2] = DEAFULT_SET_DELAY_LENGTH2;
 		
+		parameter[SET_PWR_HI_WARN] = DEAFULT_SET_PWR_HI_WARN;
+		
+		parameter[SET_PWR_LO_WARN] = DEAFULT_SET_PWR_LO_WARN;
+		
 		parameter[SPD_UP] = DEAFULT_SPD_UP;
 		
 		parameter[ROLLER_DIAMETER_LOCAL] = DEAFULT_ROLLER_DIAMETER_LOACAL;
@@ -107,6 +111,9 @@ void app_ControlParameterLoad(void){
 	
 	get_rcCtrlData()->set_delay_length1 = (float)parameter[SET_DELAY_LENGTH1] * 1e-2f;
 	get_rcCtrlData()->set_delay_length2 = (float)parameter[SET_DELAY_LENGTH2] * 1e-2f;
+	
+	get_supervisiorData()->pwr_hi_warn = (float)parameter[SET_PWR_HI_WARN] * 1e-2f;
+	get_supervisiorData()->pwr_lo_warn = (float)parameter[SET_PWR_LO_WARN] * 1e-2f;
 	
 	//获取机器运行时间
 	get_controlData()->rtc_sec = parameter[C_SEC];

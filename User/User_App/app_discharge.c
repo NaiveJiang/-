@@ -34,19 +34,39 @@ void app_discharge(void){
 				case 1:{
 					//如果速度降低到达速以下，延迟放电(22状态),或者触发线控暂停(线控状态无关达速与否，直接开始延时)  手动达速下只能通过停止电晕来停止放电
 					if((!get_controlData()->speed_up || get_controlData()->line_suspend) && !get_rcCtrlData()->state){  //没有触发换卷信号
-						if(!get_controlData()->use_pulse_corona){			//不用脉冲放电模式
-							digitalHi(&get_spdDischargeData()->delay_sw);	//开启延时触发
-							digitalIncreasing(&get_dischargeCtrlData()->step);
+						if(get_controlData()->line_control){	//线控状态
+							if(get_controlData()->line_suspend){	//触发线控暂停(线控状态无关达速与否，直接开始延时)
+								digitalHi(&get_spdDischargeData()->delay_sw);	//开启延时触发
+								digitalIncreasing(&get_dischargeCtrlData()->step);
+							}
+							else{	//非线控暂停
+								if(!get_controlData()->use_pulse_corona){			//不用脉冲放电模式
+									digitalHi(&get_spdDischargeData()->delay_sw);	//开启延时触发
+									digitalIncreasing(&get_dischargeCtrlData()->step);
+								}
+								else{
+									//回到脉冲触发模式
+									digitalHi(&get_dischargeCtrlData()->mode);
+									digitalClan(&get_dischargeCtrlData()->step);
+								}
+							}
 						}
-						else{
-							//回到脉冲触发模式
-							digitalHi(&get_dischargeCtrlData()->mode);
-							digitalClan(&get_dischargeCtrlData()->step);
+						else{	//非线控状态
+							if(!get_controlData()->use_pulse_corona){			//不用脉冲放电模式
+								digitalHi(&get_spdDischargeData()->delay_sw);	//开启延时触发
+								digitalIncreasing(&get_dischargeCtrlData()->step);
+							}
+							else{
+								//回到脉冲触发模式
+								digitalHi(&get_dischargeCtrlData()->mode);
+								digitalClan(&get_dischargeCtrlData()->step);
+							}
 						}
 					}
 					//正常线速放电
 					else{
 						spd_dischargeUpdate();
+						digitalHi(&get_controlData()->corona_on);
 					}
 				}break;
 				case 2:{	//状态22
@@ -103,6 +123,7 @@ void app_discharge(void){
 					}
 				}break;
 				case 4:{
+					digitalLo(&get_controlData()->corona_on);
 					//停止dac输出
 					digitalClan(&get_spdDischargeData()->discharge_power);
 					dac_ch1_voltageOut(get_spdDischargeData()->discharge_power);

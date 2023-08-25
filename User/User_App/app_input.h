@@ -34,6 +34,7 @@ typedef struct{
 	
 	uint8_t speed_up;			//达速标志
 	uint8_t fy_ok;				//负压标志
+	uint8_t corona_on;		//开始放电标志
 	
 	uint16_t power_density;		//功率密度
 	float speed_max;			//最大线速功率
@@ -85,6 +86,8 @@ typedef struct{
 	uint32_t password[3]; //存储在机内的密码
 	uint32_t verify_password; //需要验证的密码
 	uint8_t pwd_ok;	//密码输入是否正确
+	
+	
 	
 }appControlStruct_t;
 

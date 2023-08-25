@@ -227,15 +227,15 @@ void app_coronaMode(void){
 			}
 		}break;
 		case 5:{	//生产线暂停状态
-			//等待生产线重启
+			//等待生产线重启,要停机只能切换回本地模式
 			if(!get_controlData()->line_suspend && get_controlData()->line_control){
 				//返回放电状态
 				set_controlState(__CORONA,4);
 			}
 			
-			if(get_mainData(get_maindata()->main_rev_data,STOP_CORONA)){
-				set_controlState(__CORONA,99);
-			}
+//			if(get_mainData(get_maindata()->main_rev_data,STOP_CORONA)){
+//				set_controlState(__CORONA,99);
+//			}
 		}break;
 		case 99:{
 			//复位一些状态变量
@@ -429,13 +429,13 @@ void app_stopMode(void){
 			}
 		}break;
 		case 99:{
-			//停机清除速度
-			
-			//根据CJ3回到相关状态
-			if(CJ3OK)	//风机还在运行，回到状态1
-				set_controlState(__FAN_ON,4);
-			else		//风机停机进入状态0
-				set_controlState(__STANDBY,0);
+			//回到风机运行状态
+			set_controlState(__FAN_ON,4);
+//			//根据CJ3回到相关状态
+//			if(CJ3OK)	//风机还在运行，回到状态1
+//				set_controlState(__FAN_ON,4);
+//			else		//风机停机进入状态0
+//				set_controlState(__STANDBY,0);
 		}break;
 	}
 }

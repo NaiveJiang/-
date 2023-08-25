@@ -174,6 +174,7 @@ void app_supervisiorTask(void *Parameters){
 			}
 		}
 		
+		
 		//达速检测(如果手动达速，屏蔽达速检测)
 		if(!get_controlData()->manual_mode){
 			if(get_spdDischargeData()->local_speed < get_controlData()->set_speed_up){	//大于等于最小设定速度即达速
@@ -247,6 +248,27 @@ void app_supervisiorTask(void *Parameters){
 		
 		//根据速度模式选择获取当前线速度	本地脉冲/外部脉冲/生产线电压/生产线电流
 		get_spdDischargeData()->speed = get_speed(get_spdDischargeData()->speed_signal);
+		
+		//功率输出过低报警
+		if(get_dischargeCtrlData()->current_power < get_supervisiorData()->pwr_lo_warn){
+			PLBJ = 1;
+		}
+		//功率输出过高报警
+		else if(get_dischargeCtrlData()->current_power > get_supervisiorData()->pwr_hi_warn){
+			PHBJ = 1;
+		}
+		else{
+			PLBJ = 1;
+			PHBJ = 1;
+		}
+		
+		//输出功率超过额定功率的1%，说明正在放电,驱动放电继电器
+		if(get_dischargeCtrlData()->current_power >= get_controlData()->rated_power * 0.01f){
+			FD = 1;
+		}
+		else{
+			FD = 0;
+		}
 		
 //		//线速状态下，如果输出和真实输出产生的误差大于4kw，说明输出不受控，一定时间后停机并报警
 //		if((fabs(get_spdDischargeData()->discharge_power - get_dischargeCtrlData()->current_power) > 4.0f) && !get_dischargeCtrlData()->mode){
