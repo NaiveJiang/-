@@ -20,7 +20,7 @@ enum{
 	IN_HOT_ACTIVE 				= 0x00000001,	//热启动
 	QSALARM_ERROR 				= 0x00000002,	//缺相							//停机
 	DCVCHK_ERROR 				= 0x00000004,	//低压电源错误					//停机
-	NEGATIVE_PRESSURE 			= 0x00000008,	//无负压				LE=0		//停机
+	NEGATIVE_PRESSURE 			= 0x00000008,	//无负压			LE=0		//停机
 	ELECTRODE_SW2_CUTOFF 		= 0x00000010,	//电极到位开关2断开	LE=1		//停机
 	ELECTRODE_SW1_CUTOFF 		= 0x00000018,	//电极到位开关1断开	LE=2		//停机
 	SAFETY_SW4_CUTOFF 			= 0x00000020,	//安全开关4断开		LE=3		//停机
@@ -40,7 +40,7 @@ enum{
 	CJ3_ERROR					= 0x00010000,	//CJ3损坏						//停机
 	CJ12_ERROR					= 0x00020000,	//CJ12损坏						//停机
 	VDC_LOW_ERROR				= 0x00040000,	//外部交流输入过低				//低于450停机
-	VDC_LOW_WARN				= 0x00080000,	//外部交流输入低预警				//低于470预警
+	VDC_LOW_WARN				= 0x00080000,	//外部交流输入低预警			//低于470预警
 };
 
 typedef struct{

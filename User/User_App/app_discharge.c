@@ -133,6 +133,7 @@ void app_discharge(void){
 					STANDBY = 1;
 					
 					digitalClan(&get_dischargeCtrlData()->step); //回到线速比较达速
+					
 					//如果为线控状态，需要等待生产线重启
 					//进入暂停状态
 					if(get_controlData()->line_suspend)

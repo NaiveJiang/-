@@ -136,6 +136,7 @@ void app_fanMode(void){
 				PBLE3 = 0; 	//解除互锁开关屏蔽
 				FYKL = 0;	//解除负压开关屏蔽
 			}
+			
 			//如果关闭风机,返回到0状态
 			if(!get_mainData(get_maindata()->main_rev_data,FAN) && !get_controlData()->line_control){
 				digitalLo(&get_controlData()->wait_sw);
@@ -186,7 +187,7 @@ void app_coronaMode(void){
 			//启动功率电源
 			STOPCS = 0;		//放开STOPCS
 			pulse_outputHigh(&STARTS,100);
-			if(adc_filter_VDC_ADC >= 420){	//等待VDC检测到达420V,继电器CJ2闭合
+			if(adc_filter_VDC_ADC >= 440){	//等待VDC检测到达420V,继电器CJ2闭合
 				//闭合继电器CJ2
 				pulse_outputHigh(&UPEDCJ2,50);
 				digitalHi(&get_controlData()->wait_sw);
@@ -203,7 +204,7 @@ void app_coronaMode(void){
 		case 2:{
 			error_set(&CJ12OK,CJ12_ERROR,0);	//若CJ2无法闭合，则产生停机报警	
 			if(CJ12OK){		//继电器闭合
-				if(adc_filter_VDC_ADC >= LOW_VDC) //等待VDC检测到达470V才能放电
+				if(adc_filter_VDC_ADC >= WARN_VDC) //等待VDC检测到达470V才能放电
 					digitalIncreasing(&get_controlData()->control_step);
 			}
 			else{	//50ms后未能闭合CJ2，发出停机报警
@@ -211,8 +212,6 @@ void app_coronaMode(void){
 			}
 		}break;
 		case 3:{
-			//使能3875输出
-//			vTaskDelay(100);
 			//DAC给定为0
 			dac_ch1_voltageOut(0.0f);
 			dac_ch2_voltageOut(0.0f);
@@ -222,7 +221,7 @@ void app_coronaMode(void){
 			//功率放电模式
 			app_discharge();
 			//非线控模式下如果按下停机键或者关闭电晕，进入停机,按下停止键后会回到待机状态(状态0)，关闭电晕会回到风机启动状态（状态1）
-			if((get_mainData(get_maindata()->main_rev_data,STOP_CORONA) || !get_mainData(get_maindata()->main_rev_data,CORONA)) && !get_controlData()->line_control){
+			if(!get_mainData(get_maindata()->main_rev_data,CORONA) && !get_controlData()->line_control){
 				set_controlState(__CORONA,99);
 			}
 		}break;
@@ -255,7 +254,7 @@ void app_dryMode(void){
 			//启动功率电源
 			STOPCS = 0;		//放开STOPCS
 			pulse_outputHigh(&STARTS,100);
-			if(adc_filter_VDC_ADC >= 420){	//等待VDC检测到达420V,继电器CJ2闭合
+			if(adc_filter_VDC_ADC >= 440){	//等待VDC检测到达420V,继电器CJ2闭合
 				//闭合继电器CJ2
 				pulse_outputHigh(&UPEDCJ2,50);
 				digitalHi(&get_controlData()->wait_sw);
@@ -410,6 +409,7 @@ void app_stopMode(void){
 				get_controlData()->error_sta &= ~HIGH_VOLTAGE_SPARK_ERROR;	//清空打火报警
 				get_controlData()->error_sta &= ~VDC_LOW_ERROR;	//解决后清除报警
 				get_controlData()->error_sta &= ~VDC_LOW_WARN;	//解决后清除报警
+				
 				digitalClan(&get_supervisiorData()->spark_count);
 				digitalClan(&get_supervisiorData()->spark_last_count);
 				

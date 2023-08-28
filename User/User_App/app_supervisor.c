@@ -243,6 +243,7 @@ void app_supervisiorTask(void *Parameters){
 		
 		//手动功率转为电压
 		get_dischargeCtrlData()->manual_power = get_controlData()->manual_power * SAMP_MAX_VOLTAGE / get_controlData()->rated_power;
+		
 		//采集电压adc转为输出功率 kw
 		get_dischargeCtrlData()->current_power = adc_filter_POV3V3 * get_controlData()->rated_power / MAX_POWER_ADC;
 		
@@ -258,8 +259,8 @@ void app_supervisiorTask(void *Parameters){
 			PHBJ = 1;
 		}
 		else{
-			PLBJ = 1;
-			PHBJ = 1;
+			PLBJ = 0;
+			PHBJ = 0;
 		}
 		
 		//输出功率超过额定功率的1%，说明正在放电,驱动放电继电器
@@ -284,6 +285,7 @@ void app_supervisiorTask(void *Parameters){
 		//如果收到打火报警后，需要进行打火复位
 		if((get_controlData()->error_sta & HIGH_VOLTAGE_SPARK_ERROR) && (get_supervisiorData()->spark_last_count != get_supervisiorData()->spark_count)){
 			pulse_outputLow(&RESET_DH,50);	//打火复位
+			digitalLo(&get_dryCtrlData()->spark_wait);
 		}
 		//防止重复触发
 		get_supervisiorData()->spark_last_count = get_supervisiorData()->spark_count;
@@ -349,6 +351,7 @@ void app_supervisiorTask(void *Parameters){
 			app_FlashWriteUdata();
 			digitalLo(&get_supervisiorData()->flash_sw);
 		}
+		
 		IWDG_Feed(); //喂狗
 	}
 }	

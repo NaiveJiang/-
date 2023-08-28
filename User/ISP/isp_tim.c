@@ -9,6 +9,7 @@ void TIM2_IRQHandler(void){
 		else{
 			digitalClan(&get_controlData()->wait_time);
 		}
+		
 		if(get_supervisiorData()->write_bkp_time >= 10){
 			//写入备份数据到BKP
 			BKP_WriteBackupRegister(ACTIVITE_BKPREG,(uint16_t)(get_supervisiorData()->machine_active));

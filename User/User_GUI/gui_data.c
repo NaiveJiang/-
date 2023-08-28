@@ -325,6 +325,9 @@ void gui_data_unPackge(uint8_t *receive_data){
 		case 1:{
 			//得到Main页面数据
 			get_maindata()->main_rev_data = receive_data[index_ptr++];
+			
+			//当前功率模式
+			get_dischargeCtrlData()->power_ctrlState = get_setStateData(receive_data[index_ptr++],POWERMODE);
 			//获取控制参数
 			for(uint8_t i = 0; i < 2; i++)
 				powerRev.u8_temp[i] = receive_data[index_ptr++];
@@ -339,8 +342,7 @@ void gui_data_unPackge(uint8_t *receive_data){
 					get_spdDischargeData()->max_pow = ((float)powerRev.u16_temp) * 0.01f;
 				}break;
 			}
-			//当前功率模式
-			get_dischargeCtrlData()->power_ctrlState = get_setStateData(receive_data[index_ptr++],POWERMODE);
+			
 			//flash标志
 			get_supervisiorData()->flash_sw = receive_data[index_ptr++];
 		}break;
